@@ -1,0 +1,10 @@
+name = "ankardo-site"
+compatibility_date = "2026-08-12"
+
+routes = [
+  { pattern = "ankardo.com/*", zone_name = "ankardo.com" }
+]
+
+[assets]
+directory = "./out"
+not_found_handling = "404-page"
