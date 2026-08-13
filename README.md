@@ -19,6 +19,10 @@ ankardo/
 
 ゲーム本体は将来、ゲームごとに別リポジトリとして作成し、`ankardo.com/play/<slug>/*` に独立デプロイする(このリポジトリの対象外)。
 
+### ゲームリポジトリの命名規則
+
+`<slug>` にはゲームリポジトリの名前をそのまま使う(例: リポジトリ `rungame-sample` → `ankardo.com/play/rungame-sample/*`、`site/content/games/rungame-sample.json`)。プレフィックス(`ankardo-game-`等)は付けない。新しいゲームリポジトリを立ち上げる手順は `.claude/skills/new-game/SKILL.md` 参照。
+
 ### ルーティング
 
 | パス | 所有者 | 内容 |
@@ -39,7 +43,7 @@ npm run dev    # 開発サーバ
 npm run build  # 静的書き出し (out/)
 ```
 
-ゲームを追加する場合は `site/content/games/<slug>.json` を追加するだけで一覧・詳細ページに反映される(`site/lib/games.ts` 参照)。
+ゲームを追加する場合は `site/content/games/<slug>.json` を追加するだけで一覧・詳細ページに反映される(`site/lib/games.ts` 参照)。ゲームリポジトリ側の初期設定は `.claude/skills/new-game/SKILL.md` 参照。
 
 ### infra/ (Terraform)
 
