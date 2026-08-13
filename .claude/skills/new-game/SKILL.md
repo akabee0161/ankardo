@@ -45,7 +45,19 @@ not_found_handling = "404-page"
 
 ### 4. ゲームリポジトリ側: デプロイ用GitHub Actions workflowを作成
 
-`.github/workflows/deploy.yml` に、`main` push時に build → `cloudflare/wrangler-action` で deploy するworkflowを作成する。ankardoの `.github/workflows/site.yml` と同じ構成(actionsはSHAピン留め、`environment: production`、`permissions: contents: read`)に揃える。テストがあれば build 前に実行する。
+`.github/workflows/deploy.yml` に、`main` push時に build → `cloudflare/wrangler-action` で deploy するworkflowを作成する。ankardoの `.github/workflows/site.yml` を参照し、以下を共通要件として揃える。
+
+- actionsはSHAピン留め
+- `environment: production`
+- `permissions: contents: read`
+- テストがあれば build 前に実行する
+
+一方、以下は `site/` ディレクトリ構成を前提にした設定であり、多くのゲームリポジトリ(ルート直下にビルド設定がある構成)ではそのままコピーすると動作しない。リポジトリの実際の構成に合わせて調整すること(`site/` サブディレクトリを持つゲームリポジトリなら流用してよい)。
+
+- `on.push.paths: ["site/**"]`(ルート直下構成なら不要。指定するならそのリポジトリの実際のソースパスに合わせる)
+- `defaults.run.working-directory: site`
+- `cache-dependency-path: site/package-lock.json`
+- Wrangler の `workingDirectory: site`
 
 ### 5. ankardo側: ゲームをカタログに登録
 

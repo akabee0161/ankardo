@@ -8,7 +8,7 @@
 
 モノレポ構成。
 
-```
+```text
 ankardo/
 ├── infra/     # Terraform (Cloudflareゾーン・DNS・SSL設定)
 ├── site/      # Next.js カタログサイト(静的書き出し、トップ・一覧・個別詳細ページ)
