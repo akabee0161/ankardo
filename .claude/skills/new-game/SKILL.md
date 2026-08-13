@@ -74,9 +74,20 @@ not_found_handling = "404-page"
 
 `site/lib/games.ts` がこのディレクトリを自動的に拾うため、コード変更は不要。
 
-### 6. 手動確認事項(エージェントが自動実行できない項目)
+### 6. ゲームリポジトリのGitHub Secretsを設定
 
-- ゲームリポジトリのGitHub Secretsに `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` を登録する
+個人アカウント配下のリポジトリにはOrganization secretsのようなリポジトリ横断の共有機能がないため、リポジトリごとに設定する必要がある。`ankardo/scripts/setup-game-secrets.sh` を使う:
+
+```bash
+CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
+  ./scripts/setup-game-secrets.sh <owner>/<ゲームリポジトリ名>
+```
+
+`gh secret set` を実行するため `gh auth login` 済みで、対象リポジトリへのadmin権限が必要。
+
+### 7. 手動確認事項(エージェントが自動実行できない項目)
+
+- 上記スクリプトの実行(Cloudflare認証情報を保有するユーザーが実行するか、値を渡して実行を承認する)
 - ゲームリポジトリに `production` environment保護ルール(必須レビュアー、`main`ブランチのみ許可)を設定する(ankardo側と同様)
 - `wrangler deploy`(実際にCloudflare上へ反映する操作)は、Cloudflare認証情報を保有するユーザーの明示的な承認を得てから実行する
 - ankardo側の `site/` を再ビルド・デプロイし、カタログ一覧・詳細ページに反映されたことを確認する
