@@ -1,12 +1,17 @@
 import fs from "node:fs";
 import path from "node:path";
+import type { GenreKey } from "./genres";
 
 export type Game = {
   slug: string;
   title: string;
   description: string;
   playUrl: string;
-  screenshot?: string;
+  genre: GenreKey;
+  ageRange: string;
+  players: string;
+  difficulty: string;
+  images?: string[];
 };
 
 const GAMES_DIR = path.join(process.cwd(), "content", "games");
