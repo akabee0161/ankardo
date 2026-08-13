@@ -20,7 +20,7 @@ ankardoのゲームは各ゲームごとに独立したリポジトリで開発�
 
 `<slug>` にはゲームリポジトリの名前をそのまま使う。プレフィックス(`ankardo-game-`等)は付けない。例: リポジトリ `rungame-sample` → slug `rungame-sample`。
 
-### 2. ゲームリポジトリ側: ビルドのベースパスをankardoの配信パスに合わせる
+### 2. ゲームリポジトリ側: ビルドのベースパスとディレクトリ構造をankardoの配信パスに合わせる
 
 フレームワークのbase path設定を `/play/<slug>/` にする。
 
@@ -28,7 +28,14 @@ ankardoのゲームは各ゲームごとに独立したリポジトリで開発�
 - Next.js (`output: 'export'`): `next.config.js` の `basePath: '/play/<slug>'`
 - その他: 各フレームワークの相当する設定(アセットの絶対パス解決に影響するため必須)
 
+**ベースパスの設定だけでは不十分。** Cloudflare Workers Static Assetsは、パス付きルート(`ankardo.com/play/<slug>/*`)を使う場合、**ビルド出力のディレクトリ構造自体もそのパスと同じ階層にネストされていること**を要求する(例: `out/index.html` ではなく `out/play/<slug>/index.html`)。ネストされていないと `wrangler deploy` が `Workers which have static assets cannot be routed on a URL which has a path component` エラーで失敗する。
+
+- Vite: `build.outDir` を `out/play/<slug>` にする(単に `out` のままにしない)
+- Next.js: `distDir`/出力先を同様に `/play/<slug>` サブディレクトリの下にネストする
+
 ### 3. ゲームリポジトリ側: `wrangler.toml` を作成
+
+`assets.directory` にはビルド出力の**ルート**(上記でネストする前の起点、例 `./out`)を指定する。Wranglerがその中から `play/<slug>/*` を探す。
 
 ```toml
 name = "ankardo-game-<slug>"
@@ -39,7 +46,7 @@ routes = [
 ]
 
 [assets]
-directory = "./<ビルド出力先>"
+directory = "./out"
 not_found_handling = "404-page"
 ```
 
@@ -58,6 +65,11 @@ not_found_handling = "404-page"
 - `defaults.run.working-directory: site`
 - `cache-dependency-path: site/package-lock.json`
 - Wrangler の `workingDirectory: site`
+
+**Wranglerのバージョンを明示的に固定すること。** `cloudflare/wrangler-action` はリポジトリにWranglerがインストールされていない場合、自動で古いバージョン(3.90.0)をインストールする。このバージョンはStep 2で必要になるパス付きルート+Assetsのネスト構造をサポートしておらず、`Workers which have static assets cannot be routed on a URL which has a path component` エラーで失敗する。
+
+- `package.json` の `devDependencies` に `wrangler` (`^4`系) を追加する
+- Wrangler 4はNode.js 22以上を要求する。`actions/setup-node` の `node-version` を `"22"` 以上にする(20のままだとバージョンチェックに失敗し、結局古いWranglerにフォールバックしてしまう)
 
 ### 5. ankardo側: ゲームをカタログに登録
 
