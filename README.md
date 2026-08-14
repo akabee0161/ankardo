@@ -43,7 +43,7 @@ npm run dev    # 開発サーバ
 npm run build  # 静的書き出し (out/)
 ```
 
-ゲームを追加する場合は `site/content/games/<slug>.json` を追加するだけで一覧・詳細ページに反映される(`site/lib/games.ts` 参照)。ゲームリポジトリ側の初期設定は `.claude/skills/new-game/SKILL.md` 参照。
+ゲームを追加する場合は `site/content/games/<slug>.json` を追加すると一覧・詳細ページに反映される。`slug`/`title`/`description`/`playUrl`/`genre`/`ageRange`/`players`/`difficulty` が必須で、`genre` は `site/lib/genres.ts` の `GENRES` に定義されたキーのいずれかである必要がある(`site/lib/games.ts` の `getAllGames()` がビルド時に検証し、不正な場合はエラーになる)。フィールドの詳細は `.claude/skills/new-game/SKILL.md` 参照。ゲームリポジトリ側の初期設定も同ファイル参照。
 
 ### infra/ (Terraform)
 
