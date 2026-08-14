@@ -73,18 +73,24 @@ not_found_handling = "404-page"
 
 ### 5. ankardo側: ゲームをカタログに登録
 
-`site/content/games/<slug>.json` を作成する:
+`site/content/games/<slug>.json` を作成する(必須フィールドを指定する。`genre` は `site/lib/genres.ts` の `GENRES` に定義されたキーのいずれかである必要があり、`site/lib/games.ts` の `getAllGames()` が実行時にビルド時検証する):
 
 ```json
 {
   "slug": "<slug>",
   "title": "<ゲームタイトル>",
   "description": "<説明文>",
-  "playUrl": "/play/<slug>/"
+  "playUrl": "/play/<slug>/",
+  "genre": "<GENRES(site/lib/genres.ts)のいずれかのキー。例: action>",
+  "ageRange": "<対象年齢。例: 5〜8歳>",
+  "players": "<プレイ人数。例: ひとり用>",
+  "difficulty": "<難易度。例: やさしめ>"
 }
 ```
 
-`site/lib/games.ts` がこのディレクトリを自動的に拾うため、コード変更は不要。
+`images` (screenshot画像パスの配列)は任意フィールド。既存の `site/content/games/rungame-sample.json` も参考にできる。
+
+`site/lib/games.ts` がこのディレクトリを自動的に拾うため、コード変更は不要。ただし必須フィールドが欠落・`genre` が不正な値の場合は `next build` 時にエラーで失敗する。
 
 ### 6. ゲームリポジトリのGitHub Secretsを設定
 

@@ -2,5 +2,9 @@
   "slug": "rungame-sample",
   "title": "Space Runner",
   "description": "5〜8歳向け宇宙テーマのエンドレスランナーゲーム。",
-  "playUrl": "/play/rungame-sample/"
+  "playUrl": "/play/rungame-sample/",
+  "genre": "action",
+  "ageRange": "5〜8歳",
+  "players": "ひとり用",
+  "difficulty": "やさしめ"
 }

@@ -1,21 +1,90 @@
 import fs from "node:fs";
 import path from "node:path";
+import { GENRES, type GenreKey } from "./genres";
 
 export type Game = {
   slug: string;
   title: string;
   description: string;
   playUrl: string;
-  screenshot?: string;
+  genre: GenreKey;
+  ageRange: string;
+  players: string;
+  difficulty: string;
+  images?: string[];
 };
 
 const GAMES_DIR = path.join(process.cwd(), "content", "games");
+
+const REQUIRED_STRING_FIELDS = [
+  "slug",
+  "title",
+  "description",
+  "playUrl",
+  "ageRange",
+  "players",
+  "difficulty",
+] as const;
+
+function validateGame(data: unknown, file: string): Game {
+  if (typeof data !== "object" || data === null) {
+    throw new Error(`content/games/${file}: JSONオブジェクトではありません`);
+  }
+
+  const record = data as Record<string, unknown>;
+
+  for (const field of REQUIRED_STRING_FIELDS) {
+    const value = record[field];
+    if (typeof value !== "string" || value.trim() === "") {
+      throw new Error(
+        `content/games/${file}: "${field}" は空でない文字列である必要があります`
+      );
+    }
+  }
+
+  const genre = record.genre;
+  if (
+    typeof genre !== "string" ||
+    !Object.prototype.hasOwnProperty.call(GENRES, genre)
+  ) {
+    throw new Error(
+      `content/games/${file}: "genre" が不正です(値: ${JSON.stringify(
+        genre
+      )})。GENRES(site/lib/genres.ts)のいずれかのキーを指定してください`
+    );
+  }
+
+  const images = record.images;
+  if (images !== undefined) {
+    if (
+      !Array.isArray(images) ||
+      !images.every((image) => typeof image === "string" && image.trim() !== "")
+    ) {
+      throw new Error(
+        `content/games/${file}: "images" は空でない文字列の配列である必要があります`
+      );
+    }
+  }
+
+  return record as Game;
+}
+
+function parseGameJson(raw: string, file: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    if (error instanceof SyntaxError) {
+      throw new Error(`content/games/${file}: JSONの構文が不正です`);
+    }
+    throw error;
+  }
+}
 
 export function getAllGames(): Game[] {
   const files = fs.readdirSync(GAMES_DIR).filter((f) => f.endsWith(".json"));
   const games = files.map((file) => {
     const raw = fs.readFileSync(path.join(GAMES_DIR, file), "utf-8");
-    return JSON.parse(raw) as Game;
+    return validateGame(parseGameJson(raw, file), file);
   });
   return games.sort((a, b) => a.slug.localeCompare(b.slug));
 }
