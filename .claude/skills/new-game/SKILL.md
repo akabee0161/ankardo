@@ -73,7 +73,7 @@ not_found_handling = "404-page"
 
 ### 5. ankardo側: ゲームをカタログに登録
 
-`site/content/games/<slug>.json` を作成する(全フィールド必須。`genre` は `site/lib/genres.ts` の `GENRES` に定義されたキーのいずれかである必要があり、`site/lib/games.ts` の `getAllGames()` が実行時にビルド時検証する):
+`site/content/games/<slug>.json` を作成する(必須フィールドを指定する。`genre` は `site/lib/genres.ts` の `GENRES` に定義されたキーのいずれかである必要があり、`site/lib/games.ts` の `getAllGames()` が実行時にビルド時検証する):
 
 ```json
 {
