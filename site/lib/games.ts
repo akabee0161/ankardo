@@ -12,6 +12,7 @@ export type Game = {
   players: string;
   difficulty: string;
   images?: string[];
+  featured?: boolean;
 };
 
 const GAMES_DIR = path.join(process.cwd(), "content", "games");
@@ -66,6 +67,13 @@ function validateGame(data: unknown, file: string): Game {
     }
   }
 
+  const featured = record.featured;
+  if (featured !== undefined && typeof featured !== "boolean") {
+    throw new Error(
+      `content/games/${file}: "featured" はboolean型である必要があります`
+    );
+  }
+
   return record as Game;
 }
 
@@ -91,4 +99,10 @@ export function getAllGames(): Game[] {
 
 export function getGame(slug: string): Game | undefined {
   return getAllGames().find((game) => game.slug === slug);
+}
+
+export function getFeaturedGames(limit = 3): Game[] {
+  const games = getAllGames();
+  const featured = games.filter((game) => game.featured);
+  return (featured.length > 0 ? featured : games).slice(0, limit);
 }
