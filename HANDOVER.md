@@ -30,6 +30,11 @@
 
 - リモートbackend導入(Terraform Cloud / S3等でCI・ローカルのstateを共有)。導入時は既存リソースを `terraform import` で新backendに取り込む必要あり。詳細は `infra/README.md`
 - Cloudflareダッシュボードの推奨事項: `www.ankardo.com` 用レコード追加、MXレコード(SPF/DKIM/DMARC)設定
+- トップページ用ビジュアルアセット(2026-08-16、トップページ再設計の一環で洗い出し。詳細は `docs/superpowers/specs/2026-08-16-top-page-redesign-design.md`)
+  - ファビコン(`site/app/icon.png` 等)
+  - サイトロゴ/ワードマーク(SVG1点、現状はテキスト表記で代替)
+  - ジャンルアイコン(7種、現状は色+ラベルのみで機能)
+  - マスコットキャラクター等のイラスト(将来イラスト主導のブランド強化を行う場合に必要)
 
 ## Key Decisions Made
 
