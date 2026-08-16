@@ -4,7 +4,7 @@
 
 **Goal:** `docs/superpowers/specs/2026-08-16-top-page-redesign-design.md` で決めた方針(ジャンルカラー主導のブランドヒーロー型)に沿って、`site/app/page.tsx` を単なる中継ページから「サイトの顔」として機能するトップページに書き換える。
 
-**Architecture:** 既存の`Game`型・`GENRES`定義・`GameCard`コンポーネントを再利用する。新規コンポーネントは作成せず、`app/page.tsx`内にヒーロー・ピックアップ・ジャンルナビゲーションの3セクションを直接実装する(このページでしか使わない構成のため、抽出は将来必要になった時点で検討する)。ピックアップ表示用に`site/lib/games.ts`へ`getFeaturedGames()`ヘルパーを追加する。
+**Architecture:** 既存の`Game`型・`GENRES`定義・`GameCard`コンポーネントを再利用する。新規コンポーネントは作成せず、`app/page.tsx`内にヒーロー・ピックアップ・ジャンルナビゲーション・保護者向け一文の4セクションを直接実装する(このページでしか使わない構成のため、抽出は将来必要になった時点で検討する)。ピックアップ表示用に`site/lib/games.ts`へ`getFeaturedGames()`ヘルパーを追加する。
 
 **Tech Stack:** Next.js 16 / React 19 / TypeScript / Tailwind CSS 4.3.3(既存構成のまま、追加ライブラリなし)
 
