@@ -1,0 +1,10 @@
+{
+  "slug": "shogi-vs-cpu",
+  "title": "しょうぎ どうじょう",
+  "description": "コンピュータと対戦できる本将棋。強さは3段階から選べる。",
+  "playUrl": "/play/shogi-vs-cpu/",
+  "genre": "puzzle",
+  "ageRange": "8歳〜",
+  "players": "ひとり用",
+  "difficulty": "むずかしめ"
+}
