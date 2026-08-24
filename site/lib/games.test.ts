@@ -10,6 +10,7 @@ const VALID_GAME = {
   ageRange: "5〜8歳",
   players: "ひとり用",
   difficulty: "やさしめ",
+  devices: ["pc"],
 };
 
 describe("validateGame", () => {
@@ -57,5 +58,41 @@ describe("validateGame", () => {
 
   it("images が未設定でも通る", () => {
     expect(validateGame(VALID_GAME, "sample.json")).toEqual(VALID_GAME);
+  });
+
+  it("devices が未設定ならエラーになる", () => {
+    const { devices, ...withoutDevices } = VALID_GAME;
+    expect(() => validateGame(withoutDevices, "sample.json")).toThrow(
+      /"devices"/
+    );
+  });
+
+  it("devices が空配列ならエラーになる", () => {
+    expect(() =>
+      validateGame({ ...VALID_GAME, devices: [] }, "sample.json")
+    ).toThrow(/"devices"/);
+  });
+
+  it("devices が配列でなければエラーになる", () => {
+    expect(() =>
+      validateGame({ ...VALID_GAME, devices: "pc" }, "sample.json")
+    ).toThrow(/"devices"/);
+  });
+
+  it("devices に DEVICES に無い値が含まれていればエラーになる", () => {
+    expect(() =>
+      validateGame({ ...VALID_GAME, devices: ["pc", "vr"] }, "sample.json")
+    ).toThrow(/"devices"/);
+  });
+
+  it("devices に重複があればエラーになる", () => {
+    expect(() =>
+      validateGame({ ...VALID_GAME, devices: ["pc", "pc"] }, "sample.json")
+    ).toThrow(/重複/);
+  });
+
+  it("devices に複数の有効な値を指定できる", () => {
+    const game = { ...VALID_GAME, devices: ["pc", "mobile-landscape"] };
+    expect(validateGame(game, "sample.json")).toEqual(game);
   });
 });
