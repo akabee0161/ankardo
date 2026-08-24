@@ -27,7 +27,7 @@ const REQUIRED_STRING_FIELDS = [
   "difficulty",
 ] as const;
 
-function validateGame(data: unknown, file: string): Game {
+export function validateGame(data: unknown, file: string): Game {
   if (typeof data !== "object" || data === null) {
     throw new Error(`content/games/${file}: JSONオブジェクトではありません`);
   }
