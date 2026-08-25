@@ -1,12 +1,13 @@
 # Session Handover
 
-## Generated: 2026-08-25T04:15:00Z
+## Generated: 2026-08-25T09:15:00Z(初版 04:15、段階①完了後に残タスクを整理)
 
 ## Current State
 
-- **Branch**: `catalog-assets-and-metadata`(mainから分岐。push済み、PR作成済み)
-- **PR**: https://github.com/akabee0161/ankardo/pull/6(CodeRabbitレビュー対応中)
+- **Branch**: `main`(`origin/main` と同期済み)
+- **段階①**: 完了。PR #6 マージ済み、`Site (Next.js)` の本番デプロイも成功
 - **Uncommitted Changes**: なし
+- **後片付け**: 完了(ローカル・リモートのマージ済みブランチ `catalog-assets-and-metadata` を削除済み)
 
 ## What Was Done
 
@@ -22,35 +23,39 @@
 
 CodeRabbitのレビューで指摘された `controls` の空配列(`[]`)を許容してしまうバグを `site/lib/games.ts` で修正し、回帰テストを追加済み(計19件、`npm test` / `npm run build` とも成功)。
 
+その後、PR #6 はレビュー承認を得て `main` へマージ済み。`Site (Next.js)` ワークフローの本番デプロイも成功している(run 32825478049)。`shogi-vs-cpu` の `devices` は縦持ちで遊べることをユーザーが実機で確認済みで、`["pc", "mobile-portrait"]` を確定値とした(JSONの変更なし)。**段階①はこれで完了。**
+
 ## What Remains
 
-### 最優先: PRのクローズ
+段階①の残作業はない。次はスクリーンショットの投入、その後に段階②。
 
-- [ ] CodeRabbitの残り指摘の確認・対応(plans配下の2件は「作成時点のログ」のため意図的に未修正。理由は下記Known Issues参照)
-- [ ] mainへのマージ
-- [ ] `Site (Next.js)` ワークフローの production environment 承認
+### 1. スクリーンショットの投入(次に着手する。段階②の前提)
 
-### 実装完了後のユーザー手作業(エージェントでは完了できない)
+- [ ] 3ゲーム分のスクリーンショットを撮影し、`site/public/screenshots/<slug>/01.png` 以降に配置、各JSONの `images` に追記する。現状3件とも `images` なし(プレースホルダー表示)
 
-- [ ] スクリーンショットの撮影と配置(3ゲーム分、`site/public/screenshots/<slug>/01.png` 以降)、各JSONの `images` に追記
-- [ ] `shogi-vs-cpu` の `devices` を実機確認。現在の値 `["pc", "mobile-portrait"]` はコードからの推論
-- [ ] `shogi-vs-cpu` / `character-tactics` の `controls` を実機で確認して各JSONに追記
+規約は `.claude/skills/new-game/SKILL.md` の「スクリーンショットの規約」に確定済み(16:9 / 1280×720基本 / `01.png` からの連番 / 1〜5点 / 先頭がカードのサムネイル / 1枚300KB以内)。
 
-### 段階②(段階①完了後)
+**分担**: 撮影はユーザーが実機・ブラウザで行う。ファイルの配置・リネーム・16:9への切り出し・JSONの `images` 追記・`npm test` と `npm run build` での検証はエージェント側で行う。撮った画像を渡せばそこから先は引き取れる。
 
-内容: 共通ヘッダー/フッター、ファビコン、ワードマーク。**まだ設計していない。**
+### 2. 段階②(スクリーンショット投入後)
 
-段階①の完了後に着手する。理由は、スクリーンショットが入った実際の画面を見てからヘッダーのデザインを決める方が判断の根拠が得られるため。着手時は brainstorming から始めて spec を書く。
+内容: 共通ヘッダー/フッター、ファビコン、ワードマーク。**まだ設計していない。** 着手時は brainstorming から始めて spec を書く。
+
+スクリーンショットが入った実際の画面を見てからヘッダーのデザインを決める。判断の根拠が得られるため。
 
 `/games` や `/games/<slug>` からトップへ戻る導線がない点は体裁の問題ではなく機能欠陥に近いため、段階②の中では優先度が高い。
 
-### 段階③(段階②完了後、またはゲームが増えてから)
+### 3. 段階③(段階②完了後、またはゲームが増えてから)
 
 内容: ジャンル絞り込み。**まだ設計していない。**
 
 実装時の注意: `GENRES`(7ジャンル)の全てを絞り込みUIに出すと、実使用は3ジャンル(`action` / `puzzle` / `simulation`)のため空のジャンルが4つ並ぶ。**定義済みの全ジャンルではなく「実際にゲームが存在するジャンル」だけを表示する方式**にすること。
 
 絞り込みの軸をジャンルのみにするか `devices` や `ageRange` も含めるかは、段階③の設計時に判断する。
+
+### タスクから除外したもの
+
+- **`shogi-vs-cpu` / `character-tactics` の `controls` 追記**。任意フィールドのため未記載でも「あそびかた」セクションが出ないだけで、壊れているものはない。個別ゲームの設定値の作り込みであり、サイトの開発タスクではないと判断して外した(2026-08-25、ユーザー指示)。書きたくなったらプレイ時のメモを渡せば、文体を `rungame-sample.json` に揃えてJSONへ反映する
 
 ## Key Decisions Made
 
@@ -62,11 +67,12 @@ CodeRabbitのレビューで指摘された `controls` の空配列(`[]`)を許�
 - **テストは `validateGame` に限定し、表示コンポーネントには書かない** — 表示側はロジックを持たず、JSXがそのまま出ることを確認するだけになる
 - **一覧の並び替え機能は実装しない** — ゲーム3件では選択肢として機能しない
 - **`controls` の表示位置は「プレイボタンの下」** — specには「説明文の下」と書いたが、説明文の直後だとプレイボタンが下へ押し出される。実装計画側でプレイボタンの後ろに変更した(計画に理由を記載済み)
+- **`controls` の記載は開発タスクから外す。スクリーンショットは段階②の前提として維持する**(2026-08-25 追加) — `controls` は任意フィールドで未記載でも不具合がなく、`new-game` skill のテンプレートに含まれているため今後追加するゲームでは追加時に埋まる。既存3件の未記入は一度きりの取りこぼしで放置してもコストが増えない。一方スクリーンショットは一覧・詳細の見え方そのものを決めるため、段階②のヘッダー設計より先に入れる(ユーザー判断: 撮影待ちで開発が止まることは許容する)
 - **`next dev` の `AGENTS.md`/`CLAUDE.md` 自動生成は無効化する** — Next.js 16の新機能だが計画外の副産物であり、リポジトリの `CLAUDE.md` 運用と重複するため `next.config.js` に `agentRules: false` を追加
 
 ## Known Issues / Blockers
 
-- **CodeRabbitがplans配下のファイルへ2件指摘しているが、意図的に未対応**(`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の591-596行目・841-844行目)。このリポジトリの運用ルール(`README.md` の「ドキュメント運用ルール」節)により、`docs/superpowers/` 配下は作成時点のログとして扱い遡って更新しない。指摘内容自体は技術的に妥当(Task 4 Step 2 の型エラーは実際に発生することを確認済み)だが、修正対象は正典(`README.md`/`CLAUDE.md`)ではなくログのため見送った
+- **CodeRabbitがplans配下のファイルへ2件指摘したが、意図的に未対応のままマージした**(`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の591-596行目・841-844行目)。このリポジトリの運用ルール(`README.md` の「ドキュメント運用ルール」節)により、`docs/superpowers/` 配下は作成時点のログとして扱い遡って更新しない。指摘内容自体は技術的に妥当(Task 4 Step 2 の型エラーは実際に発生することを確認済み)だが、修正対象は正典(`README.md`/`CLAUDE.md`)ではなくログのため見送った
 - **ローカルのゲームリポジトリのクローンが古い**。`../rungame-sample` は `origin/main` より3コミット遅れ、`../shogi-vs-cpu` は `docs/` しか無い状態(リモートには実装済み)。`character-tactics` はローカルに未クローン。スクリーンショットをローカルで撮る場合は `git pull` が必要(本番URLから撮るなら不要)
 - Terraform stateがCIとローカルで共有されていない。当面 `allow_overwrite` でしのいでいる。根本対応は長期バックログ。詳細は `infra/README.md`
 
@@ -75,9 +81,9 @@ CodeRabbitのレビューで指摘された `controls` の空配列(`[]`)を許�
 次のセッションで読む順。
 
 1. このHANDOVER.md
-2. PR #6 のCodeRabbitコメント — 残り対応の有無を確認
-3. `docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` — 実装計画(完了済み。ログとして参照)
-4. `docs/superpowers/specs/2026-08-25-catalog-assets-and-metadata-design.md` — 設計と判断理由
+2. `README.md` / `CLAUDE.md` — 現在の仕様・手順の正典
+3. `docs/superpowers/specs/2026-08-25-catalog-assets-and-metadata-design.md` — 段階①の設計と判断理由(ログ)
+4. `docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` — 段階①の実装計画(完了済み。ログ)
 
 ## Long-term Backlog(ユーザー指示: 当面対応不要。ユーザーが長期バックログについて尋ねた場合のみ話題に出す)
 
@@ -91,4 +97,5 @@ CodeRabbitのレビューで指摘された `controls` の空配列(`[]`)を許�
 
 1. 新しいセッションを開始する: `claude`
 2. 「`HANDOVER.md` を読んで、前のセッションの続きから作業して」と指示する
-3. 最初のアクション: PR #6 の残りコメント・レビュー状態を確認し、マージに進めるか判断する
+3. 最初のアクション: **スクリーンショットの投入**。ユーザーが撮影した画像を受け取り、規約どおりに配置してJSONの `images` を更新、`npm test` / `npm run build` で検証してPRを出す
+4. その後、**段階②(共通ヘッダー/フッター、ファビコン、ワードマーク)の brainstorming** に進む
