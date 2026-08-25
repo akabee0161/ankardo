@@ -139,5 +139,5 @@ lib/nav.ts                   リンク定義（パスとラベルの配列）
 
 ## 実装時に必要な入力
 
-- **Google フォームの URL**。フォームはユーザーが作成する（項目は「お名前（任意）／用件の種別／本文」程度で足りる）。URL が揃うまで about ページの連絡先ブロックは完成しない
+- **Google フォームの URL**（受領済み・2026-08-25）。`https://docs.google.com/forms/d/e/1FAIpQLScr21ghCZcOtjrM7LM7QvcnM7hYjWjGE45Gu1TroNXlrFqFPg/viewform`。共有ダイアログが付与する `?usp=dialog` は落として使う（表示に影響せず、リンクを短く保てる）
 - **運営者の GitHub アカウント URL**。`https://github.com/akabee0161` を想定
