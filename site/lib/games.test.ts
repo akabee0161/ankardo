@@ -95,4 +95,28 @@ describe("validateGame", () => {
     const game = { ...VALID_GAME, devices: ["pc", "mobile-landscape"] };
     expect(validateGame(game, "sample.json")).toEqual(game);
   });
+
+  it("controls が配列でなければエラーになる", () => {
+    expect(() =>
+      validateGame({ ...VALID_GAME, controls: "タップでジャンプ" }, "sample.json")
+    ).toThrow(/"controls"/);
+  });
+
+  it("controls に空文字が含まれていればエラーになる", () => {
+    expect(() =>
+      validateGame(
+        { ...VALID_GAME, controls: ["タップでジャンプ", ""] },
+        "sample.json"
+      )
+    ).toThrow(/"controls"/);
+  });
+
+  it("controls が未設定でも通る", () => {
+    expect(validateGame(VALID_GAME, "sample.json")).toEqual(VALID_GAME);
+  });
+
+  it("controls に文字列の配列を指定できる", () => {
+    const game = { ...VALID_GAME, controls: ["タップでジャンプ"] };
+    expect(validateGame(game, "sample.json")).toEqual(game);
+  });
 });

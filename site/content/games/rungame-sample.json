@@ -5,6 +5,11 @@
   "playUrl": "/play/rungame-sample/",
   "genre": "action",
   "devices": ["pc", "mobile-landscape"],
+  "controls": [
+    "スペースキー・↑キー・画面タップのどれかでジャンプ",
+    "空中でもう一度でダブルジャンプ",
+    "スマホでは自動で横向きに固定されます"
+  ],
   "ageRange": "5〜8歳",
   "players": "ひとり用",
   "difficulty": "やさしめ",

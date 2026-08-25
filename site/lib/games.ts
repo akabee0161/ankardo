@@ -13,6 +13,7 @@ export type Game = {
   ageRange: string;
   players: string;
   difficulty: string;
+  controls?: string[];
   images?: string[];
   featured?: boolean;
 };
@@ -81,6 +82,20 @@ export function validateGame(data: unknown, file: string): Game {
     throw new Error(
       `content/games/${file}: "devices" に重複した値が含まれています`
     );
+  }
+
+  const controls = record.controls;
+  if (controls !== undefined) {
+    if (
+      !Array.isArray(controls) ||
+      !controls.every(
+        (control) => typeof control === "string" && control.trim() !== ""
+      )
+    ) {
+      throw new Error(
+        `content/games/${file}: "controls" は空でない文字列の配列である必要があります`
+      );
+    }
   }
 
   const images = record.images;
