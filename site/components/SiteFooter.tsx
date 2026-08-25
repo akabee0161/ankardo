@@ -5,7 +5,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-neutral-200 bg-white">
       <div className="mx-auto max-w-5xl px-4 py-8">
-        <nav className="flex flex-wrap gap-x-5 gap-y-2">
+        <nav className="flex flex-wrap gap-x-5 gap-y-2" aria-label="フッターメニュー">
           {FOOTER_LINKS.map((link) => (
             <Link
               key={link.href}

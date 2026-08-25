@@ -35,6 +35,23 @@ export function MobileNav() {
     wasOpenRef.current = open;
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    // 640px は Tailwind の sm ブレークポイント（SiteHeader.tsx / このファイルの
+    // sm:hidden・sm:flex）と一致させる必要がある。ここを変更する場合は
+    // クラス名側も合わせて更新すること。
+    const mql = window.matchMedia("(min-width: 640px)");
+    const closeIfDesktop = () => {
+      if (mql.matches) setOpen(false);
+    };
+
+    closeIfDesktop();
+    mql.addEventListener("change", closeIfDesktop);
+
+    return () => mql.removeEventListener("change", closeIfDesktop);
+  }, [open]);
+
   return (
     <div className="ml-auto sm:hidden">
       <button
@@ -69,7 +86,7 @@ export function MobileNav() {
           id={MENU_ID}
           className="fixed inset-x-0 bottom-0 top-14 z-40 bg-white px-6 py-8"
         >
-          <nav className="flex flex-col gap-7">
+          <nav className="flex flex-col gap-7" aria-label="メインメニュー">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}

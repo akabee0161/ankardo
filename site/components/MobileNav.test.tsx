@@ -1,8 +1,8 @@
 /**
  * @vitest-environment jsdom
  */
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MobileNav } from "./MobileNav";
 
 // next/link はクリック時に App Router のコンテキストを要求する。
@@ -11,9 +11,23 @@ vi.mock("next/link", () => ({
   default: ({ children, ...props }) => <a {...props}>{children}</a>,
 }));
 
+// jsdom は matchMedia を実装していないため、既定のモックを用意する。
+// デフォルトでは常に matches: false（デスクトップ幅ではない）として扱う。
+beforeEach(() => {
+  vi.stubGlobal(
+    "matchMedia",
+    vi.fn().mockImplementation(() => ({
+      matches: false,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }))
+  );
+});
+
 afterEach(() => {
   cleanup();
   document.body.style.overflow = "";
+  vi.unstubAllGlobals();
 });
 
 describe("MobileNav", () => {
@@ -85,5 +99,33 @@ describe("MobileNav", () => {
     fireEvent.click(button);
 
     expect(document.getElementById(controls)).not.toBeNull();
+  });
+
+  it("開いている間にビューポートが640px以上になるとメニューを閉じてスクロールロックを解除する", () => {
+    let changeHandler: (() => void) | undefined;
+    const mql = {
+      matches: false,
+      addEventListener: (_event: string, handler: () => void) => {
+        changeHandler = handler;
+      },
+      removeEventListener: vi.fn(),
+    };
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn().mockImplementation(() => mql)
+    );
+
+    render(<MobileNav />);
+
+    fireEvent.click(screen.getByRole("button", { name: "メニューを開く" }));
+    expect(document.body.style.overflow).toBe("hidden");
+
+    mql.matches = true;
+    act(() => {
+      changeHandler?.();
+    });
+
+    expect(screen.queryByRole("link", { name: "ゲーム一覧" })).toBeNull();
+    expect(document.body.style.overflow).toBe("");
   });
 });
