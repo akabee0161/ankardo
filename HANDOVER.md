@@ -1,46 +1,40 @@
 # Session Handover
 
-## Generated: 2026-08-24T22:49:28Z
+## Generated: 2026-08-25T04:15:00Z
 
 ## Current State
 
-- **Branch**: `catalog-assets-and-metadata`(mainから分岐。未push)
-- **Last Commit**: `e7df584` docs: カタログのアセット規約とメタデータ拡張の実装計画を追加
-- **Uncommitted Changes**: なし(このHANDOVER.md自体を除く)
+- **Branch**: `catalog-assets-and-metadata`(mainから分岐。push済み、PR作成済み)
+- **PR**: https://github.com/akabee0161/ankardo/pull/6(CodeRabbitレビュー対応中)
+- **Uncommitted Changes**: なし
 
 ## What Was Done
 
-ゲームが3件揃った段階で、次に進める方向性をユーザーと対話して決め、設計と実装計画をドキュメント化した。**コードは1行も変更していない。**
+`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の Task 1〜7 をすべて実装・コミット済み。
 
-1. 現状調査。以下を確認した。
-   - `site/public/` が存在せず、`images` フィールドは実装済みだが画像の置き場所が未定。3ゲームとも画像なし(プレースホルダー表示)
-   - `app/layout.tsx` に共通ヘッダー/フッターがなく、`/games` からトップへ戻れない
-   - `site/` にテストが1本もない(`package.json` に `test` script なし)
-   - 対応デバイス・操作方法がカタログのどこにも記載されていない
-2. 各ゲームリポジトリ(`../rungame-sample`、`../shogi-vs-cpu`、GitHub上の `character-tactics`)の `origin/main` のコードを調査し、対応デバイスを判定した(根拠はspecに記載)
-3. 設計を `docs/superpowers/specs/2026-08-25-catalog-assets-and-metadata-design.md` に記述しコミット
-4. 実装計画を `docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` に記述しコミット(7タスク、各タスクにコードと検証コマンドを記載)
+- [x] Task 1: Vitest 導入、`validateGame` を export、既存バリデーションの回帰テスト、CI に `npm test` 追加
+- [x] Task 2: `site/lib/devices.ts` 新設、`devices` を必須フィールド化、既存3件のJSON更新
+- [x] Task 3: `controls` を任意フィールドとして追加、`rungame-sample` に暫定値
+- [x] Task 4: `MetaBadges` に対応デバイスのバッジを表示(付随対応: `next dev` の `AGENTS.md`/`CLAUDE.md` 自動生成を `next.config.js` の `agentRules: false` で無効化)
+- [x] Task 5: 詳細ページに「あそびかた」セクションを追加
+- [x] Task 6: 画像表示を `aspect-video`(16:9)に統一、`site/public/screenshots/` を作成
+- [x] Task 7: `.claude/skills/new-game/SKILL.md` と `README.md` を更新
+
+CodeRabbitのレビューで指摘された `controls` の空配列(`[]`)を許容してしまうバグを `site/lib/games.ts` で修正し、回帰テストを追加済み(計19件、`npm test` / `npm run build` とも成功)。
 
 ## What Remains
 
-### 最優先: 段階①の実装
+### 最優先: PRのクローズ
 
-`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の Task 1〜7 を順に実行する。計画は自己完結しており、コードと検証コマンドがすべて記載されている。
-
-- [ ] Task 1: Vitest 導入、`validateGame` を export、既存バリデーションの回帰テスト(8件)、CI に `npm test` 追加
-- [ ] Task 2: `site/lib/devices.ts` 新設、`devices` を必須フィールド化、既存3件のJSON更新(テスト+6件)
-- [ ] Task 3: `controls` を任意フィールドとして追加、`rungame-sample` に暫定値(テスト+4件)
-- [ ] Task 4: `MetaBadges` に対応デバイスのバッジを表示
-- [ ] Task 5: 詳細ページに「あそびかた」セクションを追加
-- [ ] Task 6: 画像表示を `aspect-video`(16:9)に統一、`site/public/screenshots/` を作成
-- [ ] Task 7: `.claude/skills/new-game/SKILL.md` と `README.md` を更新
+- [ ] CodeRabbitの残り指摘の確認・対応(plans配下の2件は「作成時点のログ」のため意図的に未修正。理由は下記Known Issues参照)
+- [ ] mainへのマージ
+- [ ] `Site (Next.js)` ワークフローの production environment 承認
 
 ### 実装完了後のユーザー手作業(エージェントでは完了できない)
 
 - [ ] スクリーンショットの撮影と配置(3ゲーム分、`site/public/screenshots/<slug>/01.png` 以降)、各JSONの `images` に追記
 - [ ] `shogi-vs-cpu` の `devices` を実機確認。現在の値 `["pc", "mobile-portrait"]` はコードからの推論
 - [ ] `shogi-vs-cpu` / `character-tactics` の `controls` を実機で確認して各JSONに追記
-- [ ] PR作成 → mainマージ → `Site (Next.js)` ワークフローの production environment 承認
 
 ### 段階②(段階①完了後)
 
@@ -68,22 +62,22 @@
 - **テストは `validateGame` に限定し、表示コンポーネントには書かない** — 表示側はロジックを持たず、JSXがそのまま出ることを確認するだけになる
 - **一覧の並び替え機能は実装しない** — ゲーム3件では選択肢として機能しない
 - **`controls` の表示位置は「プレイボタンの下」** — specには「説明文の下」と書いたが、説明文の直後だとプレイボタンが下へ押し出される。実装計画側でプレイボタンの後ろに変更した(計画に理由を記載済み)
+- **`next dev` の `AGENTS.md`/`CLAUDE.md` 自動生成は無効化する** — Next.js 16の新機能だが計画外の副産物であり、リポジトリの `CLAUDE.md` 運用と重複するため `next.config.js` に `agentRules: false` を追加
 
 ## Known Issues / Blockers
 
+- **CodeRabbitがplans配下のファイルへ2件指摘しているが、意図的に未対応**(`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の591-596行目・841-844行目)。このリポジトリの運用ルール(`README.md` の「ドキュメント運用ルール」節)により、`docs/superpowers/` 配下は作成時点のログとして扱い遡って更新しない。指摘内容自体は技術的に妥当(Task 4 Step 2 の型エラーは実際に発生することを確認済み)だが、修正対象は正典(`README.md`/`CLAUDE.md`)ではなくログのため見送った
 - **ローカルのゲームリポジトリのクローンが古い**。`../rungame-sample` は `origin/main` より3コミット遅れ、`../shogi-vs-cpu` は `docs/` しか無い状態(リモートには実装済み)。`character-tactics` はローカルに未クローン。スクリーンショットをローカルで撮る場合は `git pull` が必要(本番URLから撮るなら不要)
-- `site/tsconfig.json` が `"strict": false`。実装計画の Task 4 Step 2 は型エラーでビルドが失敗することを期待しているが、環境によっては通る可能性がある(計画に補足済み)
 - Terraform stateがCIとローカルで共有されていない。当面 `allow_overwrite` でしのいでいる。根本対応は長期バックログ。詳細は `infra/README.md`
 
 ## Context Files
 
 次のセッションで読む順。
 
-1. `docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` — 実装計画。これだけで Task 1〜7 を実行できる
-2. `docs/superpowers/specs/2026-08-25-catalog-assets-and-metadata-design.md` — 設計と判断理由。計画に疑問が出たらこちらを読む
-3. `README.md` — リポジトリ構成とドキュメント運用ルール(正典)
-4. `.claude/skills/new-game/SKILL.md` — ゲーム追加手順(正典)。Task 7 で更新する
-5. `site/lib/games.ts` / `site/lib/genres.ts` — 変更対象の中心
+1. このHANDOVER.md
+2. PR #6 のCodeRabbitコメント — 残り対応の有無を確認
+3. `docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` — 実装計画(完了済み。ログとして参照)
+4. `docs/superpowers/specs/2026-08-25-catalog-assets-and-metadata-design.md` — 設計と判断理由
 
 ## Long-term Backlog(ユーザー指示: 当面対応不要。ユーザーが長期バックログについて尋ねた場合のみ話題に出す)
 
@@ -97,4 +91,4 @@
 
 1. 新しいセッションを開始する: `claude`
 2. 「`HANDOVER.md` を読んで、前のセッションの続きから作業して」と指示する
-3. 最初のアクション: ブランチ `catalog-assets-and-metadata` にいることを確認し、`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の Task 1 Step 1 から実行する(`cd site && npm install -D vitest`)
+3. 最初のアクション: PR #6 の残りコメント・レビュー状態を確認し、マージに進めるか判断する

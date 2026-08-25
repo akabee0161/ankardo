@@ -88,6 +88,7 @@ export function validateGame(data: unknown, file: string): Game {
   if (controls !== undefined) {
     if (
       !Array.isArray(controls) ||
+      controls.length === 0 ||
       !controls.every(
         (control) => typeof control === "string" && control.trim() !== ""
       )

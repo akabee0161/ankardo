@@ -111,6 +111,12 @@ describe("validateGame", () => {
     ).toThrow(/"controls"/);
   });
 
+  it("controls が空配列ならエラーになる", () => {
+    expect(() =>
+      validateGame({ ...VALID_GAME, controls: [] }, "sample.json")
+    ).toThrow(/"controls"/);
+  });
+
   it("controls が未設定でも通る", () => {
     expect(validateGame(VALID_GAME, "sample.json")).toEqual(VALID_GAME);
   });
