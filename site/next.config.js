@@ -5,6 +5,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  agentRules: false,
 };
 
 module.exports = nextConfig;

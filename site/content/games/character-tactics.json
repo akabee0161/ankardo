@@ -4,6 +4,7 @@
   "description": "4人のなかまを動かして、島のとりでを守るシミュレーションゲーム。",
   "playUrl": "/play/character-tactics/",
   "genre": "simulation",
+  "devices": ["pc", "mobile-landscape"],
   "ageRange": "6〜10歳",
   "players": "ひとり用",
   "difficulty": "ふつう"

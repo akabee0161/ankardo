@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { GENRES, type GenreKey } from "./genres";
+import { DEVICES, type DeviceKey } from "./devices";
 
 export type Game = {
   slug: string;
@@ -8,9 +9,11 @@ export type Game = {
   description: string;
   playUrl: string;
   genre: GenreKey;
+  devices: DeviceKey[];
   ageRange: string;
   players: string;
   difficulty: string;
+  controls?: string[];
   images?: string[];
   featured?: boolean;
 };
@@ -27,7 +30,7 @@ const REQUIRED_STRING_FIELDS = [
   "difficulty",
 ] as const;
 
-function validateGame(data: unknown, file: string): Game {
+export function validateGame(data: unknown, file: string): Game {
   if (typeof data !== "object" || data === null) {
     throw new Error(`content/games/${file}: JSONオブジェクトではありません`);
   }
@@ -53,6 +56,47 @@ function validateGame(data: unknown, file: string): Game {
         genre
       )})。GENRES(site/lib/genres.ts)のいずれかのキーを指定してください`
     );
+  }
+
+  const devices = record.devices;
+  if (!Array.isArray(devices) || devices.length === 0) {
+    throw new Error(
+      `content/games/${file}: "devices" は1つ以上の要素を持つ配列である必要があります`
+    );
+  }
+
+  for (const device of devices) {
+    if (
+      typeof device !== "string" ||
+      !Object.prototype.hasOwnProperty.call(DEVICES, device)
+    ) {
+      throw new Error(
+        `content/games/${file}: "devices" に不正な値が含まれています(値: ${JSON.stringify(
+          device
+        )})。DEVICES(site/lib/devices.ts)のいずれかのキーを指定してください`
+      );
+    }
+  }
+
+  if (new Set(devices).size !== devices.length) {
+    throw new Error(
+      `content/games/${file}: "devices" に重複した値が含まれています`
+    );
+  }
+
+  const controls = record.controls;
+  if (controls !== undefined) {
+    if (
+      !Array.isArray(controls) ||
+      controls.length === 0 ||
+      !controls.every(
+        (control) => typeof control === "string" && control.trim() !== ""
+      )
+    ) {
+      throw new Error(
+        `content/games/${file}: "controls" は空でない文字列の配列である必要があります`
+      );
+    }
   }
 
   const images = record.images;

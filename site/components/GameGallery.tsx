@@ -19,7 +19,7 @@ export function GameGallery({
   if (!images || images.length === 0) {
     return (
       <div
-        className={`flex h-48 w-full items-center justify-center rounded-lg text-6xl font-bold text-neutral-400 sm:h-72 ${GENRES[genre].placeholderClassName}`}
+        className={`flex aspect-video w-full items-center justify-center rounded-lg text-6xl font-bold text-neutral-400 ${GENRES[genre].placeholderClassName}`}
       >
         {title.charAt(0)}
       </div>
@@ -60,7 +60,7 @@ export function GameGallery({
   return (
     <div>
       <div
-        className="h-48 w-full overflow-hidden rounded-lg sm:h-72"
+        className="aspect-video w-full overflow-hidden rounded-lg"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >

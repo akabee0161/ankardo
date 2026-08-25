@@ -10,7 +10,7 @@ export function GameCard({ game }: { game: Game }) {
       href={`/games/${game.slug}`}
       className="block overflow-hidden rounded-lg border border-neutral-200 bg-white transition hover:shadow-md"
     >
-      <div className="h-40 w-full">
+      <div className="aspect-video w-full">
         <GameThumbnail genre={game.genre} images={game.images} title={game.title} />
       </div>
       <div className="p-4">
@@ -24,6 +24,7 @@ export function GameCard({ game }: { game: Game }) {
             ageRange={game.ageRange}
             players={game.players}
             difficulty={game.difficulty}
+            devices={game.devices}
           />
         </div>
       </div>
