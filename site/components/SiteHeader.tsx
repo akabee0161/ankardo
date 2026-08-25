@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { NAV_LINKS } from "../lib/nav";
 import { CatfishMark } from "./CatfishMark";
+import { MobileNav } from "./MobileNav";
 
 export function SiteHeader() {
   return (
@@ -21,6 +22,7 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+        <MobileNav />
       </div>
     </header>
   );
