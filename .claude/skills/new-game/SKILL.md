@@ -82,13 +82,38 @@ not_found_handling = "404-page"
   "description": "<説明文>",
   "playUrl": "/play/<slug>/",
   "genre": "<GENRES(site/lib/genres.ts)のいずれかのキー。例: action>",
+  "devices": ["<DEVICES(site/lib/devices.ts)のいずれかのキー。例: pc>"],
   "ageRange": "<対象年齢。例: 5〜8歳>",
   "players": "<プレイ人数。例: ひとり用>",
   "difficulty": "<難易度。例: やさしめ>"
 }
 ```
 
-`images` (screenshot画像パスの配列)は任意フィールド。既存の `site/content/games/rungame-sample.json` も参考にできる。
+`devices` は必須で、`site/lib/devices.ts` の `DEVICES` に定義されたキー(`pc` / `mobile-landscape` / `mobile-portrait`)を1つ以上、重複なく指定する。PCとスマホの両方に対応するなら `["pc", "mobile-landscape"]` のように複数指定する。
+
+任意フィールドは次の3つ。
+
+| フィールド | 内容 |
+|---|---|
+| `controls` | 操作方法。空でない文字列の配列。詳細ページに「あそびかた」として箇条書きで表示される |
+| `images` | スクリーンショットのパスの配列(下記「スクリーンショットの規約」参照) |
+| `featured` | `true` にするとトップページのピックアップに表示される |
+
+既存の `site/content/games/rungame-sample.json` も参考にできる。
+
+### スクリーンショットの規約
+
+| 項目 | 規約 |
+|---|---|
+| 置き場所 | `site/public/screenshots/<slug>/` |
+| ファイル名 | `01.png`, `02.png` の連番 |
+| JSONでの参照 | `"images": ["/screenshots/<slug>/01.png"]` |
+| 枚数 | 1〜5点。先頭のファイルが一覧カードのサムネイルになる |
+| 比率 | 16:9。表示側も16:9のため、この比率なら切り取られない |
+| 解像度 | 1280×720 を基本 |
+| ファイルサイズ | 1枚あたり300KB以内が目安。`next.config.js` で `images: { unoptimized: true }` を指定しており画像最適化は動作しないため、超える場合はWebPを使う |
+
+ゲームの論理解像度が16:9の場合(例: `rungame-sample` は720×405、`character-tactics` は960×540)、ブラウザのウィンドウ比率が16:9でないと描画領域の周囲に余白が入る。描画領域だけを切り出すか、ウィンドウを16:9に合わせて撮影する。
 
 `site/lib/games.ts` がこのディレクトリを自動的に拾うため、コード変更は不要。ただし必須フィールドが欠落・`genre` が不正な値の場合は `next build` 時にエラーで失敗する。
 
