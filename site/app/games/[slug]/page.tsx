@@ -40,6 +40,16 @@ export default async function GameDetail({
       >
         ▶ プレイする
       </a>
+      {game.controls && game.controls.length > 0 && (
+        <section className="mt-8">
+          <h2 className="text-base font-bold text-neutral-900">あそびかた</h2>
+          <ul className="mt-2 list-disc pl-5 text-sm leading-relaxed text-neutral-600">
+            {game.controls.map((control) => (
+              <li key={control}>{control}</li>
+            ))}
+          </ul>
+        </section>
+      )}
     </main>
   );
 }
