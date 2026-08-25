@@ -29,6 +29,7 @@ export default async function GameDetail({
           ageRange={game.ageRange}
           players={game.players}
           difficulty={game.difficulty}
+          devices={game.devices}
         />
       </div>
       <h1 className="mt-3 text-2xl font-extrabold text-neutral-900">{game.title}</h1>

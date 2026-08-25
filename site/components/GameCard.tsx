@@ -24,6 +24,7 @@ export function GameCard({ game }: { game: Game }) {
             ageRange={game.ageRange}
             players={game.players}
             difficulty={game.difficulty}
+            devices={game.devices}
           />
         </div>
       </div>
