@@ -5,7 +5,10 @@ import { SiteFooter } from "../components/SiteFooter";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ankardo",
+  title: {
+    default: "Ankardo",
+    template: "%s | Ankardo",
+  },
   description: "子供向けインディーゲームカタログ Ankardo",
 };
 

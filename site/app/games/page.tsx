@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { getAllGames } from "../../lib/games";
 import { GameCard } from "../../components/GameCard";
+
+export const metadata: Metadata = {
+  title: "ゲーム一覧",
+  description: "Ankardo に掲載しているゲームの一覧。",
+};
 
 export default function GamesList() {
   const games = getAllGames();

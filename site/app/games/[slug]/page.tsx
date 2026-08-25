@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getAllGames, getGame } from "../../../lib/games";
 import { GenreBadge } from "../../../components/GenreBadge";
@@ -6,6 +7,21 @@ import { GameGallery } from "../../../components/GameGallery";
 
 export function generateStaticParams() {
   return getAllGames().map((game) => ({ slug: game.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const game = getGame(slug);
+
+  if (!game) {
+    return { title: "ページが見つかりません" };
+  }
+
+  return { title: game.title, description: game.description };
 }
 
 export default async function GameDetail({
