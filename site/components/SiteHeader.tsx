@@ -11,7 +11,11 @@ export function SiteHeader() {
           <CatfishMark className="h-7 w-7" />
           <span className="text-lg font-extrabold tracking-tight">Ankardo</span>
         </Link>
-        <nav className="ml-auto hidden items-center gap-5 sm:flex" aria-label="メインメニュー">
+        <nav
+          id="desktop-nav"
+          className="ml-auto hidden items-center gap-5 sm:flex"
+          aria-label="メインメニュー"
+        >
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

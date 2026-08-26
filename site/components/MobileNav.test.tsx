@@ -129,7 +129,16 @@ describe("MobileNav", () => {
     expect(document.body.style.overflow).toBe("");
   });
 
-  it("画面幅の変化で閉じたときは非表示のボタンへフォーカスを戻さない", () => {
+  it("画面幅の変化で閉じたときは非表示のボタンではなく表示中のデスクトップナビへフォーカスを移す", () => {
+    // SiteHeader.tsx の #desktop-nav を模したダミー要素を用意する。
+    const desktopNav = document.createElement("nav");
+    desktopNav.id = "desktop-nav";
+    const desktopLink = document.createElement("a");
+    desktopLink.href = "/games";
+    desktopLink.textContent = "ゲーム一覧";
+    desktopNav.appendChild(desktopLink);
+    document.body.appendChild(desktopNav);
+
     let changeHandler: (() => void) | undefined;
     const mql = {
       matches: false,
@@ -147,6 +156,8 @@ describe("MobileNav", () => {
 
     const button = screen.getByRole("button", { name: "メニューを開く" });
     fireEvent.click(button);
+    button.focus();
+    expect(document.activeElement).toBe(button);
 
     mql.matches = true;
     act(() => {
@@ -154,5 +165,8 @@ describe("MobileNav", () => {
     });
 
     expect(document.activeElement).not.toBe(button);
+    expect(document.activeElement).toBe(desktopLink);
+
+    desktopNav.remove();
   });
 });

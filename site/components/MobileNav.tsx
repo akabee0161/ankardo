@@ -12,7 +12,8 @@ export function MobileNav() {
   const wasOpenRef = useRef(false);
   // 画面幅が sm 以上になったことでメニューを自動で閉じた場合は true。
   // このときボタン自体が sm:hidden で非表示になるため、フォーカスを
-  // ボタンへ戻すとキーボード利用者が見えない要素にフォーカスを残してしまう。
+  // ボタンへ戻す代わりに、表示されているデスクトップナビ（SiteHeader.tsx
+  // の #desktop-nav）の最初のリンクへフォーカスを移す。
   const closedByResizeRef = useRef(false);
 
   useEffect(() => {
@@ -34,7 +35,12 @@ export function MobileNav() {
 
   useEffect(() => {
     if (wasOpenRef.current && !open) {
-      if (!closedByResizeRef.current) {
+      if (closedByResizeRef.current) {
+        const firstDesktopLink = document.querySelector<HTMLAnchorElement>(
+          "#desktop-nav a"
+        );
+        firstDesktopLink?.focus();
+      } else {
         buttonRef.current?.focus();
       }
       closedByResizeRef.current = false;
