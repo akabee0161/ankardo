@@ -4,9 +4,10 @@
 
 ## Current State
 
-- **Branch**: `main`(**PR #7 マージ済み**、2026-08-26T09:28:50Z、マージコミット `f9ec483`)
+- **Branch**: `genre-filter`(mainから分岐、push済み。**PR #8 作成済み**、レビュー・マージ待ち)
 - **段階①**: 完了・デプロイ済み(PR #6 マージ済み)
-- **段階②**: **実装完了・マージ済み**。全7タスクをSubagent-Driven Developmentで実装し、タスクごとのレビューと最終ホールブランチレビューを通過。CodeRabbitの指摘2件も対応済み
+- **段階②**: 完了・デプロイ済み(PR #7 マージ済み)
+- **段階③**: **実装完了**。ジャンル絞り込みタブをTDDで実装し、テスト・ビルド・Playwrightでのブラウザ確認を通過。PR #8 としてpush済み
 - **デプロイ**: PR #7マージ直後の `Site (Next.js)` ワークフロー(run 32953221840)が成功、production環境への自動デプロイ完了(手動承認ステップは無い構成)
 - **Uncommitted Changes**: なし
 
@@ -61,13 +62,13 @@
 
 規約は `.claude/skills/new-game/SKILL.md` の「スクリーンショットの規約」(16:9 / 1280×720基本 / `01.png` からの連番 / 1枚300KB以内)。撮り方は Chrome DevTools のデバイスツールバーで 1280×720・DPR 1 にし、`Ctrl+Shift+P` → `Capture screenshot`。画像を渡せば配置・JSON更新・検証はエージェント側で引き取れる。
 
-### 3. 段階③(実装完了・未コミット)
+### 3. 段階③(実装完了・PR #8 作成済み)
 
 内容: ジャンル絞り込み。`site/app/games/page.tsx` に `site/components/GenreFilter.tsx`(新規クライアントコンポーネント)を組み込み、単一選択タブ(「すべて」＋実際にゲームが存在するジャンルのみ)で絞り込む方式で実装した。URLへの反映はしない(シンプルさ優先、ユーザー判断)。
 
 TDDでテスト(`GenreFilter.test.tsx`)を先に書きRed→Green確認、`npm test`(33件成功)・`npm run build`成功、Playwrightでの実ブラウザ動作確認も実施済み。
 
-- [ ] コミット・PR作成・マージ
+- [ ] PR #8 (`https://github.com/akabee0161/ankardo/pull/8`) のレビュー対応・マージ
 
 ### タスクから除外したもの
 
