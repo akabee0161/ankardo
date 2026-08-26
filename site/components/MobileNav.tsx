@@ -10,6 +10,10 @@ export function MobileNav() {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const wasOpenRef = useRef(false);
+  // 画面幅が sm 以上になったことでメニューを自動で閉じた場合は true。
+  // このときボタン自体が sm:hidden で非表示になるため、フォーカスを
+  // ボタンへ戻すとキーボード利用者が見えない要素にフォーカスを残してしまう。
+  const closedByResizeRef = useRef(false);
 
   useEffect(() => {
     if (!open) return;
@@ -30,7 +34,10 @@ export function MobileNav() {
 
   useEffect(() => {
     if (wasOpenRef.current && !open) {
-      buttonRef.current?.focus();
+      if (!closedByResizeRef.current) {
+        buttonRef.current?.focus();
+      }
+      closedByResizeRef.current = false;
     }
     wasOpenRef.current = open;
   }, [open]);
@@ -43,7 +50,10 @@ export function MobileNav() {
     // クラス名側も合わせて更新すること。
     const mql = window.matchMedia("(min-width: 640px)");
     const closeIfDesktop = () => {
-      if (mql.matches) setOpen(false);
+      if (mql.matches) {
+        closedByResizeRef.current = true;
+        setOpen(false);
+      }
     };
 
     closeIfDesktop();

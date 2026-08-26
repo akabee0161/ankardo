@@ -128,4 +128,31 @@ describe("MobileNav", () => {
     expect(screen.queryByRole("link", { name: "ゲーム一覧" })).toBeNull();
     expect(document.body.style.overflow).toBe("");
   });
+
+  it("画面幅の変化で閉じたときは非表示のボタンへフォーカスを戻さない", () => {
+    let changeHandler: (() => void) | undefined;
+    const mql = {
+      matches: false,
+      addEventListener: (_event: string, handler: () => void) => {
+        changeHandler = handler;
+      },
+      removeEventListener: vi.fn(),
+    };
+    vi.stubGlobal(
+      "matchMedia",
+      vi.fn().mockImplementation(() => mql)
+    );
+
+    render(<MobileNav />);
+
+    const button = screen.getByRole("button", { name: "メニューを開く" });
+    fireEvent.click(button);
+
+    mql.matches = true;
+    act(() => {
+      changeHandler?.();
+    });
+
+    expect(document.activeElement).not.toBe(button);
+  });
 });
