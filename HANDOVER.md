@@ -49,7 +49,7 @@
 
 ## What Remains
 
-### 1. PR #7 マージ後の確認(次に着手する)
+### 1. PR #7 マージ後の確認(段階②の残タスク)
 
 - [x] CodeRabbitへの追加コメント対応
 - [x] PR のマージ(2026-08-26)、デプロイ確認(`Site (Next.js)` ワークフロー成功。手動のproduction environment承認ステップは無い構成と判明)
@@ -62,7 +62,7 @@
 
 規約は `.claude/skills/new-game/SKILL.md` の「スクリーンショットの規約」(16:9 / 1280×720基本 / `01.png` からの連番 / 1枚300KB以内)。撮り方は Chrome DevTools のデバイスツールバーで 1280×720・DPR 1 にし、`Ctrl+Shift+P` → `Capture screenshot`。画像を渡せば配置・JSON更新・検証はエージェント側で引き取れる。
 
-### 3. 段階③(実装完了・PR #8 作成済み)
+### 3. 段階③(実装完了・PR #8 作成済み、次に着手する)
 
 内容: ジャンル絞り込み。`site/app/games/page.tsx` に `site/components/GenreFilter.tsx`(新規クライアントコンポーネント)を組み込み、単一選択タブ(「すべて」＋実際にゲームが存在するジャンルのみ)で絞り込む方式で実装した。URLへの反映はしない(シンプルさ優先、ユーザー判断)。
 
@@ -110,7 +110,7 @@ TDDでテスト(`GenreFilter.test.tsx`)を先に書きRed→Green確認、`npm t
 次のセッションで読む順。
 
 1. このHANDOVER.md
-2. PR #7 (`https://github.com/akabee0161/ankardo/pull/7`) のレビューコメント — 未対応のものがないか確認
+2. PR #8 (`https://github.com/akabee0161/ankardo/pull/8`) のレビューコメント — 未対応のものがないか確認
 3. `README.md` — 現在の仕様・手順の正典
 
 ## Long-term Backlog(ユーザー指示: 当面対応不要。ユーザーが長期バックログについて尋ねた場合のみ話題に出す)
@@ -127,5 +127,5 @@ TDDでテスト(`GenreFilter.test.tsx`)を先に書きRed→Green確認、`npm t
 
 1. 新しいセッションを開始する: `claude`
 2. 「`HANDOVER.md` を読んで、前のセッションの続きから作業して」と指示する
-3. 最初のアクション: PR #7 のレビュー状況を確認し、未対応コメントがあれば対応
-4. マージ後、production environment 承認・問い合わせフォーム送信テスト・実機確認へ進む
+3. 最初のアクション: PR #8 のレビュー状況を確認し、未対応コメントがあれば対応
+4. マージ後、スマートフォン実機でのハンバーガーメニュー確認(段階②の残タスク)へ進む
