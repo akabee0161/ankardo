@@ -4,11 +4,17 @@
   "description": "5〜8歳向け宇宙テーマのエンドレスランナーゲーム。",
   "playUrl": "/play/rungame-sample/",
   "genre": "action",
-  "devices": ["pc", "mobile-landscape"],
+  "devices": [
+    "pc",
+    "mobile-landscape"
+  ],
   "controls": [
     "スペースキー・↑キー・画面タップのどれかでジャンプ",
     "空中でもう一度でダブルジャンプ",
     "スマホでは自動で横向きに固定されます"
+  ],
+  "images": [
+    "/screenshots/rungame-sample/01.png"
   ],
   "ageRange": "5〜8歳",
   "players": "ひとり用",

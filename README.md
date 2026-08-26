@@ -11,7 +11,7 @@
 ```text
 ankardo/
 ├── infra/     # Terraform (Cloudflareゾーン・DNS・SSL設定)
-├── site/      # Next.js カタログサイト(静的書き出し、トップ・一覧・個別詳細ページ)
+├── site/      # Next.js カタログサイト(静的書き出し、トップ・一覧・個別詳細・このサイトについて)
 └── .github/workflows/
     ├── infra.yml  # infra/ 変更時の terraform plan/apply
     └── site.yml   # site/ 変更時の next build → wrangler deploy
@@ -29,6 +29,7 @@ ankardo/
 |---|---|---|
 | `ankardo.com/` | カタログ(`site/`) | トップページ |
 | `ankardo.com/games` | カタログ(`site/`) | ゲーム一覧ページ |
+| `ankardo.com/about` | カタログ(`site/`) | このサイトについて(目的・安全性の方針・運営者と連絡先) |
 | `ankardo.com/games/<slug>` | カタログ(`site/`) | 個別ゲームのランディング/詳細ページ |
 | `ankardo.com/play/<slug>/*` | 各ゲームリポジトリ | プレイ可能なゲーム本体(独立デプロイ) |
 
@@ -40,11 +41,21 @@ ankardo/
 cd site
 npm install
 npm run dev    # 開発サーバ
-npm test       # Vitest でバリデーションのテストを実行
+npm test       # Vitest でバリデーションと MobileNav のテストを実行
 npm run build  # 静的書き出し (out/)
 ```
 
+`MobileNav` のテストだけはファイル冒頭の docblock で `jsdom` 環境を指定している。他のテストは `node` 環境で動く。
+
 ゲームを追加する場合は `site/content/games/<slug>.json` を追加すると一覧・詳細ページに反映される。`slug`/`title`/`description`/`playUrl`/`genre`/`devices`/`ageRange`/`players`/`difficulty` が必須。`genre` は `site/lib/genres.ts` の `GENRES` に、`devices` は `site/lib/devices.ts` の `DEVICES` に定義されたキーである必要がある(`site/lib/games.ts` の `getAllGames()` がビルド時に検証し、不正な場合はエラーになる)。スクリーンショットは `site/public/screenshots/<slug>/` に16:9で置く。フィールドとアセットの詳細は `.claude/skills/new-game/SKILL.md` 参照。ゲームリポジトリ側の初期設定も同ファイル参照。
+
+#### ブランドアセット
+
+- シンボルは `site/components/CatfishMark.tsx`（ナマズの正面顔、SVG 1点）。色は `currentColor` で、呼び出し側が決める
+- ブランド色は藍 `#1f3a5f`。`site/app/globals.css` の `@theme` に `--color-brand` として定義し、`text-brand` / `bg-brand` で使う。既存ボタンの `bg-neutral-900` は据え置き
+- ファビコンは `site/app/icon.svg`(白地の角丸四角＋藍のナマズ)。Next.js のファイル規約で `<link rel="icon">` が自動生成される
+- ヘッダー/フッターのリンクは `site/lib/nav.ts` に集約する。リンクを増やすときはこのファイルだけを変更する
+- Webフォントは読み込まない(表示速度優先の既存方針)
 
 ### infra/ (Terraform)
 
