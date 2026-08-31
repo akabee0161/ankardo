@@ -4,6 +4,7 @@
   "description": "ドラゴンを撃ち落とす全5ステージのシューティング。各ステージの最後にはボスが待ち構える。",
   "playUrl": "/play/dragon-shooter/",
   "genre": "shooting",
+  "devices": ["pc", "mobile-portrait"],
   "ageRange": "8歳〜",
   "players": "ひとり用",
   "difficulty": "むずかしめ"
