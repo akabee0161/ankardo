@@ -4,6 +4,7 @@
   "description": "サメから卵を守る海のタワーディフェンス。タコと珊瑚を置いて全5ウェーブを守りきろう。",
   "playUrl": "/play/sea-defence/",
   "genre": "simulation",
+  "devices": ["pc", "mobile-portrait"],
   "ageRange": "5〜8歳",
   "players": "ひとり用",
   "difficulty": "やさしめ"
