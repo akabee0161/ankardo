@@ -1,80 +1,71 @@
 # Session Handover
 
-## Generated: 2026-08-26T00:00:00Z
+## Generated: 2026-09-01T00:00:00Z
 
 ## Current State
 
-- **Branch**: `genre-filter`(mainから分岐、push済み。**PR #8 作成済み**、レビュー・マージ待ち)
-- **段階①**: 完了・デプロイ済み(PR #6 マージ済み)
-- **段階②**: 完了・デプロイ済み(PR #7 マージ済み)
-- **段階③**: **実装完了**。ジャンル絞り込みタブをTDDで実装し、テスト・ビルド・Playwrightでのブラウザ確認を通過。PR #8 としてpush済み
-- **デプロイ**: PR #7マージ直後の `Site (Next.js)` ワークフロー(run 32953221840)が成功、production環境への自動デプロイ完了(手動承認ステップは無い構成)
+- **Branch**: `main`(このHANDOVER更新は `handover-migrate-games-to-ankardo` ブランチで作業、PRでmainへ)
+- **段階①〜③**: 完了・デプロイ済み(PR #6・#7・#8 マージ済み)
+- **dragon-shooter / sea-defence の ankardo 移行**: **完了**。hermit-life(AWS CodeCommit + CDK + S3 + CloudFront)から ankardo(GitHub + Cloudflare Workers)へ完全移行し、hermit-life 側のコード・AWSリソースを撤去済み(PR #9・#10 マージ済み)
 - **Uncommitted Changes**: なし
-
-ブランチ名は当初スクリーンショット投入用に切ったもので、その後に段階②の spec・実装計画・実装のコミットが乗っている。名前と中身が一致していないが実害はないためそのまま使っている。
 
 ## What Was Done
 
-### 段階①(完了)
+### dragon-shooter / sea-defence を ankardo へ移行(完了)
 
-`docs/superpowers/plans/2026-08-25-catalog-assets-and-metadata.md` の Task 1〜7 を実装し、PR #6 としてマージ・本番デプロイ済み。`devices` の必須化、`controls` の追加、対応デバイスのバッジ表示、「あそびかた」セクション、画像の16:9統一、Vitest の導入。
-
-`shogi-vs-cpu` の `devices` はユーザーが実機確認済みで `["pc", "mobile-portrait"]` を確定値とした。
-
-### スクリーンショット(1件のみ投入)
-
-`rungame-sample` の1枚(1280×720)を `site/public/screenshots/rungame-sample/01.png` に配置し、JSONの `images` に追記した(コミット `3902bd2`)。残り2ゲームは未撮影のまま、ユーザー判断で段階②へ進んだ。
-
-### 段階②(実装完了)
-
-- spec: `docs/superpowers/specs/2026-08-25-site-header-footer-and-brand-design.md`
-- 実装計画: `docs/superpowers/plans/2026-08-25-site-header-footer-and-brand.md`(7タスク、全完了)
+- spec: `docs/superpowers/specs/2026-08-31-migrate-games-to-ankardo-design.md`
+- 実装計画: `docs/superpowers/plans/2026-08-31-migrate-games-to-ankardo.md`(Task 1〜7、全完了)
+- 進行ログ: `.superpowers/sdd/2026-08-31-migrate-games-to-ankardo/progress.md`(各Taskのレビュー結果・判断根拠を記録)
 
 実装内容:
 
-- ナマズのシンボルマーク(`site/components/CatfishMark.tsx`)とファビコン(`site/app/icon.svg`)、ブランド色 `--color-brand: #1f3a5f`
-- 共通ヘッダー(`SiteHeader`、ワードマーク＋デスクトップナビ)、640px未満用の全画面モバイルメニュー(`MobileNav`、Esc・背後スクロール抑止・フォーカス復帰・画面幅変化での自動クローズを実装、テスト付き)
-- 共通フッター(`SiteFooter`、リンク3本・コピーライト、短いページでも下端に固定)
-- `/about` ページ(このサイトについて・安全性の方針・掲載ゲームについて・運営者と連絡先)
-- ページ別タイトル(`%s | Ankardo` テンプレート)
-- README.md の正典更新
+- **Task 1-2**: `akabee0161/sea-defence` / `akabee0161/dragon-shooter` の GitHub リポジトリ状態を確認、Cloudflare Secrets(`CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID`)と `production` environment(reviewer承認必須)を両リポジトリに設定
+- **Task 3**: sea-defence を Cloudflare Workers Static Assets 向けに書き換え(`vite.config.ts` の `base`/`outDir` をネスト、`wrangler.toml` 新規、GitHub Actions で `wrangler deploy`)、`https://ankardo.com/play/sea-defence/` にデプロイ・動作確認済み
+- **Task 4**: dragon-shooter も同様に移行。`import.meta.env.BASE_URL` 経由のステージJSON読み込み(`assets/levels/stage1.json`)がビルド成果物のgrepで正しく解決されることを確認したうえで `https://ankardo.com/play/dragon-shooter/` にデプロイ・動作確認済み
+- **Task 5**: ankardo のカタログに2件を登録(PR #9)。マージ直後、main側で先行してマージされていた `devices` フィールド必須化(PR #6, `eb6b138`)との非同期により `Site (Next.js)` のビルドが失敗 → 両ゲームに `devices: ["pc", "mobile-portrait"]` を追加するホットフィックス(PR #10)で解消
+- **Task 6**: hermit-life 側の `src/app/labs/games/page.tsx` のゲーム一覧、`infra/bin/infra.ts` の `DragonShooterPipelineStack`/`SeaDefencePipelineStack` 定義、`CLAUDE.md` のゲーム表を削除・更新(コミット `1dcb169`)
+- **Task 7**: AWS リソースを破棄。`DragonShooterPipelineStack`/`SeaDefencePipelineStack` を削除(**Task 6でinfra.tsから定義を消した後だと `cdk destroy` が対象を見つけられずno-opになるため `aws cloudformation delete-stack` で代替**)、S3実体(`s3://hermit-life-net-static/labs/games/{dragon-shooter,sea-defence}/`)を削除、CloudFrontキャッシュを無効化、CodeCommitリポジトリ(`dragon-shooter`/`sea-defence`)を削除(GitHub側に全ブランチが揃っていることを確認後に実施)、ローカルの `codecommit` remote を削除
 
-`apple-icon.png` はImageMagickが実装環境に無かったため作成を見送った(spec記載の「崩れていたら捨てて進む」条件に、ツール自体が使えない場合も該当すると判断)。
+### 段階③(実装完了・マージ済み)
 
-最終ホールブランチレビューで、モバイルメニュー表示中に画面幅が640pxを跨ぐ(スマホの横向き回転など)とスクロールロックが解除されずページがフリーズする不具合を検出・修正済み(コミット `96164fc`)。
-
-**PR #7** (`https://github.com/akabee0161/ankardo/pull/7`) 作成後、CodeRabbitの自動レビューで指摘2件を受領・対応中:
-1. `HANDOVER.md` の内容が段階②未実装のまま古かった → このファイルで対応
-2. `MobileNav.tsx` で画面幅変化によりメニューが自動クローズする際、非表示になったボタンへフォーカスが戻ってしまう問題 → 対応済み(通常のクローズ時のみボタンへフォーカスを戻し、画面幅変化によるクローズ時はフォーカスを移動しないよう修正、回帰テスト追加)
+`site/app/games/page.tsx` にジャンル絞り込みタブ(`site/components/GenreFilter.tsx`)を実装。PR #8 としてマージ・デプロイ済み。詳細は変更前バージョンのこのファイル、または `git log` を参照。
 
 ## What Remains
 
-### 1. PR #7 マージ後の確認(段階②の残タスク)
+### 1. dragon-shooter / sea-defence 移行の残タスク
 
-- [x] CodeRabbitへの追加コメント対応
-- [x] PR のマージ(2026-08-26)、デプロイ確認(`Site (Next.js)` ワークフロー成功。手動のproduction environment承認ステップは無い構成と判明)
-- [x] 問い合わせフォームの送信テスト — ユーザー側で実施
+なし。完了条件(下記)を全て満たした。
+
+- [x] `https://ankardo.com/play/sea-defence/` / `https://ankardo.com/play/dragon-shooter/` が200を返しプレイ可能
+- [x] `https://ankardo.com/games` に2件が並び、詳細ページも表示される
+- [x] `https://hermit-life.net/labs/games/` の一覧から2件が消え、旧URLが404/403
+- [x] `https://hermit-life.net/labs/games/puzzlebobble-like/` が引き続き200(共有バケットを巻き込んでいない)
+- [x] `npx cdk list` に `DragonShooterPipelineStack`/`SeaDefencePipelineStack` が出ない
+- [x] CodeCommitの `dragon-shooter`/`sea-defence` が削除され、GitHub側に全ブランチが存在する
+
+### 2. 段階②由来の残タスク(持ち越し)
+
 - [ ] スマートフォン実機でのハンバーガーメニューの確認(縦向き・横向き双方。横向きでの自動クローズも確認) — 未実施、実機操作が必要
 
-### 2. スクリーンショットの追加投入(任意・随時)
+### 3. スクリーンショットの追加投入(任意・随時)
 
 - [ ] `shogi-vs-cpu` / `character-tactics` の撮影と配置、各JSONの `images` 追記
 
 規約は `.claude/skills/new-game/SKILL.md` の「スクリーンショットの規約」(16:9 / 1280×720基本 / `01.png` からの連番 / 1枚300KB以内)。撮り方は Chrome DevTools のデバイスツールバーで 1280×720・DPR 1 にし、`Ctrl+Shift+P` → `Capture screenshot`。画像を渡せば配置・JSON更新・検証はエージェント側で引き取れる。
-
-### 3. 段階③(実装完了・PR #8 作成済み、次に着手する)
-
-内容: ジャンル絞り込み。`site/app/games/page.tsx` に `site/components/GenreFilter.tsx`(新規クライアントコンポーネント)を組み込み、単一選択タブ(「すべて」＋実際にゲームが存在するジャンルのみ)で絞り込む方式で実装した。URLへの反映はしない(シンプルさ優先、ユーザー判断)。
-
-TDDでテスト(`GenreFilter.test.tsx`)を先に書きRed→Green確認、`npm test`(33件成功)・`npm run build`成功、Playwrightでの実ブラウザ動作確認も実施済み。
-
-- [ ] PR #8 (`https://github.com/akabee0161/ankardo/pull/8`) のレビュー対応・マージ
 
 ### タスクから除外したもの
 
 - **`shogi-vs-cpu` / `character-tactics` の `controls` 追記**。任意フィールドで未記載でも不具合はなく、個別ゲームの設定値の作り込みでサイトの開発タスクではないと判断して外した(2026-08-25、ユーザー指示)。プレイ時のメモを渡せば JSON へ反映する
 
 ## Key Decisions Made
+
+### dragon-shooter / sea-defence の ankardo 移行
+
+- **hermit-life から ankardo への移行は完全移行とし、旧URLのリダイレクトは作らない**(ユーザー判断)。404を受け入れる
+- **移行スコープはホスティングのみ**。カタログ表示名は英語表記のまま(`Dragon Shooter`/`Sea Defence`)、ゲーム本体の内容(難易度・UI文言)は変更しない
+- **先行事例の `rungame-sample` は hermit-life の `rungame` と併存しているが、今回はその形を取らなかった**。2ゲームとも hermit-life 側を完全撤去する方式を採用
+- **`cdk destroy` はCDKアプリ側にスタック定義が残っている間に実行する**(Task 6の infra.ts 編集より前、または `aws cloudformation delete-stack` で代替)。今回はTask 6 → Task 7の順で計画されていたため後者で対応した。次回同様の撤去作業をする際は、CDK定義削除と物理スタック破棄の順序に注意する
+- **sea-defence / dragon-shooter の `devices` は両方 `["pc", "mobile-portrait"]`**(ユーザー確認: いずれもPC・スマホ縦向き対応)
 
 ### 段階②(ブランドとナビゲーション)
 
@@ -100,18 +91,18 @@ TDDでテスト(`GenreFilter.test.tsx`)を先に書きRed→Green確認、`npm t
 
 ## Known Issues / Blockers
 
-- **問い合わせフォームの URL は到達確認をしていない**。`curl` の実行が許可されなかったため。マージ後にブラウザで開いて確認すること
+- **問い合わせフォームの URL は到達確認をしていない**。`curl` の実行が許可されなかったため。ブラウザで開いて確認すること
 - **`apple-icon.png` は未作成**。ImageMagick が実装環境に無かったため生成を見送った。サイトの利用には影響しない(iOS ホーム画面追加時にページのスクリーンショットが代わりに使われるのみ)
 - **ローカルのゲームリポジトリのクローンが古い**。`../rungame-sample` は `origin/main` より遅れ、`../shogi-vs-cpu` は `docs/` しか無い。`character-tactics` は未クローン。スクリーンショットは本番URLから撮れば影響しない
 - **Terraform state が CI とローカルで共有されていない**。当面 `allow_overwrite` でしのいでいる。詳細は `infra/README.md`
+- **auto mode の分類器が `git push`・`gh pr merge`・`gh run list`・`curl`・`aws cloudformation delete-stack` などデプロイ/削除に関わるコマンドを断続的にブロックする**。今回の移行作業ではその都度ユーザー本人に実行を依頼した。次回も同様の詰まりが起こりうる
 
 ## Context Files
 
 次のセッションで読む順。
 
 1. このHANDOVER.md
-2. PR #8 (`https://github.com/akabee0161/ankardo/pull/8`) のレビューコメント — 未対応のものがないか確認
-3. `README.md` — 現在の仕様・手順の正典
+2. `README.md` — 現在の仕様・手順の正典
 
 ## Long-term Backlog(ユーザー指示: 当面対応不要。ユーザーが長期バックログについて尋ねた場合のみ話題に出す)
 
@@ -127,5 +118,4 @@ TDDでテスト(`GenreFilter.test.tsx`)を先に書きRed→Green確認、`npm t
 
 1. 新しいセッションを開始する: `claude`
 2. 「`HANDOVER.md` を読んで、前のセッションの続きから作業して」と指示する
-3. 最初のアクション: PR #8 のレビュー状況を確認し、未対応コメントがあれば対応
-4. マージ後、スマートフォン実機でのハンバーガーメニュー確認(段階②の残タスク)へ進む
+3. 最初のアクション: スマートフォン実機でのハンバーガーメニュー確認、またはスクリーンショットの追加投入から着手する
