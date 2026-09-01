@@ -86,7 +86,7 @@
 - **`devices` はデバイスと向きを合成した列挙型で必須フィールド** — 別フィールドに分けるとPCに向きを指定する無意味な組み合わせが表現可能になる
 - **`controls` は文字列配列の任意フィールド** — 記載内容がゲームごとに異なり、構造を固定すると当てはまらない項目が出る
 - **テストは `validateGame` に限定し、表示コンポーネントには書かない** — 段階②では `MobileNav` のみ例外(実際の振る舞いを持つため)
-- **一覧の並び替え機能は実装しない** — ゲーム3件では選択肢として機能しない
+- **一覧の並び替え機能は実装しない** — 当時ゲーム3件では選択肢として機能しなかった判断(2026-08-25)。2026-09-01時点でカタログは5件(character-tactics/dragon-shooter/rungame-sample/sea-defence/shogi-vs-cpu)に増えたが、判断自体は据え置き。再検討する場合はこの前提の変化を踏まえること
 - **`next dev` の `AGENTS.md`/`CLAUDE.md` 自動生成は無効化**(`next.config.js` の `agentRules: false`)
 
 ## Known Issues / Blockers
@@ -96,6 +96,7 @@
 - **ローカルのゲームリポジトリのクローンが古い**。`../rungame-sample` は `origin/main` より遅れ、`../shogi-vs-cpu` は `docs/` しか無い。`character-tactics` は未クローン。スクリーンショットは本番URLから撮れば影響しない
 - **Terraform state が CI とローカルで共有されていない**。当面 `allow_overwrite` でしのいでいる。詳細は `infra/README.md`
 - **auto mode の分類器が `git push`・`gh pr merge`・`gh run list`・`curl`・`aws cloudformation delete-stack` などデプロイ/削除に関わるコマンドを断続的にブロックする**。今回の移行作業ではその都度ユーザー本人に実行を依頼した。次回も同様の詰まりが起こりうる
+- **`hermit-life/.claude/skills/add-game/SKILL.md`(16行目・51行目)が、移行で削除済みの `sea-defence` を例・参照先として挙げたまま**。`rungame` が生きているため手順自体は機能するが、参照先の記述は古い。修正は hermit-life main への push を伴う(CDKパイプラインが起動する)ため、今回はデプロイ回避のため見送った。次に hermit-life 側で何か変更する機会にまとめて直すとよい
 
 ## Context Files
 
