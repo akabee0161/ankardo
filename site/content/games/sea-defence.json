@@ -5,7 +5,14 @@
   "playUrl": "/play/sea-defence/",
   "genre": "simulation",
   "devices": ["pc", "mobile-portrait"],
+  "images": [
+    "/screenshots/sea-defence/01.png",
+    "/screenshots/sea-defence/02.png",
+    "/screenshots/sea-defence/03.png",
+    "/screenshots/sea-defence/04.png"
+  ],
   "ageRange": "5〜8歳",
   "players": "ひとり用",
-  "difficulty": "やさしめ"
+  "difficulty": "やさしめ",
+  "featured": true
 }

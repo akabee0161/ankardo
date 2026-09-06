@@ -5,6 +5,11 @@
   "playUrl": "/play/dragon-shooter/",
   "genre": "shooting",
   "devices": ["pc", "mobile-portrait"],
+  "images": [
+    "/screenshots/dragon-shooter/01.png",
+    "/screenshots/dragon-shooter/02.png",
+    "/screenshots/dragon-shooter/03.png"
+  ],
   "ageRange": "8歳〜",
   "players": "ひとり用",
   "difficulty": "むずかしめ"

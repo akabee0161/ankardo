@@ -5,6 +5,9 @@
   "playUrl": "/play/shogi-vs-cpu/",
   "genre": "puzzle",
   "devices": ["pc", "mobile-portrait"],
+  "images": [
+    "/screenshots/shogi-vs-cpu/01.png"
+  ],
   "ageRange": "8歳〜",
   "players": "ひとり用",
   "difficulty": "むずかしめ"
