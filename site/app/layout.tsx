@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
@@ -10,6 +10,14 @@ export const metadata: Metadata = {
     template: "%s | Ankardo",
   },
   description: "子供向けインディーゲームカタログ Ankardo",
+  appleWebApp: {
+    title: "Ankardo",
+    statusBarStyle: "default",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1f3a5f",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
