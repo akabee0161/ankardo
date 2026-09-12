@@ -5,6 +5,10 @@
   "playUrl": "/play/character-tactics/",
   "genre": "simulation",
   "devices": ["pc", "mobile-landscape"],
+  "images": [
+    "/screenshots/character-tactics/01.png",
+    "/screenshots/character-tactics/02.png"
+  ],
   "ageRange": "6〜10歳",
   "players": "ひとり用",
   "difficulty": "ふつう"
