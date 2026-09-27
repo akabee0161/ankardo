@@ -31,6 +31,7 @@ ankardo/
 | `ankardo.com/games` | カタログ(`site/`) | ゲーム一覧ページ |
 | `ankardo.com/about` | カタログ(`site/`) | このサイトについて(目的・安全性の方針・運営者と連絡先) |
 | `ankardo.com/games/<slug>` | カタログ(`site/`) | 個別ゲームのランディング/詳細ページ |
+| `ankardo.com/sitemap.xml` / `ankardo.com/robots.txt` | カタログ(`site/`) | 検索エンジン向け(`site/app/sitemap.ts` / `site/app/robots.ts`) |
 | `ankardo.com/play/<slug>/*` | 各ゲームリポジトリ | プレイ可能なゲーム本体(独立デプロイ) |
 
 ## 開発
@@ -41,13 +42,13 @@ ankardo/
 cd site
 npm install
 npm run dev    # 開発サーバ
-npm test       # Vitest でバリデーションと MobileNav のテストを実行
+npm test       # Vitest でバリデーション・MobileNav・sitemap/robots のテストを実行
 npm run build  # 静的書き出し (out/)
 ```
 
 `MobileNav` のテストだけはファイル冒頭の docblock で `jsdom` 環境を指定している。他のテストは `node` 環境で動く。
 
-ゲームを追加する場合は `site/content/games/<slug>.json` を追加すると一覧・詳細ページに反映される。`slug`/`title`/`description`/`playUrl`/`genre`/`devices`/`ageRange`/`players`/`difficulty` が必須。`genre` は `site/lib/genres.ts` の `GENRES` に、`devices` は `site/lib/devices.ts` の `DEVICES` に定義されたキーである必要がある(`site/lib/games.ts` の `getAllGames()` がビルド時に検証し、不正な場合はエラーになる)。スクリーンショットは `site/public/screenshots/<slug>/` に16:9で置く。フィールドとアセットの詳細は `.claude/skills/new-game/SKILL.md` 参照。ゲームリポジトリ側の初期設定も同ファイル参照。
+ゲームを追加する場合は `site/content/games/<slug>.json` を追加すると一覧・詳細ページに反映される。`slug`/`title`/`description`/`playUrl`/`genre`/`devices`/`ageRange`/`players`/`difficulty` が必須。`genre` は `site/lib/genres.ts` の `GENRES` に、`devices` は `site/lib/devices.ts` の `DEVICES` に定義されたキーである必要がある(`site/lib/games.ts` の `getAllGames()` がビルド時に検証し、不正な場合はエラーになる)。ゲームを追加すると `sitemap.xml` にも自動で載る(カタログ内のページのみ。`/play/<slug>/*` は含めない)。絶対URLの基準は `site/lib/site.ts` の `SITE_URL`。スクリーンショットは `site/public/screenshots/<slug>/` に16:9で置く。フィールドとアセットの詳細は `.claude/skills/new-game/SKILL.md` 参照。ゲームリポジトリ側の初期設定も同ファイル参照。
 
 #### ブランドアセット
 
