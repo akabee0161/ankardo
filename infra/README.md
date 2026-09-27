@@ -22,5 +22,5 @@ Cloudflareゾーン・DNS設定を管理する。GitHub Actions (`.github/workfl
 ### 根本対応(未着手)
 
 リモートbackend(Terraform Cloud、S3など)を導入し、ローカル・CIで同一のstateを参照する構成にする。
-導入時は既存リソース(`cloudflare_zone_settings_override.ankardo`, `cloudflare_record.root`)を
+導入時は既存リソース(`cloudflare_zone_settings_override.ankardo`, `cloudflare_record.root`, `cloudflare_record.google_site_verification`)を
 `terraform import` で新backendのstateに取り込む必要がある。
