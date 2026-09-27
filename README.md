@@ -61,6 +61,8 @@ npm run build  # 静的書き出し (out/)
 
 Cloudflareゾーン・DNS・SSL設定を管理する。ローカルでの `terraform apply` はユーザーの明示的な承認を得てから実行する(エージェントが無承認で実行してはならない)。既知の制約(Terraform stateがCIとローカルで共有されていない件)は `infra/README.md` 参照。
 
+Google Search Console はドメイン プロパティ(`ankardo.com`)で登録しており、所有権確認用の TXT レコードを `infra/dns.tf` の `cloudflare_record.google_site_verification` で管理している。レコードを消すと所有権が失効するため削除しない。Google Analytics などのページ内解析は入れていない(about ページの「Cookie は使わない」という記述と両立させるため)。
+
 ## デプロイ
 
 - `infra/**` を変更してmainにpush → `Infra (Terraform)` ワークフローが `terraform apply` を実行(production environmentの承認が必要)
