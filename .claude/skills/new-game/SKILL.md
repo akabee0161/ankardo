@@ -134,3 +134,34 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 - ゲームリポジトリに `production` environment保護ルール(必須レビュアー、`main`ブランチのみ許可)を設定する(ankardo側と同様)
 - `wrangler deploy`(実際にCloudflare上へ反映する操作)は、Cloudflare認証情報を保有するユーザーの明示的な承認を得てから実行する
 - ankardo側の `site/` を再ビルド・デプロイし、カタログ一覧・詳細ページに反映されたことを確認する
+
+## ドット絵を使うなら（pixel-asset-forge）
+
+ドット絵のアセットは pixel-asset-forge（以下 forge）で作る。forge をゲームリポジトリの `pixel-asset-forge/` へ丸ごとコピーし、ゲームの中でエンジンを直しながらアセットを作る。
+
+### コピーする
+
+```bash
+./scripts/copy-forge.sh <ゲームリポジトリのパス>
+```
+
+forge の main の最新 commit の中身が `<ゲームリポジトリ>/pixel-asset-forge/` に入り、コピー元の commit を書いた `UPSTREAM.md` ができる。`pixel-asset-forge/` が既にあるときは何もせずに止まる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて1つのコミットにする。
+
+### コピーした後にゲーム側で行うこと
+
+1. `pixel-asset-forge/` で venv を作る: `python3 -m venv pixel-asset-forge/.venv && pixel-asset-forge/.venv/bin/pip install -r pixel-asset-forge/requirements.txt`
+2. ゲームのルートに対応表 `sprites.json` を書く。forge の `build/` からの相対パスを、書き出し先のファイル名に対応させる: `{ "tile/forest.png": "tile-forest.png" }`
+3. 書き出す: `pixel-asset-forge/.venv/bin/python pixel-asset-forge/tools/export.py sprites.json <ゲームが PNG を読むフォルダ>`
+4. 書き出した PNG をコミットする。デプロイでは Python を使わない
+
+### forge とゲーム側のコピーの関係
+
+- ゲーム側のコピーは、そのゲームに合わせて自由に直してよい。forge も並行して開発が続く
+- ゲーム側でエンジン・規約・道具を直したら、`UPSTREAM.md` の「forge に戻す候補」に1行足す
+- ゲームの開発が終わったら、候補を forge の issue にまとめる。取り込むときに、そのまま採用するか、抽象化してから入れるかを1件ずつ決める
+- forge の改善をゲーム側へ取り込む仕組みは無い。要るものはその都度手で持ってくる
+
+### 経緯
+
+- 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/main/docs/superpowers/specs/2026-09-30-move-pixel-asset-forge-design.md)
+- リポジトリを分けておく意味の見直し: #17
