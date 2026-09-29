@@ -149,7 +149,7 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/pixel-a
 
 ### コピーした後にゲーム側で行うこと
 
-1. `pixel-asset-forge/` で venv を作る: `python3 -m venv pixel-asset-forge/.venv && pixel-asset-forge/.venv/bin/pip install -r pixel-asset-forge/requirements.txt`
+1. Python 3.14 の venv を [uv](https://docs.astral.sh/uv/) で作る（3.10 では forge のテストが落ちる）: `uv python install 3.14 && uv venv --python 3.14 pixel-asset-forge/.venv && uv pip install --python pixel-asset-forge/.venv/bin/python -r pixel-asset-forge/requirements.txt`
 2. ゲームのルートに対応表 `sprites.json` を書く。forge の `build/` からの相対パスを、書き出し先のファイル名に対応させる: `{ "tile/forest.png": "tile-forest.png" }`
 3. 書き出す: `pixel-asset-forge/.venv/bin/python pixel-asset-forge/tools/export.py sprites.json <ゲームが PNG を読むフォルダ>`
 4. 書き出した PNG をコミットする。デプロイでは Python を使わない
