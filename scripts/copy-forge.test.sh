@@ -51,7 +51,16 @@ mkdir "$other"
 if FORGE_URL="file://$work/nope" "$here/copy-forge.sh" "$other" 2> /dev/null; then fail "bad source accepted"; fi
 [ ! -e "$other/pixel-asset-forge" ] || fail "left pixel-asset-forge/ behind after a failure"
 
-# 5. 引数が無い・フォルダが無いときは止まる
+# 5. 一時フォルダはゲームリポジトリの中に作る（/tmp と別のファイルシステムでも mv が一度に移るように）
+#    TMPDIR を使えない場所にしても成功し、作業用のフォルダを残さない
+third="$work/third"
+mkdir "$third"
+TMPDIR="$work/no-such-dir" "$here/copy-forge.sh" "$third" > /dev/null || fail "depends on TMPDIR"
+[ -f "$third/pixel-asset-forge/UPSTREAM.md" ] || fail "copy missing when TMPDIR is unusable"
+leftover="$(find "$third" -maxdepth 1 -name '.copy-forge.*')"
+[ -z "$leftover" ] || fail "left a work folder behind: $leftover"
+
+# 6. 引数が無い・フォルダが無いときは止まる
 if "$here/copy-forge.sh" 2> /dev/null; then fail "no argument accepted"; fi
 if "$here/copy-forge.sh" "$work/missing" 2> /dev/null; then fail "missing folder accepted"; fi
 

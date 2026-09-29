@@ -21,10 +21,12 @@ if [ -e "$dest" ]; then
   exit 1
 fi
 
-work="$(mktemp -d)"
+# 一時フォルダで組み立ててから移すので、途中で失敗しても $dest は残らない。
+# 一時フォルダをゲームリポジトリの中に作るのは、mv を同じファイルシステムの中の
+# rename にして、一度に移すため（/tmp が別のファイルシステムだとコピーと削除になる）
+work="$(mktemp -d "$game/.copy-forge.XXXXXX")"
 trap 'rm -rf "$work"' EXIT
 
-# 一時フォルダで組み立ててから移すので、途中で失敗しても $dest は残らない
 git clone --quiet --depth 1 --branch main "$FORGE_URL" "$work/forge"
 commit="$(git -C "$work/forge" rev-parse HEAD)"
 mkdir "$work/out"
