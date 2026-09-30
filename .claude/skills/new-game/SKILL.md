@@ -164,4 +164,5 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/pixel-a
 ### 経緯
 
 - 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/main/docs/superpowers/specs/2026-09-30-move-pixel-asset-forge-design.md)
+- 移設の PR: [character-tactics #22](https://github.com/akabee0161/character-tactics/pull/22)
 - リポジトリを分けておく意味の見直し: [ankardo #17](https://github.com/akabee0161/ankardo/issues/17)
