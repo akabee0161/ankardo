@@ -60,7 +60,17 @@ TMPDIR="$work/no-such-dir" "$here/copy-forge.sh" "$third" > /dev/null || fail "d
 leftover="$(find "$third" -maxdepth 1 -name '.copy-forge.*')"
 [ -z "$leftover" ] || fail "left a work folder behind: $leftover"
 
-# 6. 引数が無い・フォルダが無いときは止まる
+# 6. 呼び出し元の GIT_DIR（git のフックの中などで入る）に引きずられず、forge を読む
+decoy="$work/decoy"
+git init -q -b main "$decoy"
+git -C "$decoy" -c user.name=test -c user.email=test@example.com commit -q --allow-empty -m decoy
+fourth="$work/fourth"
+mkdir "$fourth"
+GIT_DIR="$decoy/.git" GIT_WORK_TREE="$decoy" "$here/copy-forge.sh" "$fourth" > /dev/null 2>&1 || fail "failed with GIT_DIR set"
+grep -q "$commit" "$fourth/pixel-asset-forge/UPSTREAM.md" || fail "UPSTREAM.md records another repository's commit"
+cmp -s "$src/tools/render.py" "$fourth/pixel-asset-forge/tools/render.py" || fail "copied another repository's files"
+
+# 7. 引数が無い・フォルダが無いときは止まる
 if "$here/copy-forge.sh" 2> /dev/null; then fail "no argument accepted"; fi
 if "$here/copy-forge.sh" "$work/missing" 2> /dev/null; then fail "missing folder accepted"; fi
 

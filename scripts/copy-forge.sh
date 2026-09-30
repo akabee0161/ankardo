@@ -6,6 +6,11 @@ set -euo pipefail
 
 FORGE_URL="${FORGE_URL:-https://github.com/akabee0161/pixel-asset-forge.git}"
 
+# git のフックの中などから呼ばれると GIT_DIR などが入っていて、git -C でも呼び出し元の
+# リポジトリを読んでしまう。git が挙げる「リポジトリの場所を決める変数」をすべて外す
+# shellcheck disable=SC2046
+unset $(git rev-parse --local-env-vars)
+
 if [ $# -ne 1 ]; then
   echo "使い方: $0 <ゲームリポジトリのパス>" >&2
   exit 2
