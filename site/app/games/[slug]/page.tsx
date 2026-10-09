@@ -21,7 +21,11 @@ export async function generateMetadata({
     return { title: "ページが見つかりません" };
   }
 
-  return { title: game.title, description: game.description };
+  return {
+    title: game.title,
+    description: game.description,
+    alternates: { canonical: `/games/${slug}/` },
+  };
 }
 
 export default async function GameDetail({

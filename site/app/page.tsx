@@ -42,7 +42,7 @@ export default function Home() {
             return (
               <Link
                 key={key}
-                href="/games"
+                href="/games/"
                 className={`flex h-16 items-center justify-center rounded-lg text-sm font-bold ${info.textClassName} ${info.badgeClassName}`}
               >
                 {info.label}
@@ -57,7 +57,7 @@ export default function Home() {
           対象年齢やジャンルでゲームを選べるので、お子さまに合った一本を見つけやすくしています。
         </p>
         <Link
-          href="/games"
+          href="/games/"
           className="mt-6 inline-block rounded-lg bg-neutral-900 px-6 py-3 text-sm font-bold text-white"
         >
           ゲーム一覧を見る

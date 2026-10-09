@@ -5,6 +5,7 @@ import { GenreFilter } from "../../components/GenreFilter";
 export const metadata: Metadata = {
   title: "ゲーム一覧",
   description: "Ankardo に掲載しているゲームの一覧。",
+  alternates: { canonical: "/games/" },
 };
 
 export default function GamesList() {
