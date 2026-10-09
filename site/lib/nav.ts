@@ -4,8 +4,8 @@ export type NavLink = {
 };
 
 export const NAV_LINKS: NavLink[] = [
-  { href: "/games", label: "ゲーム一覧" },
-  { href: "/about", label: "このサイトについて" },
+  { href: "/games/", label: "ゲーム一覧" },
+  { href: "/about/", label: "このサイトについて" },
 ];
 
 export const FOOTER_LINKS: NavLink[] = [

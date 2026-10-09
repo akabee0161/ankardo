@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: "このサイトについて",
   description:
     "Ankardo の目的、安全性の方針、掲載しているゲーム、運営者と連絡先について。",
+  alternates: { canonical: "/about/" },
 };
 
 const CONTACT_FORM_URL =
