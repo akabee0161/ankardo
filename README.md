@@ -67,7 +67,7 @@ Google Search Console はドメイン プロパティ(`ankardo.com`)で登録し
 ## デプロイ
 
 - `infra/**` を変更してmainにpush → `Infra (Terraform)` ワークフローが `terraform apply` を実行(production environmentの承認が必要)
-- `site/**` を変更してmainにpush → `Site (Next.js)` ワークフローが `next build` → `wrangler deploy` を実行(`site-production` environment。承認なしで自動デプロイされる。デプロイできるのは main のみ)
+- `site/**` を変更してmainにpush → `Site (Next.js)` ワークフローが `next build` → `wrangler deploy` を実行(承認なしで自動デプロイされる。environment は使わず、Cloudflare の認証情報はリポジトリの secret `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` から読む)
 - `wrangler deploy` で使う wrangler のバージョンは `.github/workflows/site.yml` の `wranglerVersion` で固定している。3.113.0 より古い wrangler では `site/public/_redirects` が転送ルールとして読まれず、ただのファイルとして公開される(2026-10 に `/games` の 301 が効かず 307 になっていた原因)。バージョンを外したり下げたりしないこと
 
 ## ドキュメント運用ルール
