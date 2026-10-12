@@ -32,4 +32,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: site
+          # 未指定だと古い wrangler(3.90.0)が入り、_redirects が転送ルールとして読まれない(3.113.0 から対応)
+          wranglerVersion: "4.149.0"
           command: deploy
