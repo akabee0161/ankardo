@@ -13,8 +13,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    # 承認なしで main からデプロイする。infra.yml の production(承認あり)とは分けている
-    environment: site-production
     defaults:
       run:
         working-directory: site
