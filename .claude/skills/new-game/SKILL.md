@@ -101,6 +101,12 @@ not_found_handling = "404-page"
 
 既存の `site/content/games/rungame-sample.json` も参考にできる。
 
+あわせて `site/public/_redirects` に次の1行を足す(末尾スラッシュなしの詳細ページ URL を正規の URL へ 301 で転送するため。足し忘れると `site/lib/redirects.test.ts` が失敗する)。
+
+```txt
+/games/<slug> /games/<slug>/ 301
+```
+
 ### スクリーンショットの規約
 
 | 項目 | 規約 |

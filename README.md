@@ -48,7 +48,7 @@ npm run build  # 静的書き出し (out/)
 
 `MobileNav` のテストだけはファイル冒頭の docblock で `jsdom` 環境を指定している。他のテストは `node` 環境で動く。
 
-ゲームを追加する場合は `site/content/games/<slug>.json` を追加すると一覧・詳細ページに反映される。`slug`/`title`/`description`/`playUrl`/`genre`/`devices`/`ageRange`/`players`/`difficulty` が必須。`genre` は `site/lib/genres.ts` の `GENRES` に、`devices` は `site/lib/devices.ts` の `DEVICES` に定義されたキーである必要がある(`site/lib/games.ts` の `getAllGames()` がビルド時に検証し、不正な場合はエラーになる)。ゲームを追加すると `sitemap.xml` にも自動で載る(カタログ内のページのみ。`/play/<slug>/*` は含めない)。絶対URLの基準は `site/lib/site.ts` の `SITE_URL`。スクリーンショットは `site/public/screenshots/<slug>/` に16:9で置く。フィールドとアセットの詳細は `.claude/skills/new-game/SKILL.md` 参照。ゲームリポジトリ側の初期設定も同ファイル参照。
+ゲームを追加する場合は `site/content/games/<slug>.json` を追加すると一覧・詳細ページに反映される。`slug`/`title`/`description`/`playUrl`/`genre`/`devices`/`ageRange`/`players`/`difficulty` が必須。`genre` は `site/lib/genres.ts` の `GENRES` に、`devices` は `site/lib/devices.ts` の `DEVICES` に定義されたキーである必要がある(`site/lib/games.ts` の `getAllGames()` がビルド時に検証し、不正な場合はエラーになる)。ゲームを追加すると `sitemap.xml` にも自動で載る(カタログ内のページのみ。`/play/<slug>/*` は含めない)。絶対URLの基準は `site/lib/site.ts` の `SITE_URL`。スクリーンショットは `site/public/screenshots/<slug>/` に16:9で置く。あわせて `site/public/_redirects` に `/games/<slug> /games/<slug>/ 301` を1行足す(末尾スラッシュなしの URL を正規の URL へ恒久転送するため。足し忘れると `site/lib/redirects.test.ts` が失敗し、デプロイが止まる)。`/games/:slug` のようなプレースホルダは `/games/` 配下の `.txt` まで転送してしまうので使わない。フィールドとアセットの詳細は `.claude/skills/new-game/SKILL.md` 参照。ゲームリポジトリ側の初期設定も同ファイル参照。
 
 #### ブランドアセット
 
@@ -67,7 +67,7 @@ Google Search Console はドメイン プロパティ(`ankardo.com`)で登録し
 ## デプロイ
 
 - `infra/**` を変更してmainにpush → `Infra (Terraform)` ワークフローが `terraform apply` を実行(production environmentの承認が必要)
-- `site/**` を変更してmainにpush → `Site (Next.js)` ワークフローが `next build` → `wrangler deploy` を実行(production environmentの承認が必要)
+- `site/**` を変更してmainにpush → `Site (Next.js)` ワークフローが `next build` → `wrangler deploy` を実行(`site-production` environment。承認なしで自動デプロイされる。デプロイできるのは main のみ)
 - `wrangler deploy` で使う wrangler のバージョンは `.github/workflows/site.yml` の `wranglerVersion` で固定している。3.113.0 より古い wrangler では `site/public/_redirects` が転送ルールとして読まれず、ただのファイルとして公開される(2026-10 に `/games` の 301 が効かず 307 になっていた原因)。バージョンを外したり下げたりしないこと
 
 ## ドキュメント運用ルール
