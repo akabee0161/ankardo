@@ -22,5 +22,20 @@ Cloudflareゾーン・DNS設定を管理する。GitHub Actions (`.github/workfl
 ### 根本対応(未着手)
 
 リモートbackend(Terraform Cloud、S3など)を導入し、ローカル・CIで同一のstateを参照する構成にする。
-導入時は既存リソース(`cloudflare_zone_settings_override.ankardo`, `cloudflare_record.root`, `cloudflare_record.google_site_verification`)を
+導入時は既存リソース(`cloudflare_zone_settings_override.ankardo`, `cloudflare_record.root`)を
 `terraform import` で新backendのstateに取り込む必要がある。
+
+## Terraform の管理外のレコード
+
+### Google Search Console の所有権確認用 TXT(ルート)
+
+ドメイン プロパティ(`ankardo.com`)の所有権確認用 TXT レコードは、Cloudflare 上に置いたまま
+Terraform では宣言していない。レコードを消すと所有権が失効するため、Cloudflare 上で削除しない。
+
+宣言しない理由: Cloudflare のメール受信(Email Routing)を有効にすると、ルートに SPF の TXT
+レコードが加わり、ルートの TXT が複数になる。この Terraform は state を持たず、ルートの TXT が
+1 件のときだけ `allow_overwrite` の上書きで apply が通るため、ルートの TXT が複数あると apply が
+失敗する。CI は state を持たないので、宣言していないレコードには触れない(作成・変更・削除しない)。
+
+state に `cloudflare_record.google_site_verification` が残っている場合も、`dns.tf` の `removed` ブロック
+(`destroy = false`)により、レコードを削除せずに state から外す。
