@@ -1,5 +1,15 @@
 # Session Handover
 
+## 進捗
+作業: Google Search Console の導入
+工程:
+1. 所有権の確認とサイトマップの送信（完了）
+2. URL の末尾のスラッシュをそろえる（完了）
+段階: 完了
+次にやること:
+- スマートフォンの実機でハンバーガーメニューを確かめる（縦向き・横向き）
+- shogi-vs-cpu・character-tactics のスクリーンショットを撮って入れる
+
 ## Generated: 2026-09-01T00:00:00Z
 
 ## Current State
