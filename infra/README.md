@@ -36,3 +36,6 @@ Terraform では宣言していない。レコードを消すと所有権が失�
 レコードが加わり、ルートの TXT が複数になる。この Terraform は state を持たず、ルートの TXT が
 1 件のときだけ `allow_overwrite` の上書きで apply が通るため、ルートの TXT が複数あると apply が
 失敗する。CI は state を持たないので、宣言していないレコードには触れない(作成・変更・削除しない)。
+
+state に `cloudflare_record.google_site_verification` が残っている場合も、`dns.tf` の `removed` ブロック
+(`destroy = false`)により、レコードを削除せずに state から外す。

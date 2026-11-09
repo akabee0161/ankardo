@@ -17,3 +17,12 @@ resource "cloudflare_record" "root" {
 
 # Google Search Console の所有権確認用の TXT レコード(ルート)はここでは宣言しない。
 # Cloudflare 上に置いたまま Terraform の管理外にしている(理由: infra/README.md)。
+
+# 以前の設定で apply した state にこのレコードが残っていても、削除せず state から外すため。
+removed {
+  from = cloudflare_record.google_site_verification
+
+  lifecycle {
+    destroy = false
+  }
+}
