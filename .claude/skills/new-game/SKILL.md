@@ -151,7 +151,8 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 2. `wrangler.toml` の `routes` の前に `preview_urls = true` を足し、末尾に空の `[previews]` を足す（`wrangler preview` が要求する。足さないと `Your Wrangler configuration is missing a previews block` で失敗する）
 3. wrangler を 4.135.0 以上にする（`npm install -D wrangler@^4.135.0`）。Worker Previews は、これより古い wrangler では使えない
 4. ゲームの `CLAUDE.md` に、機能ブランチ → `develop` → `main` の流れを書く
-5. この PR は `develop` がまだないので `main` に向け、マージしたあとで `main` から `develop` を作って push する。ワークフローの成功を見てから、ログインなしで `curl` し、`302` で `cloudflareaccess.com` に転送されることを確かめる
+5. この PR は `develop` がまだないので `main` に向け、マージしたあと、**`main` の本番の `deploy` が成功するまで待つ**（`production` の承認が要るリポジトリでは、承認する）。`preview_urls = true` は本番の `deploy` で Worker に反映されるので、先に `develop` を push すると、プレビューは成功しても URL が付かない（`"urls": []`。sea-defence で起きた。承認後に `Preview (develop)` を動かし直すと付く）
+6. `main` から `develop` を作って push する。ワークフローの成功を見てから、ログインなしで `curl` し、`302` で `cloudflareaccess.com` に転送されることを確かめる
 
 守ること:
 
