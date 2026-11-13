@@ -141,6 +141,25 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 - `wrangler deploy`(実際にCloudflare上へ反映する操作)は、Cloudflare認証情報を保有するユーザーの明示的な承認を得てから実行する
 - ankardo側の `site/` を再ビルド・デプロイし、カタログ一覧・詳細ページに反映されたことを確認する
 
+## 確認用のプレビュー（develop ブランチ）を足す
+
+ゲームのリポジトリでは、機能ブランチ → `develop` への PR をマージすると、`develop` の固定のプレビュー（`https://develop-<Worker 名>.akabee0161.workers.dev/play/<slug>/`。`/` は 404 になる）が自動で上がる。プレビューは Cloudflare Access の受付の後ろにあり、ログインした人だけが開ける。本番（ankardo.com）へは、`develop` から `main` への PR をマージして出す（`deploy.yml` が動く）。
+
+手順（新しいゲームのリポジトリで）:
+
+1. `.claude/skills/new-game/preview.yml`（このリポジトリのひな形。先頭は `# template-version: 1`）を、ゲームの `.github/workflows/preview.yml` にそのまま写す
+2. `wrangler.toml` の `routes` の前に `preview_urls = true` を足し、末尾に空の `[previews]` を足す（`wrangler preview` が要求する。足さないと `Your Wrangler configuration is missing a previews block` で失敗する）
+3. wrangler を 4.135.0 以上にする（`npm install -D wrangler@^4.135.0`）。Worker Previews は、これより古い wrangler では使えない
+4. ゲームの `CLAUDE.md` に、機能ブランチ → `develop` → `main` の流れを書く
+5. この PR は `develop` がまだないので `main` に向け、マージしたあとで `main` から `develop` を作って push する。ワークフローの成功を見てから、ログインなしで `curl` し、`302` で `cloudflareaccess.com` に転送されることを確かめる
+
+守ること:
+
+- **`wrangler deploy` を書かない。`environment` を使わない。** プレビューのワークフローは `develop` への push で動き、`production` の承認の外で動くので、本番に出す手段を持たせない。Cloudflare のトークンは、最後の `wrangler preview` のステップの `env` にだけ渡す
+- ひな形を直すときは、先にこのリポジトリのひな形を直し（`site/lib/preview-template.test.ts` が固定している）、それから各ゲームのリポジトリへ手で写す
+- ホスト名の最初の部分（`develop-` + Worker 名）は 63 文字以内にする
+- 受付（Cloudflare Access）はアカウント内の全 Worker のプレビューを対象にしている。受付が作られているか分からないうちは、プレビューを有効にしない
+
 ## ドット絵を使うなら（pixel-asset-forge）
 
 ドット絵のアセットは pixel-asset-forge（以下 forge）で作る。forge をゲームリポジトリの `pixel-asset-forge/` へ丸ごとコピーし、ゲームの中でエンジンを直しながらアセットを作る。
