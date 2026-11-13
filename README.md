@@ -70,6 +70,8 @@ Google Search Console はドメイン プロパティ(`ankardo.com`)で登録し
 - `site/**` を変更してmainにpush → `Site (Next.js)` ワークフローが `next build` → `wrangler deploy` を実行(承認なしで自動デプロイされる。environment は使わず、Cloudflare の認証情報はリポジトリの secret `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` から読む)
 - `wrangler deploy` で使う wrangler のバージョンは `.github/workflows/site.yml` の `wranglerVersion` で固定している。3.113.0 より古い wrangler では `site/public/_redirects` が転送ルールとして読まれず、ただのファイルとして公開される(2026-10 に `/games` の 301 が効かず 307 になっていた原因)。バージョンを外したり下げたりしないこと
 
+- ゲームのリポジトリは、`develop` ブランチへのマージで確認用のプレビュー（Cloudflare Access の受付の後ろ）が自動で上がり、本番へは `develop` から `main` への PR で出す。ひな形は `.claude/skills/new-game/preview.yml`（`site/lib/preview-template.test.ts` で固定）、手順は `.claude/skills/new-game/SKILL.md` 参照
+
 ## ドキュメント運用ルール
 
 - **`docs/superpowers/` 配下(specs / plans)は作成時点のログ。** ファイル名の日付時点での記録として扱い、後から実装や運用が変わっても遡って更新しない。「未実施」「TODO」等の当時の記述が現状と食い違っていても、それはバグではなく履歴。
