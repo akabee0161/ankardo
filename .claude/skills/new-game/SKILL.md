@@ -168,10 +168,12 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 ### コピーする
 
 ```bash
-./scripts/copy-forge.sh <ゲームリポジトリのパス>
+./scripts/copy-forge.sh pixel <ゲームリポジトリのパス>
 ```
 
 forge の main の最新 commit の中身が `<ゲームリポジトリ>/pixel-asset-forge/` に入り、コピー元の commit を書いた `UPSTREAM.md` ができる。`pixel-asset-forge/` が既にあるときは何もせずに止まる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて1つのコミットにする。
+
+1 回の実行でコピーするのは 1 つ。ドット絵とイラストの両方を使うゲームは、`pixel` と `illust` で 2 回実行する。使わないほうは実行しない。
 
 ### コピーした後にゲーム側で行うこと
 
@@ -192,3 +194,36 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/pixel-a
 - 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/main/docs/superpowers/specs/2026-09-30-move-pixel-asset-forge-design.md)
 - 移設の PR: [character-tactics #22](https://github.com/akabee0161/character-tactics/pull/22)
 - リポジトリを分けておく意味の見直し: [ankardo #17](https://github.com/akabee0161/ankardo/issues/17)
+
+## イラストを使うなら（illust-asset-forge）
+
+顔グラなどのイラストは illust-asset-forge（以下 forge）で作る。forge をゲームリポジトリの `illust-asset-forge/` へ丸ごとコピーし、ゲームの中で画風・テンプレート・道具を直しながらキャラクターを作る。GPU を使う処理（生成）は依頼者が Colab で動かす。仕組みは「ドット絵を使うなら」と同じ（コピーして自由に直す）。
+
+### コピーする
+
+```bash
+./scripts/copy-forge.sh illust <ゲームリポジトリのパス>
+```
+
+forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-asset-forge/` に入り、コピー元の commit を書いた `UPSTREAM.md` ができる。forge の `HANDOVER.md` と `docs/superpowers/` は入らない（引き継ぎはゲームの `HANDOVER.md` 1 つにする。forge の当時のログはゲームのログではない）。`illust-asset-forge/` が既にあるときは何もせずに止まる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて1つのコミットにする。
+
+### コピーした後にゲーム側で行うこと
+
+1. `illust-asset-forge/notebooks/run.ipynb` の準備のセルの 4 つの変数を、ゲームの値に書き換える
+   - `REPO_URL`: ゲームのリポジトリの URL
+   - `REPO_BRANCH`: `develop`（機能ブランチを `develop` にマージした時点で Colab に届く）
+   - `SUBDIR`: `illust-asset-forge`
+   - `DRIVE_DIR`: `/content/drive/MyDrive/<ゲームのリポジトリ名>/illust-asset-forge`（forge 本体の置き場と混ざらないように、ゲームごとに分ける）
+2. コピーの `tests/test_notebook.py` の既定値のテストを、1 の値に合わせる。`UPSTREAM.md` の「forge に戻す候補」とは別に、ゲームで直したことを 1 行ずつ書く
+3. コピーの `tests/test_repo_configs.py` のうち、forge 本体の見本だけを前提にしたテスト（`test_sample_characters_are_the_four_generic_ones`・`test_no_game_ids_or_trial_style_names`）と、禁止語の検査（`test_repo_does_not_mention_the_game`。ゲームのリポジトリ名が `REPO_URL` に入ると落ちる）を、このゲームに合わせて直す
+4. コピーの `CLAUDE.md` の「リポジトリにゲーム側の事情…を書かない」を、このゲーム専用であることと、直したら `UPSTREAM.md` に 1 行足すことに書き換える
+5. Python の venv を作り、テストを通す: `uv venv illust-asset-forge/.venv && uv pip install --python illust-asset-forge/.venv/bin/python -e 'illust-asset-forge[dev]' && (cd illust-asset-forge && .venv/bin/pytest)`
+6. 生成（GPU）は依頼者が Colab で動かす。Colab は `develop` を取るので、設定の変更は `develop` にマージするまで Colab に届かない
+
+### forge とゲーム側のコピーの関係
+
+「ドット絵を使うなら」の「forge とゲーム側のコピーの関係」と同じ。ゲーム側で直したら `UPSTREAM.md` の「forge に戻す候補」に1行足し、forge の改善は要るものだけ手で持ってくる。
+
+### 経緯
+
+- 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/develop/docs/superpowers/specs/2026-11-22-face-gen-ai-design.md)
