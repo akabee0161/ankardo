@@ -226,4 +226,4 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 
 ### 経緯
 
-- 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/develop/docs/superpowers/specs/2026-11-22-face-gen-ai-design.md)
+- 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/fc34a512e9fdcdeccea1bd78679f3f9cbe62676e/docs/superpowers/specs/2026-11-22-face-gen-ai-design.md)（commit 固定。マージの前後で同じ資料が開ける）
