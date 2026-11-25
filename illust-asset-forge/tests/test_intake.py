@@ -533,6 +533,6 @@ def test_install_rejects_png_whose_template_does_not_match_name(repo, tmp_path):
     d = tmp_path / "selected"
     write_png(d / "c1/object.png", template="face")  # face の絵を object.png として渡す
     before = sorted(p.name for p in (repo / "characters/c1/source").iterdir())
-    with pytest.raises(ConfigError, match=r"c1/object.png: 条件の template が 'face'"):
+    with pytest.raises(ConfigError, match=r"c1/object.png: template: 条件の値が 'face'"):
         install_selection(repo, d)
     assert sorted(p.name for p in (repo / "characters/c1/source").iterdir()) == before

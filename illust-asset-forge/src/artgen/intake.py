@@ -178,7 +178,7 @@ def install_selection(root: Path, selected_dir: Path) -> list[CharacterReport]:
             want_template = template_for_name(p.stem)
             if params.get("template") != want_template:  # 別の種類の絵で source/ を置き換えない（書き出しが止まる）
                 raise ConfigError(
-                    f"{where}: 条件の template が {params.get('template')!r}（この名前には {want_template!r} の絵が要る）"
+                    f"{where}: template: 条件の値が {params.get('template')!r}（この名前には {want_template!r} の絵が要る）"
                 )
             pngs.append(p)
             used_raw = params.get("inpaint_box")

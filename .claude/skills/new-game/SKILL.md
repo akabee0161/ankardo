@@ -235,10 +235,13 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 ### コピーする
 
 ```bash
-./scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>
+./scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>            # 鳴き声を使うゲーム
+./scripts/copy-assets.sh chiiku <ゲームリポジトリのパス> --no-cry   # 鳴き声を使わないゲーム
 ```
 
-`<ゲーム>/public/chiiku/` に、`items.json`・`img/<id>.webp`・`voice/<id>.wav`・`voice/manifest.json`・`cry/<id>.wav`（どうぶつ 6 つ）・`CREDITS.md` が入る。`public/chiiku/` が既にあるときは、丸ごと置き換える（コピー元から消えたファイルも消える）。コピー元の commit（未コミットの変更があれば `+dirty`）とコピーした日は `<ゲーム>/chiiku-assets.md` に書かれる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて 1 つのコミットにする。
+鳴き声を鳴らさないゲームには `--no-cry` を付ける。付けないと、CC BY-SA の録音（`cry/dog.wav`・`cry/pig.wav`）がそのゲームの公開物に入り、使わないのにクレジットの義務だけを負う。
+
+`<ゲーム>/public/chiiku/` に、`items.json`・`img/<id>.webp`・`voice/<id>.wav`・`voice/manifest.json`・`cry/<id>.wav`（どうぶつ 6 つ。`--no-cry` では入らない）・`CREDITS.md` が入る。`public/chiiku/` が既にあるときは、丸ごと置き換える（コピー元から消えたファイルも消える）。コピー元の commit（未コミットの変更があれば `+dirty`）とコピーした日は `<ゲーム>/chiiku-assets.md` に書かれる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて 1 つのコミットにする。
 
 ### ゲーム側で守ること
 

@@ -37,7 +37,7 @@ ankardo/
 | `cry/<id>.wav` | 鳴き声(どうぶつ 6 つだけ) | Wikimedia Commons・Freesound の再配布可の録音を切り出したもの。出典と条件は `CREDITS.md` |
 | `CREDITS.md` | 出典・条件・ゲームの画面に出すクレジットの文 | 手で書く。素材を替えたら直す(`shared-assets/tools/tests/test_credits.py` が、全部の鳴き声と声の話者が載っているかを確かめる) |
 
-ゲームへは `scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>` で配る。`<ゲーム>/public/chiiku/` を丸ごと置き換え、コピー元の commit を `<ゲーム>/chiiku-assets.md` に書く(コミットはしない)。ゲームは自分のリポジトリにコピーされた素材だけを読むので、ここで素材を直しても、コピーし直すまで公開中のゲームは変わらない。素材は `ankardo.com` から配らない(名前の変更・削除で、何も変えていないゲームの絵が出なくなるため)。
+ゲームへは `scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>` で配る。`<ゲーム>/public/chiiku/` を丸ごと置き換え、コピー元の commit を `<ゲーム>/chiiku-assets.md` に書く(コミットはしない)。鳴き声を鳴らさないゲームは `--no-cry` を付けて、`cry/`(CC BY-SA の録音を含む)を入れない。ゲームは自分のリポジトリにコピーされた素材だけを読むので、ここで素材を直しても、コピーし直すまで公開中のゲームは変わらない。素材は `ankardo.com` から配らない(名前の変更・削除で、何も変えていないゲームの絵が出なくなるため)。
 
 - 絵の生成は Modal の T4 で行う(`illust-asset-forge/README.md` の 10)。Modal アプリの名前は `ankardo-chiiku`、モデルの Volume は forge 本体と同じ `illust-asset-forge-models`。生成の前に、枚数と見込みの金額を依頼者に伝える
 - `illust-asset-forge/UPSTREAM.md` に、forge のコピーで直したことと、ものの絵を作って分かったこと(背景の消し方など)を書いている
