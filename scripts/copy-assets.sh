@@ -68,7 +68,7 @@ mkdir -p "$game/public"
 note_dest="$game/${set_name}-assets.md"
 
 # メモに書く「コピーしたコマンド」。使ったオプションごと書き、そのまま再実行しても同じコピーになるようにする
-copy_cmd="scripts/copy-assets.sh ${set_name} ."
+copy_cmd="<ankardo のフォルダ>/scripts/copy-assets.sh ${set_name} ."
 if [ "$no_cry" = 1 ]; then
   copy_cmd="$copy_cmd --no-cry"
 fi
@@ -77,7 +77,7 @@ fi
 cat > "$work/note.md" << EOF
 # ${set_name} の共通素材のコピー
 
-\`public/${set_name}/\` は、ankardo の \`shared-assets/${set_name}/\` を \`${copy_cmd}\` でコピーしたもの。
+\`public/${set_name}/\` は、ankardo の \`shared-assets/${set_name}/\` を、ゲームのフォルダで \`${copy_cmd}\` を実行してコピーしたもの（\`<ankardo のフォルダ>\` は ankardo をクローンした場所）。
 手で直さない。直すときは ankardo の素材を直し、コピーし直す（コピーのたびに \`public/${set_name}/\` は丸ごと置き換わる）。
 
 - コピー元: ankardo の \`shared-assets/${set_name}/\`

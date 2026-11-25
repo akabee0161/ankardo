@@ -11,4 +11,4 @@ cutouts:
   object:
     background: matte
     outputs:
-      - {suffix: "", box: null, width: 512}
+      - {suffix: "", box: [145, 133, 925, 913], width: 512}

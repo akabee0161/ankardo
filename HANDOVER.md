@@ -9,7 +9,7 @@
 段階: 実装計画
 次にやること:
 - 工程 3 の実装計画を書く（共通部分 `name-touch/src/common/` を ankardo のひな形（例 `templates/chiiku-game/`）に切り出す手順と、残り 8 本の作る順）。設計書は docs/superpowers/specs/2026-11-24-chiiku-games-design.md（依頼者が承認済み）。工程 1・2 の計画は docs/superpowers/plans/2026-11-24-chiiku-games-step1-2.md（ログ）
-- 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。決めた経緯は shared-assets/chiiku/CREDITS.md と illust-asset-forge/UPSTREAM.md
+- 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。経緯は README.md の「共通素材」
 - 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は、試聴で不自然だったアクセントを直してから作る（`voice.py` に足す）
 - 鳴き声（なきごえあて）を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）。鳴き声を使わないゲームは、ゲームのフォルダで `<ankardo のフォルダ>/scripts/copy-assets.sh chiiku . --no-cry` を実行してコピーする（スクリプトは ankardo にあり、ゲームには無い）
 - 持ち越した課題は ISSUES.md（並行実行の対策・YAML の重複キーなど、直さないと決めたもの）

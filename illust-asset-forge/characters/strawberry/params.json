@@ -9,7 +9,12 @@
       },
       "outputs": [
         {
-          "box": null,
+          "box": [
+            138,
+            65,
+            920,
+            847
+          ],
           "suffix": "",
           "width": 512
         }

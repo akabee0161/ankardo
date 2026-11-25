@@ -32,13 +32,14 @@ ankardo/
 | 場所 | 中身 | 作り方 |
 |---|---|---|
 | `items.json` | 21 種類(どうぶつ 6・むし 3・みずのいきもの 3・やさい 4・たべもの 5)の ID・種類・名前・ひらがな・読み上げの文 | 手で書く。ID は `illust-asset-forge/characters/<id>/` と同じ |
-| `img/<id>.webp` | 絵(背景透明、512×512) | `illust-asset-forge` で生成・書き出し(`characters/<id>/object.png`)したものを `shared-assets/tools/build_images.py` で webp にする |
+| `img/<id>.webp` | 絵(背景透明、512×512。絵の長い辺が枠の約 90%) | `illust-asset-forge` で生成・書き出し(`characters/<id>/object.png`)したものを `shared-assets/tools/build_images.py` で webp にする。枠に占める大きさをそろえるため、`character.yaml` の `cutouts.object.outputs[].box` に、絵の外接の正方形(長辺が枠の 90%、片側の余白 5%)を、元の 1024 の絵の座標で書く(全体を縮めると、てんとうむし 8%・ぞう 71% のようにばらつく。`illust-asset-forge/tests/test_chiiku_objects.py` が、全種類に正方形の `box` があることを確かめる) |
 | `voice/<id>.wav`・`voice/manifest.json` | 名前の声(VOICEVOX:ずんだもん) | `shared-assets/tools/voice.py --speaker 3`(VOICEVOX Engine を `~/opt/voicevox_engine/run --host 127.0.0.1` で起動しておく) |
 | `cry/<id>.wav` | 鳴き声(どうぶつ 6 つだけ) | Wikimedia Commons・Freesound の再配布可の録音を切り出したもの。出典と条件は `CREDITS.md` |
 | `CREDITS.md` | 出典・条件・ゲームの画面に出すクレジットの文 | 手で書く。素材を替えたら直す(`shared-assets/tools/tests/test_credits.py` が、全部の鳴き声と声の話者が載っているかを確かめる) |
 
 ゲームへは `scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>` で配る。`<ゲーム>/public/chiiku/` を丸ごと置き換え、コピー元の commit を `<ゲーム>/chiiku-assets.md` に書く(コミットはしない)。鳴き声を鳴らさないゲームは `--no-cry` を付けて、`cry/`(CC BY-SA の録音を含む)を入れない。ゲームは自分のリポジトリにコピーされた素材だけを読むので、ここで素材を直しても、コピーし直すまで公開中のゲームは変わらない。素材は `ankardo.com` から配らない(名前の変更・削除で、何も変えていないゲームの絵が出なくなるため)。
 
+- 種類(`items.json` の `categories`)は、`animal`(どうぶつ)・`insect`(むし)・`sea`(みずのいきもの)・`vegetable`(やさい)・`food`(たべもの)。`sea` の表示名は、最初は「うみのいきもの」だったが、金魚(淡水魚)を含むため、PR #28 のレビュー指摘で「みずのいきもの」にした。設計書・計画の「20 種類」「`fish`」「うみ」は、この 21 種類・`sea`・「みずのいきもの」に読み替えて読む
 - 絵の生成は Modal の T4 で行う(`illust-asset-forge/README.md` の 10)。Modal アプリの名前は `ankardo-chiiku`、モデルの Volume は forge 本体と同じ `illust-asset-forge-models`。生成の前に、枚数と見込みの金額を依頼者に伝える
 - `illust-asset-forge/UPSTREAM.md` に、forge のコピーで直したことと、ものの絵を作って分かったこと(背景の消し方など)を書いている
 - テスト: `illust-asset-forge/.venv/bin/pytest shared-assets/tools/tests`(素材の道具)、`bash scripts/copy-assets.test.sh`(コピーの道具)

@@ -143,7 +143,7 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 ### 7. 手動確認事項(エージェントが自動実行できない項目)
 
 - 上記スクリプトの実行(Cloudflare認証情報を保有するユーザーが実行するか、値を渡して実行を承認する)
-- ゲームリポジトリに `production` environment保護ルール(必須レビュアー、`main`ブランチのみ許可)を設定する(ankardo側と同様)
+- ゲームリポジトリに `production` environment保護ルール(必須レビュアー、`main`ブランチのみ許可)を設定する(ankardo側と同様)。**ただし、幼児向け知育ゲーム（name-touch 以降の 9 本）は、依頼者の判断（2026-11-25）で設定しない。** `main` へのマージが、承認の待ちなしに、そのまま本番へ出る。マージする人が、本番に出ることを承知して押す
 - `wrangler deploy`(実際にCloudflare上へ反映する操作)は、Cloudflare認証情報を保有するユーザーの明示的な承認を得てから実行する
 - ankardo側の `site/` を再ビルド・デプロイし、カタログ一覧・詳細ページに反映されたことを確認する
 
@@ -247,14 +247,14 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 
 鳴き声を鳴らさないゲームには `--no-cry` を付ける。付けないと、CC BY-SA の録音（`cry/dog.wav`・`cry/pig.wav`）がそのゲームの公開物に入り、使わないのにクレジットの義務だけを負う。
 
-`<ゲーム>/public/chiiku/` に、`items.json`・`img/<id>.webp`・`voice/<id>.wav`・`voice/manifest.json`・`cry/<id>.wav`（どうぶつ 6 つ。`--no-cry` では入らない）・`CREDITS.md` が入る。`public/chiiku/` が既にあるときは、丸ごと置き換える（コピー元から消えたファイルも消える）。コピー元の commit（未コミットの変更があれば `+dirty`）とコピーした日は `<ゲーム>/chiiku-assets.md` に書かれる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて 1 つのコミットにする。
+`<ゲーム>/public/chiiku/` に、`items.json`・`img/<id>.webp`・`voice/<id>.wav`・`voice/manifest.json`・`cry/<id>.wav`（どうぶつ 6 つ。`--no-cry` では入らない）・`CREDITS.md` が入る。`public/chiiku/` が既にあるときは、丸ごと置き換える（コピー元から消えたファイルも消える）。コピー元の commit（未コミットの変更があれば `+dirty`）とコピーした日は `<ゲーム>/chiiku-assets.md` に書かれる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて 1 つのコミットにする。スクリプトは、ゲームのフォルダの中に一時フォルダ `.copy-assets.XXXXXX` を作る（`mv` を同じファイルシステムの中の rename にするため）。強制終了で残ってもコミットに混ざらないよう、ゲームの `.gitignore` に `.copy-assets.*/` を 1 行足しておく。
 
 ### ゲーム側で守ること
 
 1. `public/chiiku/` を手で直さない。素材を直すときは ankardo の `shared-assets/chiiku/` を直し、コピーし直す
 2. `items.json` の形（`categories` と `items`。種類のキーは `animal`・`insect`・`sea`・`vegetable`・`food`、ID は 21 種類の英語名）を `loadItems` で読み、形が違えば、どの項目が違うかを示して止める。ゲーム側に 21 種類の一覧を書き写さない
 3. 字を読めない子ども向けなので、名前は声（`voice/<id>.wav`）で出し、画面の字は 8・9 のゲーム（もじとえ・もじなぞり）だけ。字を出すときは `kana`（ひらがな）を使い、`label` は使わない
-4. クレジットは `public/chiiku/CREDITS.md` の「ゲームの画面に出すクレジット」を、タイトル画面の下に小さく出す。鳴き声（`cry/`）を使うゲームだけ、鳴き声の行も出す
+4. クレジットは `public/chiiku/CREDITS.md` の「ゲームの画面に出すクレジット」に従い、タイトル画面の下に小さく出す。`cry/` を入れないゲーム（`copy-assets.sh` に `--no-cry`）は 1 行目（VOICEVOX）だけ。`cry/` を入れたゲームは、使うかどうかによらず 3 行とも出し、リンク先の詳細クレジットも公開する（CC BY-SA の録音を配布することになるため）
 5. 音は最初のタッチの「はじめる」の中で `AudioContext.resume()` を呼び、無音の再生をしてから鳴らす（ブラウザは画面に触れるまで音を出せないため）
 6. 声と鳴き声は wav。古い iOS でも鳴る
 

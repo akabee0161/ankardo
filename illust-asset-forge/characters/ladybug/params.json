@@ -12,7 +12,12 @@
       "erase": [],
       "outputs": [
         {
-          "box": null,
+          "box": [
+            352,
+            332,
+            705,
+            685
+          ],
           "suffix": "",
           "width": 512
         }
