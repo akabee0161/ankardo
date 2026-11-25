@@ -1,0 +1,20 @@
+# 組織の画面（Organization UI）の設定を引き継ぎ、ここではレビューから外すパスだけを足す。
+# inheritance が無いと、このファイルだけが使われ、画面の設定（日本語・CHILL など）が効かなくなる。
+inheritance: true
+reviews:
+  path_filters:
+    # 画像・音のファイル（テキストとして読めない。絵と音は依頼者が承認用のページで見て・聞いて承認する）
+    - "!**/*.png"
+    - "!**/*.webp"
+    - "!**/*.jpg"
+    - "!**/*.jpeg"
+    - "!**/*.gif"
+    - "!**/*.wav"
+    - "!**/*.mp3"
+    - "!**/*.ogg"
+    - "!**/*.oga"
+    # illust-asset-forge のキャラクターごとの絵・マスク・書き出しの記録と、その設定（プロンプトと切り出しの範囲）。
+    # 設定は依頼者が承認用のページで絵を見て承認するもので、組めることは illust-asset-forge/tests/test_repo_configs.py が見る
+    - "!illust-asset-forge/characters/**"
+    # 作成時点の作業ログ（後から更新しない）
+    - "!docs/superpowers/**"
