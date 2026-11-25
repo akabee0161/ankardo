@@ -6,10 +6,10 @@
 1. 共通素材を作る（forge のコピー・20 種類の絵・声・鳴き声・copy-assets.sh） ← 今ここ
 2. なまえタッチを作って公開する
 3. ひな形を作り、残りの 8 本を作って公開する
-段階: 設計の相談
+段階: 実装（11 タスク中 0）
 次にやること:
-- 依頼者が設計書 docs/superpowers/specs/2026-11-24-chiiku-games-design.md を確かめる
-- 承認後、工程 1・2 の実装計画を書く
+- 実装計画 docs/superpowers/plans/2026-11-24-chiiku-games-step1-2.md を Task 1 から「まとめて」（superpowers:executing-plans）で進める
+- 設計書は docs/superpowers/specs/2026-11-24-chiiku-games-design.md（依頼者が承認済み）
 
 ## 前の作業（Google Search Console の導入、完了）の残り
 - スマートフォンの実機でハンバーガーメニューを確かめる（縦向き・横向き）
