@@ -5,7 +5,8 @@ export type GenreKey =
   | "rhythm"
   | "racing"
   | "shooting"
-  | "simulation";
+  | "simulation"
+  | "education";
 
 export type GenreInfo = {
   label: string;
@@ -63,5 +64,13 @@ export const GENRES: Record<GenreKey, GenreInfo> = {
     placeholderClassName: "bg-genre-simulation/15",
     // #26c6da は白文字だと2.06:1でAA未達のため濃色文字にする
     textClassName: "text-neutral-900",
+  },
+  education: {
+    label: "知育",
+    badgeClassName: "bg-genre-education",
+    placeholderClassName: "bg-genre-education/15",
+    // #6d4c41(こげ茶)は、既存の 7 色との色の差(CIEDE2000)が最小で 29.3 あり、
+    // 既存の 7 色どうしの最小(20.2)より離れていて見分けやすい。白文字は 7.61:1 で AA 達成
+    textClassName: "text-white",
   },
 };

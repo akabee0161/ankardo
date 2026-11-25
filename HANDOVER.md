@@ -4,15 +4,16 @@
 作業: 幼児向け知育ゲーム
 工程:
 1. 共通素材を作る（forge のコピー・21 種類の絵・声・鳴き声・copy-assets.sh）（完了）
-2. なまえタッチを作って公開する ← 今ここ
-3. ひな形を作り、残りの 8 本を作って公開する
-段階: 実装（11 タスク中 8）
+2. なまえタッチを作って公開する（完了）
+3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ
+段階: 実装計画
 次にやること:
-- 依頼者の手作業（ankardo の PR のマージ、name-touch の GitHub リポジトリ作成・秘密の値・production の保護ルール）が済んだら、実装計画 docs/superpowers/plans/2026-11-24-chiiku-games-step1-2.md の Task 9（なまえタッチの土台）から進める
-- 計画の「20 種類」は 21 種類（たべもの 5）、種類キー fish は sea（みずのいきもの。金魚を含むため表示名を変えた）に読み替える。決めた経緯は shared-assets/chiiku/CREDITS.md と illust-asset-forge/UPSTREAM.md
-- 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は工程 3 で、試聴で不自然だったアクセントを直してから作る
-- 鳴き声（なきごえあて）を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）
-- 設計書は docs/superpowers/specs/2026-11-24-chiiku-games-design.md（依頼者が承認済み）
+- 工程 3 の実装計画を書く（共通部分 `name-touch/src/common/` を ankardo のひな形（例 `templates/chiiku-game/`）に切り出す手順と、残り 8 本の作る順）。設計書は docs/superpowers/specs/2026-11-24-chiiku-games-design.md（依頼者が承認済み）。工程 1・2 の計画は docs/superpowers/plans/2026-11-24-chiiku-games-step1-2.md（ログ）
+- 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。決めた経緯は shared-assets/chiiku/CREDITS.md と illust-asset-forge/UPSTREAM.md
+- 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は、試聴で不自然だったアクセントを直してから作る（`voice.py` に足す）
+- 鳴き声（なきごえあて）を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）。鳴き声を使わないゲームは `copy-assets.sh chiiku . --no-cry` でコピーする
+- 持ち越した課題は ISSUES.md（並行実行の対策・YAML の重複キーなど、直さないと決めたもの）
+- ゲームの `package-lock.json` は、CI と同じ npm（Node 22 の npm 10）で、`node_modules` の無い場所で作り、同じ npm で `npm ci` を試してから出す（name-touch で、npm 11 のロックが 2 回デプロイを止めた）
 
 ## 前の作業（Google Search Console の導入、完了）の残り
 - スマートフォンの実機でハンバーガーメニューを確かめる（縦向き・横向き）
