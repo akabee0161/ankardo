@@ -1,0 +1,13 @@
+name: いぬ
+subject: [dog, animal focus, cute]
+appearance: [shiba inu, brown fur, sitting, smiling]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

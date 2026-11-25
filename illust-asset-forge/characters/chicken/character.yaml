@@ -1,0 +1,13 @@
+name: にわとり
+subject: [chicken, bird, animal focus, cute]
+appearance: [white hen, red comb, standing]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

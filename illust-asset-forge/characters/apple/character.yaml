@@ -1,0 +1,13 @@
+name: りんご
+subject: [apple, food focus]
+appearance: [red apple, green leaf, stem]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

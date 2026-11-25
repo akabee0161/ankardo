@@ -82,7 +82,8 @@ def test_style_candidates_exist():
 
 
 def test_sample_characters_are_the_four_generic_ones():
-    assert CHARACTER_IDS == ["knight", "mage", "schoolboy", "schoolgirl"]
+    # ankardo のコピーでは、見本 4 人のほかに知育ゲームの 20 種類（tests/test_chiiku_objects.py が一覧を持つ）を足している
+    assert {"knight", "mage", "schoolboy", "schoolgirl"} <= set(CHARACTER_IDS)
 
 
 def test_no_game_ids_or_trial_style_names():

@@ -1,0 +1,13 @@
+name: ぶた
+subject: [pig, animal focus, cute]
+appearance: [pink pig, round body, standing, smiling]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

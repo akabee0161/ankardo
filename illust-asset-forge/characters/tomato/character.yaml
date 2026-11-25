@@ -1,0 +1,13 @@
+name: トマト
+subject: [tomato, food focus]
+appearance: [red tomato, green calyx]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

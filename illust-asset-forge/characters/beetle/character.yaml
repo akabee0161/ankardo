@@ -1,0 +1,13 @@
+name: かぶとむし
+subject: [beetle, bug, animal focus]
+appearance: [rhinoceros beetle, male, large horn, brown shell, side view]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

@@ -1,0 +1,13 @@
+name: ねこ
+subject: [cat, animal focus, cute]
+appearance: [orange tabby cat, sitting, smiling]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

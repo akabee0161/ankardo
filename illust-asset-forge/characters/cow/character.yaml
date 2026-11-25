@@ -1,0 +1,13 @@
+name: うし
+subject: [cow, animal focus, cute]
+appearance: [holstein cow, black and white spots, standing, smiling]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

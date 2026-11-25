@@ -1,0 +1,13 @@
+name: いちご
+subject: [strawberry, food focus]
+appearance: [red strawberry, green calyx, seeds]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}

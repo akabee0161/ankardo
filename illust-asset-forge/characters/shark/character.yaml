@@ -1,0 +1,13 @@
+name: さめ
+subject: [shark, fish, animal focus, cute]
+appearance: [grey shark, friendly smile, dorsal fin, side view]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}
