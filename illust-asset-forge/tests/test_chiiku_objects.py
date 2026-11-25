@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pytest
+from PIL import Image
 
 from artgen.config import load_character, load_template
 from artgen.prompt import build_prompt
@@ -63,3 +64,14 @@ def test_every_object_is_cropped_to_a_square_inside_the_source(char_id):
     x0, y0, x1, y1 = box
     assert x1 - x0 == y1 - y0, f"正方形でない: {box}"
     assert 0 <= x0 < x1 <= 1024 and 0 <= y0 < y1 <= 1024, f"元の絵（1024）の外にはみ出す: {box}"
+
+
+@pytest.mark.parametrize("char_id", OBJECT_IDS)
+def test_exported_object_fills_about_90_percent_of_the_frame(char_id):
+    # box が正方形で 1024 の中にあるだけでは、全体 [0, 0, 1024, 1024] も通る（小さい絵を拡大しない退行を見逃す）。
+    # 書き出した絵（不透明な範囲 = alpha 100 以上）の長い辺が、枠の約 90%（片側の余白 5%）に収まることを見る
+    with Image.open(ROOT / "characters" / char_id / "object.png") as im:
+        alpha = im.convert("RGBA").getchannel("A").point(lambda v: 255 if v >= 100 else 0)
+        left, top, right, bottom = alpha.getbbox()
+        ratio = max(right - left, bottom - top) / im.width
+    assert 0.885 <= ratio <= 0.915, f"絵の長い辺が枠の {ratio:.0%}（約 90% でない）"
