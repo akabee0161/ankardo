@@ -1,0 +1,91 @@
+{
+  "speaker": 3,
+  "speaker_name": "ずんだもん",
+  "engine_version": "0.26.1",
+  "files": {
+    "dog": {
+      "text": "いぬ",
+      "sha256": "3b0a8d0ad04fdddd97c2028526222e2dd72b5c80d622dc3313fe777105d2a33f"
+    },
+    "cat": {
+      "text": "ねこ",
+      "sha256": "21280bf907eb7417efe9adbef7e4c24593fa4c4ca47074f3ebcae21eca9c4aeb"
+    },
+    "cow": {
+      "text": "うし",
+      "sha256": "7c0ce3c7ff866b241311517bee9944c2930914fad8343a76388614f67742c9f9"
+    },
+    "pig": {
+      "text": "ぶた",
+      "sha256": "7a8adfad115c42f43ced338ff174918cce3db480b7051179b3128ef804b330c0"
+    },
+    "chicken": {
+      "text": "にわとり",
+      "sha256": "dddec894b34dbe34404b0d6a6b29d6840bf0621228197785bbf5651272783de3"
+    },
+    "elephant": {
+      "text": "ぞう",
+      "sha256": "16af38f848be14378625cba166f9c1087717734e999f26db0e379301e7c2942c"
+    },
+    "butterfly": {
+      "text": "ちょうちょ",
+      "sha256": "c210e0503eacd7b708b21de81b24d6f01e65826c4ce8fd848260ddac7f6a7401"
+    },
+    "ladybug": {
+      "text": "てんとうむし",
+      "sha256": "521f151d17ba4b5aa1e127ed33ad1cd32426f04df14f9c8231950af57d095aef"
+    },
+    "dragonfly": {
+      "text": "とんぼ",
+      "sha256": "5d5499d39d7ff6888c62ab2703c0c64ab9ff439e9d4f749fbf530421b6c2d53a"
+    },
+    "goldfish": {
+      "text": "きんぎょ",
+      "sha256": "625606c182927e9b46b6cd8bc48dc93403b307fb83b584a65203ae155628d5dc"
+    },
+    "pufferfish": {
+      "text": "ふぐ",
+      "sha256": "f46f1a763c9736bbcdda7db5f6cf251544720dc8761f56f3282b18d49e91baec"
+    },
+    "dolphin": {
+      "text": "いるか",
+      "sha256": "808bdb1aded23bacc096c232da00a6eb86b7fbf5ac1b67457d5b2597e29f5c38"
+    },
+    "tomato": {
+      "text": "トマト",
+      "sha256": "1ae6dcfe7f015e45a431256c65dbd745103b54a8cb41b8930d0a7e0a7c0741fb"
+    },
+    "carrot": {
+      "text": "にんじん",
+      "sha256": "24107b81eaa42b3318a8420c4147ab7805461b8b71250100179cea1c8dc4cd6b"
+    },
+    "eggplant": {
+      "text": "なす",
+      "sha256": "8efd7a2fdee23da663372c63fee34b43b1230d34c92c8432f025fb464920a13b"
+    },
+    "corn": {
+      "text": "とうもろこし",
+      "sha256": "6feea62aa8da88cf1844f03e4a185b19915406d54bc5d8bea1b0fe28be7fcbd2"
+    },
+    "apple": {
+      "text": "りんご",
+      "sha256": "b25b8f8b597968083de4f7960f49c475768e47b8126a3a3d2d85e0a6594589c0"
+    },
+    "banana": {
+      "text": "バナナ",
+      "sha256": "13332f082578eb9c13abe8299668f5250a3453216dd86995d2d88ce9de9ef5e4"
+    },
+    "strawberry": {
+      "text": "いちご",
+      "sha256": "7a0f0ec79cad5a14ccc6ac86b33d6b8d67b00e37c5690ed1be1e117daba18f8a"
+    },
+    "bread": {
+      "text": "パン",
+      "sha256": "989ecbdaa54266969c694cc6e0bf959c4f8f0d75df33895d76ef67ef682f8232"
+    },
+    "spaghetti": {
+      "text": "スパゲッティ",
+      "sha256": "78d274953c24bb4a14a7750820d18bd567709c557a38ad57c8f4db8fb4505783"
+    }
+  }
+}
