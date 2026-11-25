@@ -39,6 +39,7 @@ ankardo/
 
 ゲームへは `scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>` で配る。`<ゲーム>/public/chiiku/` を丸ごと置き換え、コピー元の commit を `<ゲーム>/chiiku-assets.md` に書く(コミットはしない)。鳴き声を鳴らさないゲームは `--no-cry` を付けて、`cry/`(CC BY-SA の録音を含む)を入れない。ゲームは自分のリポジトリにコピーされた素材だけを読むので、ここで素材を直しても、コピーし直すまで公開中のゲームは変わらない。素材は `ankardo.com` から配らない(名前の変更・削除で、何も変えていないゲームの絵が出なくなるため)。
 
+- 種類(`items.json` の `categories`)は、`animal`(どうぶつ)・`insect`(むし)・`sea`(みずのいきもの)・`vegetable`(やさい)・`food`(たべもの)。`sea` の表示名は、最初は「うみのいきもの」だったが、金魚(淡水魚)を含むため、PR #28 のレビュー指摘で「みずのいきもの」にした。設計書・計画の「20 種類」「`fish`」「うみ」は、この 21 種類・`sea`・「みずのいきもの」に読み替えて読む
 - 絵の生成は Modal の T4 で行う(`illust-asset-forge/README.md` の 10)。Modal アプリの名前は `ankardo-chiiku`、モデルの Volume は forge 本体と同じ `illust-asset-forge-models`。生成の前に、枚数と見込みの金額を依頼者に伝える
 - `illust-asset-forge/UPSTREAM.md` に、forge のコピーで直したことと、ものの絵を作って分かったこと(背景の消し方など)を書いている
 - テスト: `illust-asset-forge/.venv/bin/pytest shared-assets/tools/tests`(素材の道具)、`bash scripts/copy-assets.test.sh`(コピーの道具)

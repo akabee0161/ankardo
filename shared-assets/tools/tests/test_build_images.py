@@ -11,7 +11,10 @@ def make_forge(root: Path, ids: list[str]) -> None:
     for i in ids:
         d = root / "characters" / i
         d.mkdir(parents=True)
-        Image.new("RGBA", (512, 512), (0, 0, 0, 0)).save(d / "object.png")  # 全面透明の絵（四隅の alpha 0）
+        # 四隅は透明、中央は不透明な赤の四角（絵が消えたり、透明になったりしないかを見るため）
+        im = Image.new("RGBA", (512, 512), (0, 0, 0, 0))
+        im.paste((200, 40, 40, 255), (156, 156, 356, 356))
+        im.save(d / "object.png")
 
 
 def make_items(path: Path, ids: list[str]) -> Path:
@@ -32,8 +35,13 @@ def test_writes_webp_with_alpha(tmp_path):
     for p in written:
         im = Image.open(p)
         assert im.format == "WEBP" and im.size == (512, 512)
-        assert im.convert("RGBA").getpixel((0, 0))[3] == 0
-        assert im.convert("RGBA").getpixel((511, 511))[3] == 0
+        rgba = im.convert("RGBA")
+        assert rgba.getpixel((0, 0))[3] == 0
+        assert rgba.getpixel((511, 511))[3] == 0
+        # 絵の部分は、不透明のまま、ほぼ同じ色で残る（webp の圧縮で少しずれてよい）
+        r, g, b, a = rgba.getpixel((256, 256))
+        assert a == 255
+        assert abs(r - 200) <= 12 and abs(g - 40) <= 12 and abs(b - 40) <= 12, (r, g, b)
 
 
 def test_stops_when_image_missing(tmp_path):
