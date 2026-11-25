@@ -1,0 +1,32 @@
+{
+  "categories": [
+    {"key": "animal", "label": "どうぶつ"},
+    {"key": "insect", "label": "むし"},
+    {"key": "sea", "label": "うみのいきもの"},
+    {"key": "vegetable", "label": "やさい"},
+    {"key": "food", "label": "たべもの"}
+  ],
+  "items": [
+    {"id": "dog", "category": "animal", "label": "いぬ", "kana": "いぬ", "reading": "いぬ"},
+    {"id": "cat", "category": "animal", "label": "ねこ", "kana": "ねこ", "reading": "ねこ"},
+    {"id": "cow", "category": "animal", "label": "うし", "kana": "うし", "reading": "うし"},
+    {"id": "pig", "category": "animal", "label": "ぶた", "kana": "ぶた", "reading": "ぶた"},
+    {"id": "chicken", "category": "animal", "label": "にわとり", "kana": "にわとり", "reading": "にわとり"},
+    {"id": "elephant", "category": "animal", "label": "ぞう", "kana": "ぞう", "reading": "ぞう"},
+    {"id": "butterfly", "category": "insect", "label": "ちょうちょ", "kana": "ちょうちょ", "reading": "ちょうちょ"},
+    {"id": "ladybug", "category": "insect", "label": "てんとうむし", "kana": "てんとうむし", "reading": "てんとうむし"},
+    {"id": "dragonfly", "category": "insect", "label": "とんぼ", "kana": "とんぼ", "reading": "とんぼ"},
+    {"id": "goldfish", "category": "sea", "label": "きんぎょ", "kana": "きんぎょ", "reading": "きんぎょ"},
+    {"id": "pufferfish", "category": "sea", "label": "ふぐ", "kana": "ふぐ", "reading": "ふぐ"},
+    {"id": "dolphin", "category": "sea", "label": "いるか", "kana": "いるか", "reading": "いるか"},
+    {"id": "tomato", "category": "vegetable", "label": "トマト", "kana": "とまと", "reading": "トマト"},
+    {"id": "carrot", "category": "vegetable", "label": "にんじん", "kana": "にんじん", "reading": "にんじん"},
+    {"id": "eggplant", "category": "vegetable", "label": "なす", "kana": "なす", "reading": "なす"},
+    {"id": "corn", "category": "vegetable", "label": "とうもろこし", "kana": "とうもろこし", "reading": "とうもろこし"},
+    {"id": "apple", "category": "food", "label": "りんご", "kana": "りんご", "reading": "りんご"},
+    {"id": "banana", "category": "food", "label": "バナナ", "kana": "ばなな", "reading": "バナナ"},
+    {"id": "strawberry", "category": "food", "label": "いちご", "kana": "いちご", "reading": "いちご"},
+    {"id": "bread", "category": "food", "label": "パン", "kana": "ぱん", "reading": "パン"},
+    {"id": "spaghetti", "category": "food", "label": "スパゲッティ", "kana": "すぱげってぃ", "reading": "スパゲッティ"}
+  ]
+}
