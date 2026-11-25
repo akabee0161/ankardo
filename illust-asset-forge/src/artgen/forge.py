@@ -339,10 +339,10 @@ class Forge:
         except (MissingParamsError, OSError):
             return  # 条件が読めない候補は、採用の側（selected.adopt）が理由を言って止める
         name = selected_name(params)
-        if name in ("face.png", "fullbody.png"):
+        if not name.startswith("face_"):
             return
         char_id = _check_char_id(params.get("character"), path.name)
-        if name not in _accepted_names(list(load_character(self.root, char_id).expressions)):
+        if name not in _accepted_names(self.root, list(load_character(self.root, char_id).expressions)):
             raise ConfigError(
                 f"{path.name}: 表情 {params.get('expression')!r} は今の設定"
                 f"（characters/{char_id}/character.yaml の expressions）に無い。設定に足してから採用する"

@@ -104,7 +104,17 @@ def test_selected_name_from_params():
     assert selected_name({"template": "face", "expression": "hurt", "source": "face.png"}) == "face_hurt.png"
     assert selected_name({"template": "fullbody"}) == "fullbody.png"
     with pytest.raises(ConfigError):
-        selected_name({"template": "other"})
+        selected_name({})
+
+
+def test_selected_name_object():
+    assert selected_name({"template": "object"}) == "object.png"
+
+
+@pytest.mark.parametrize("template", ["../x", "a/b", "..", ""])
+def test_selected_name_rejects_bad_template_name(template):
+    with pytest.raises(ConfigError):
+        selected_name({"template": template})
 
 
 def test_adopt_copies_with_params_and_flipped_false(store, candidate):

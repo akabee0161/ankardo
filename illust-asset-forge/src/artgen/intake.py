@@ -159,7 +159,7 @@ def install_selection(root: Path, selected_dir: Path) -> list[CharacterReport]:
     for char_dir in char_dirs:
         char_id = char_dir.name
         character = load_character(root, char_id)
-        accepted = _accepted_names(list(character.expressions))
+        accepted = _accepted_names(root, list(character.expressions))
         pngs: list[Path] = []
         write_back: list[str] = []
         selection_box: list[int] | None = None
@@ -181,7 +181,7 @@ def install_selection(root: Path, selected_dir: Path) -> list[CharacterReport]:
                 used = list(parse_box(where, "inpaint_box", used_raw))
                 if used not in used_boxes:
                     used_boxes.append(used)
-            if p.name not in ("face.png", "fullbody.png"):
+            if p.name.startswith("face_"):
                 check_expression_source(params, char_dir / "face.png", where)
             overrides = params.get("overrides")
             if overrides:
@@ -251,7 +251,7 @@ def extract_pack(zip_path: Path, dest: Path, *, root: Path) -> Path:
                 raise ConfigError(f"{where}: 知らないキャラクター {char_id!r}（characters/{char_id}/character.yaml が無い）")
             if char_id not in expressions:
                 expressions[char_id] = list(load_character(root, char_id).expressions)
-            accepted = _accepted_names(expressions[char_id])
+            accepted = _accepted_names(root, expressions[char_id])
             if name != BOX_FILE and name not in accepted:
                 raise ConfigError(f"{where}: 受け付けない名前（受け付ける名前: {', '.join(accepted)}）")
             if (char_id, name) in seen:

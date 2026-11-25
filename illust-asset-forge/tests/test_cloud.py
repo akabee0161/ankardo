@@ -522,3 +522,12 @@ def test_generate_explains_retry_even_for_non_runtime_modal_errors(cli_env, monk
     assert cloud.main(["generate", "--jobs", str(jobs)]) == 1
     out = capsys.readouterr().out
     assert "回りの記録" in out and "page" in out and "接続が切れた" in out
+
+
+def test_install_object(cli_env):
+    write(cli_env, "templates/object.yaml",
+          "width: 64\nheight: 64\nprompt: [no humans]\nnegative: []\nexport_size: null\n")
+    forge_ = make_forge(cli_env)
+    forge_.selected.adopt(forge_.generate("c1", "object", seeds=[5])[0])
+    assert cloud.main(["install", "c1"]) == 0
+    assert (cli_env / "characters/c1/source/object.png").is_file()

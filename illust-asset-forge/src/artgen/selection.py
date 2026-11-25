@@ -53,17 +53,19 @@ def check_expression_source(expression_params: dict, face: Path, where: str) -> 
 
 def selected_name(params: dict) -> str:
     template = params.get("template")
-    if template == "fullbody":
-        return "fullbody.png"
-    if template == "face":
-        if params.get("source"):
-            expression = params.get("expression")
-            if not isinstance(expression, str) or not expression:
-                raise ConfigError("条件に source があるのに expression が無い（表情の名前が分からない）")
-            _check_name_part(expression, "条件の expression")
-            return f"face_{expression}.png"
-        return FACE_NAME
-    raise ConfigError(f"条件の template が face・fullbody のどちらでもない: {template!r}")
+    if not isinstance(template, str) or not template:
+        raise ConfigError(f"条件の template が文字列でない: {template!r}")
+    if template != "face":
+        # fullbody・object など、face 以外のテンプレートは <テンプレート名>.png（テンプレートが在るかは書き出し・取り込みが確かめる）
+        _check_name_part(template, "条件の template")
+        return f"{template}.png"
+    if params.get("source"):
+        expression = params.get("expression")
+        if not isinstance(expression, str) or not expression:
+            raise ConfigError("条件に source があるのに expression が無い（表情の名前が分からない）")
+        _check_name_part(expression, "条件の expression")
+        return f"face_{expression}.png"
+    return FACE_NAME
 
 
 def _check_name_part(value: str, where: str) -> None:
@@ -134,7 +136,7 @@ class SelectionStore:
         char_id = _check_char_id(params.get("character"), candidate.name)
         if flip and name != FACE_NAME:
             raise ConfigError(f"{candidate.name}: 左右反転は顔（{FACE_NAME}）だけに使える")
-        if name not in (FACE_NAME, "fullbody.png"):
+        if name.startswith("face_"):
             check_expression_source(params, self.face_path(char_id), candidate.name)
         with Image.open(candidate) as im:
             image = im.copy()

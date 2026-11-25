@@ -422,3 +422,69 @@ def test_export_stops_when_output_height_would_be_zero(repo):
     set_cutouts(repo, {"fullbody": {"background": "none", "outputs": [{"suffix": "", "width": 10}]}})
     with pytest.raises(ConfigError, match=r"cutouts\.fullbody\.outputs\[0\]\.width"):
         export_character(repo, "c1")
+
+
+# --- ものを 1 つ描くテンプレート（object） ---
+
+OBJECT_TEMPLATE = (
+    "width: 1024\nheight: 1024\nprompt: [no humans]\nnegative: [human]\nexport_size: null\n"
+)
+OBJECT_CHARACTER = (
+    "name: O\nstyle: s\nsubject: [dog]\nappearance: []\noutfit: []\n"
+    "default_expression: normal\nexpressions: {normal: []}\n"
+)
+
+
+def object_repo(repo, cutouts=True):
+    write(repo, "templates/object.yaml", OBJECT_TEMPLATE)
+    text = OBJECT_CHARACTER
+    if cutouts:
+        text += yaml.safe_dump(
+            {"cutouts": {"object": {"background": "colors", "outputs": [{"suffix": "", "box": None, "width": 512}]}}}
+        )
+    write(repo, "characters/c1/character.yaml", text)
+
+
+def put_object(repo, template="object"):
+    from PIL import ImageDraw
+
+    image = Image.new("RGB", (1024, 1024), (255, 255, 255))
+    ImageDraw.Draw(image).ellipse((200, 200, 824, 824), outline=(0, 0, 0), width=24)  # 内側は白のまま
+    path = repo / "characters/c1/source/object.png"
+    save_png(image, path, {"seed": 1, "template": template, "prompt": "犬", "character": "c1", "width": 1024, "height": 1024})
+    return path
+
+
+def test_export_object_with_colors_cutout(repo):
+    object_repo(repo)
+    put_object(repo)
+    export_character(repo, "c1")
+    im = Image.open(repo / "characters/c1/object.png")
+    assert im.mode == "RGBA" and im.size == (512, 512)
+    for xy in [(0, 0), (511, 0), (0, 511), (511, 511)]:
+        assert im.getpixel(xy)[3] == 0
+    assert im.getpixel((256, 256))[3] == 255  # 線で囲まれた白は残す
+
+
+def test_export_object_rejects_face_template(repo):
+    object_repo(repo)
+    put_object(repo, template="face")
+    with pytest.raises(ExportError) as e:
+        export_character(repo, "c1")
+    assert "object.png" in str(e.value) and "template" in str(e.value)
+
+
+def test_export_without_face_png(repo):
+    object_repo(repo, cutouts=False)
+    put_object(repo)
+    export_character(repo, "c1")
+    assert (repo / "characters/c1/object.png").is_file()
+    assert not (repo / "characters/c1/face.png").exists()
+
+
+def test_export_rejects_name_of_template_that_does_not_exist(repo):
+    object_repo(repo)
+    put_object(repo)
+    (repo / "templates/object.yaml").unlink()
+    with pytest.raises((ExportError, ConfigError)):
+        export_character(repo, "c1")

@@ -202,7 +202,7 @@ def cmd_install(args: argparse.Namespace) -> None:
             # 取り込みは source/ を丸ごと置き換える。採用し直していない絵（顔・全身・表情）は今の source/ から持ち越す。
             # ただし顔を採用し直したときは、表情（face_*.png）を持ち越さない（古い顔から作ったので検査で落ちる）
             # 今の設定に無い名前（expressions から消した表情など）は持ち越さず、取り込みの「消した」に出す
-            accepted = set(_accepted_names(list(load_character(root, char).expressions)))
+            accepted = set(_accepted_names(root, list(load_character(root, char).expressions)))
             source_dir = root / "characters" / char / "source"
             if source_dir.is_dir():
                 for kept in sorted(source_dir.iterdir()):

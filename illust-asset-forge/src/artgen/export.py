@@ -67,20 +67,24 @@ def cutout_record(
     return record
 
 
-def _accepted_names(expressions: list[str]) -> list[str]:
-    return ["face.png", *(f"face_{e}.png" for e in expressions), "fullbody.png"]
+def _accepted_names(root: Path, expressions: list[str]) -> list[str]:
+    """受け付ける元の絵の名前。顔と表情は face.png・face_<表情>.png、それ以外は templates/ にあるテンプレート 1 つにつき <名前>.png。"""
+    others = sorted(p.stem for p in (Path(root) / "templates").glob("*.yaml") if p.stem != "face")
+    # fullbody を先頭に寄せる（今までの並びと、エラー文の見え方を変えない）
+    others.sort(key=lambda n: n != "fullbody")
+    return ["face.png", *(f"face_{e}.png" for e in expressions), *(f"{n}.png" for n in others)]
 
 
 def _check_matches_name(src: Path, rel_source: str, params: dict, template_name: str, character) -> None:
     """ファイル名から決まる型・表情と、画像の中身・条件が合っているか。取り違えと縮小を止める。"""
     where = f"{rel_source}/{src.name}"
     stem = src.stem
-    if stem == "fullbody":
-        want_template, want_expression = "fullbody", None
-    elif stem == "face":
+    if stem == "face":
         want_template, want_expression = "face", character.default_expression
-    else:
+    elif stem.startswith("face_"):
         want_template, want_expression = "face", stem.removeprefix("face_")
+    else:
+        want_template, want_expression = stem, None  # fullbody・object など。名前がそのままテンプレート名
     if template_name != want_template:
         raise ExportError(f"{where}: 条件の template が {template_name!r}。この名前には {want_template!r} の絵が要る")
     if want_expression is not None and params.get("expression", want_expression) != want_expression:
@@ -120,7 +124,7 @@ def export_character(root: Path, char_id: str) -> list[Path]:
     if not sources:
         raise ExportError(f"{rel_source}: PNG が無い")
 
-    accepted = _accepted_names(list(character.expressions))
+    accepted = _accepted_names(root, list(character.expressions))
     # (元の絵, 出力先, export_size, cutout)。cutout があるときは出力先と export_size を使わない
     plans: list[tuple[Path, Path, int | None, Cutout | None]] = []
     all_params: dict[str, dict] = {}

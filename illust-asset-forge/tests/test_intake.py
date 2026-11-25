@@ -517,3 +517,12 @@ def test_rollback_reports_new_source_it_could_not_remove_on_first_install(repo, 
     message = str(info.value)
     assert "characters/c1/source" in message and "busy" in message
     assert "控えは無い" in message  # 控えの改名ではなく、残った source の後処理を案内する
+
+
+def test_intake_accepts_object_png(repo, tmp_path):
+    write(repo, "templates/object.yaml", "width: 8\nheight: 8\nprompt: [x]\nnegative: []\nexport_size: null\n")
+    d = tmp_path / "selected"
+    write_png(d / "c1/object.png", template="object")
+    [r] = install_selection(repo, d)
+    assert r.installed == ["object.png"]
+    assert (repo / "characters/c1/source/object.png").is_file()
