@@ -3,13 +3,45 @@
     "object": {
       "background": "matte",
       "clear_colors": [],
-      "erase": [],
+      "erase": [
+        [
+          [
+            200,
+            872
+          ],
+          [
+            340,
+            872
+          ],
+          [
+            366,
+            893
+          ],
+          [
+            380,
+            912
+          ],
+          [
+            380,
+            945
+          ],
+          [
+            200,
+            945
+          ]
+        ]
+      ],
       "matte_sha256": {
         "object.png": "b931cdea26100d2831ef223df0d99cea679d8a0b55cab27808f221eb2bac9f2a"
       },
       "outputs": [
         {
-          "box": null,
+          "box": [
+            30,
+            126,
+            901,
+            997
+          ],
           "suffix": "",
           "width": 512
         }

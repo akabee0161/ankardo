@@ -9,5 +9,7 @@ expressions:
 cutouts:
   object:
     background: matte
+    erase:
+      - [[200,872],[340,872],[366,893],[380,912],[380,945],[200,945]]
     outputs:
-      - {suffix: "", box: null, width: 512}
+      - {suffix: "", box: [30, 126, 901, 997], width: 512}
