@@ -12,12 +12,37 @@
 ankardo/
 ├── infra/     # Terraform (Cloudflareゾーン・DNS・SSL設定)
 ├── site/      # Next.js カタログサイト(静的書き出し、トップ・一覧・個別詳細・このサイトについて)
+├── illust-asset-forge/  # forge(イラスト生成)のコピー。知育ゲームの共通の絵をここで作る
+├── shared-assets/       # 書き出した共通素材(chiiku/: 絵・名前の声・鳴き声・クレジット)と、その道具(tools/)
+├── scripts/
+│   ├── copy-forge.sh    # forge をゲームリポジトリへコピーする
+│   ├── copy-assets.sh   # shared-assets の素材をゲームリポジトリへコピーする
+│   └── setup-game-secrets.sh
 └── .github/workflows/
     ├── infra.yml  # infra/ 変更時の terraform plan/apply
     └── site.yml   # site/ 変更時の next build → wrangler deploy
 ```
 
-ゲーム本体は将来、ゲームごとに別リポジトリとして作成し、`ankardo.com/play/<slug>/*` に独立デプロイする(このリポジトリの対象外)。
+ゲーム本体はゲームごとに別リポジトリとして作成し、`ankardo.com/play/<slug>/*` に独立デプロイする(このリポジトリの対象外)。ただし、複数のゲームで使う素材は、このリポジトリが作って各ゲームへ配る(下記「共通素材」)。
+
+### 共通素材
+
+幼児向けの知育ゲーム(2〜4 歳向けに何本か作る)が使う素材を、このリポジトリで作って各ゲームへ配る。素材は `shared-assets/chiiku/` にある。
+
+| 場所 | 中身 | 作り方 |
+|---|---|---|
+| `items.json` | 21 種類(どうぶつ 6・むし 3・うみのいきもの 3・やさい 4・たべもの 5)の ID・種類・名前・ひらがな・読み上げの文 | 手で書く。ID は `illust-asset-forge/characters/<id>/` と同じ |
+| `img/<id>.webp` | 絵(背景透明、512×512) | `illust-asset-forge` で生成・書き出し(`characters/<id>/object.png`)したものを `shared-assets/tools/build_images.py` で webp にする |
+| `voice/<id>.wav`・`voice/manifest.json` | 名前の声(VOICEVOX:ずんだもん) | `shared-assets/tools/voice.py --speaker 3`(VOICEVOX Engine を `~/opt/voicevox_engine/run --host 127.0.0.1` で起動しておく) |
+| `cry/<id>.wav` | 鳴き声(どうぶつ 6 つだけ) | Wikimedia Commons・Freesound の再配布可の録音を切り出したもの。出典と条件は `CREDITS.md` |
+| `CREDITS.md` | 出典・条件・ゲームの画面に出すクレジットの文 | 手で書く。素材を替えたら直す(`shared-assets/tools/tests/test_credits.py` が、全部の鳴き声と声の話者が載っているかを確かめる) |
+
+ゲームへは `scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>` で配る。`<ゲーム>/public/chiiku/` を丸ごと置き換え、コピー元の commit を `<ゲーム>/chiiku-assets.md` に書く(コミットはしない)。ゲームは自分のリポジトリにコピーされた素材だけを読むので、ここで素材を直しても、コピーし直すまで公開中のゲームは変わらない。素材は `ankardo.com` から配らない(名前の変更・削除で、何も変えていないゲームの絵が出なくなるため)。
+
+- 絵の生成は Modal の T4 で行う(`illust-asset-forge/README.md` の 10)。Modal アプリの名前は `ankardo-chiiku`、モデルの Volume は forge 本体と同じ `illust-asset-forge-models`。生成の前に、枚数と見込みの金額を依頼者に伝える
+- `illust-asset-forge/UPSTREAM.md` に、forge のコピーで直したことと、ものの絵を作って分かったこと(背景の消し方など)を書いている
+- テスト: `illust-asset-forge/.venv/bin/pytest shared-assets/tools/tests`(素材の道具)、`bash scripts/copy-assets.test.sh`(コピーの道具)
+- `shared-assets/` と `illust-asset-forge/` を直しても、カタログサイトのデプロイ(`site.yml`)は動かない(`site/**` の変更でだけ動く)
 
 ### ゲームリポジトリの命名規則
 
