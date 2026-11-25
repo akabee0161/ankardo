@@ -71,6 +71,12 @@ not_found_handling = "404-page"
 - `package.json` の `devDependencies` に `wrangler` (`^4`系) を追加する
 - Wrangler 4はNode.js 22以上を要求する。`actions/setup-node` の `node-version` を `"22"` 以上にする(20のままだとバージョンチェックに失敗し、結局古いWranglerにフォールバックしてしまう)
 
+**`package-lock.json` は、CI と同じ npm で、`node_modules` の無い場所で作る。** CI は `npm ci` を使い、Node 22 の npm 10 で動く。手元の npm が違う版(例: Node 24 の npm 11)でロックファイルを作ると、`npm ci` が止まって本番デプロイが失敗することがある(name-touch で 2 回起きた。wrangler の中の peer 依存(vitest 5・vite 8・rolldown)を、npm 11 は「使われていない」として落とし、npm 10 は必要と見たため)。
+
+- 作り方: 空のフォルダに `package.json` と、あれば `.npmrc`（`legacy-peer-deps` など、CI の `npm ci` にも効くプロジェクトの npm 設定。無いと、peer 依存が競合するゲームでロックファイルの生成が失敗するか、CI と違う解決になる）だけを置き、`npx npm@10 install --package-lock-only`。できた `package-lock.json` をゲームに戻す
+- `node_modules` がある場所で `--package-lock-only` を使わない。手元に入っているパッケージの `resolved`・`integrity`(取得元と改ざん検出のハッシュ)が書かれなくなる
+- 出す前に、`npx npm@10 ci` が通ること、全パッケージに `integrity` があることを確かめる
+
 ### 5. ankardo側: ゲームをカタログに登録
 
 `site/content/games/<slug>.json` を作成する(必須フィールドを指定する。`genre` は `site/lib/genres.ts` の `GENRES` に定義されたキーのいずれかである必要があり、`site/lib/games.ts` の `getAllGames()` が実行時にビルド時検証する):

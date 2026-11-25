@@ -1,0 +1,17 @@
+{
+  "slug": "name-touch",
+  "title": "なまえタッチ",
+  "description": "どうぶつ・むし・みずのいきもの・やさい・たべものの絵をタッチすると、なまえを読み上げます。",
+  "playUrl": "/play/name-touch/",
+  "genre": "education",
+  "devices": ["pc", "mobile-landscape"],
+  "controls": [
+    "絵をタッチすると、なまえを読み上げます",
+    "左右の矢印でページをめくります",
+    "左上のボタンを長押しすると、はじめの画面にもどります"
+  ],
+  "images": ["/screenshots/name-touch/01.png"],
+  "ageRange": "2歳〜",
+  "players": "ひとり用",
+  "difficulty": "やさしめ"
+}
