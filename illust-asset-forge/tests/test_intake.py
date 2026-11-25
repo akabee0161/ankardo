@@ -215,7 +215,7 @@ def test_install_rejects_folder_without_png(repo, tmp_path):
 @pytest.mark.parametrize("content", [b"[1, 2]", b"\xff\xfe\x00bad", b"null"])
 def test_install_rejects_odd_selection_json(repo, selected, content):
     (selected / "c1/selection.json").write_bytes(content)
-    with pytest.raises(ConfigError, match="selection.json"):
+    with pytest.raises(ConfigError, match=r"selection.json: \$: "):  # キーの位置（$ は JSON の全体）を含む
         install_selection(repo, selected)
 
 
@@ -526,3 +526,13 @@ def test_intake_accepts_object_png(repo, tmp_path):
     [r] = install_selection(repo, d)
     assert r.installed == ["object.png"]
     assert (repo / "characters/c1/source/object.png").is_file()
+
+
+def test_install_rejects_png_whose_template_does_not_match_name(repo, tmp_path):
+    write(repo, "templates/object.yaml", "width: 8\nheight: 8\nprompt: [x]\nnegative: []\nexport_size: null\n")
+    d = tmp_path / "selected"
+    write_png(d / "c1/object.png", template="face")  # face の絵を object.png として渡す
+    before = sorted(p.name for p in (repo / "characters/c1/source").iterdir())
+    with pytest.raises(ConfigError, match=r"c1/object.png: 条件の template が 'face'"):
+        install_selection(repo, d)
+    assert sorted(p.name for p in (repo / "characters/c1/source").iterdir()) == before

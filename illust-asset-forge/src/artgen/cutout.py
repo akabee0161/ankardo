@@ -30,11 +30,12 @@ def output_name(source_name: str, suffix: str) -> str:
 
 
 def output_size(box: tuple[int, int, int, int], width: int | None) -> tuple[int, int]:
-    """出力の大きさ。width が None なら範囲の大きさ、あれば縦横の比を保った高さ（四捨五入）。"""
+    """出力の大きさ。width が None なら範囲の大きさ、あれば縦横の比を保った高さ（四捨五入。ちょうど半分は切り上げ）。"""
     x0, y0, x1, y1 = box
     if width is None:
         return (x1 - x0, y1 - y0)
-    return (width, round(width * (y1 - y0) / (x1 - x0)))
+    num, den = width * (y1 - y0), x1 - x0
+    return (width, (2 * num + den) // (2 * den))  # ちょうど半分は切り上げる（round() は 0.5 を 0 にして、高さ 0 になる）
 
 
 def prepared_mask(mask: Image.Image, erase) -> Image.Image:

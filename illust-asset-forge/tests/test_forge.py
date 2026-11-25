@@ -447,7 +447,7 @@ def test_load_pipeline_skips_memory_saving_by_default_for_speed(monkeypatch):
     from artgen.forge import load_pipeline
 
     load_pipeline()
-    assert "attention_slicing" not in rec.calls and "vae_tiling" not in rec.calls
+    assert not {"attention_slicing", "vae_slicing", "vae_tiling"} & set(rec.calls)
 
 
 def test_load_pipeline_low_memory_enables_slicing_and_tiling(monkeypatch):

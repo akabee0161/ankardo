@@ -104,10 +104,10 @@ def prepare_assigns():
 
 def test_prepare_cell_has_source_variables_with_forge_defaults():
     a = prepare_assigns()
-    assert a["REPO_URL"] == "https://github.com/akabee0161/illust-asset-forge.git"
+    assert a["REPO_URL"] == "https://github.com/akabee0161/ankardo.git"
     assert a["REPO_BRANCH"] == "main"
-    assert a["SUBDIR"] == ""
-    assert a["DRIVE_DIR"] == "/content/drive/MyDrive/illust-asset-forge"
+    assert a["SUBDIR"] == "illust-asset-forge"
+    assert a["DRIVE_DIR"] == "/content/drive/MyDrive/ankardo-chiiku"
 
 
 def test_notebook_passes_drive_dir_to_attach():
@@ -118,9 +118,28 @@ def test_notebook_passes_drive_dir_to_attach():
 
 
 def test_prepare_cell_switches_branch_before_pull():
+    # 準備のセルの git の部分を、git の呼び出しを記録する偽物の subprocess で実行し、呼ばれた順を見る
+    import types
+
     src = code_cells()[1][0]
-    assert "REPO_BRANCH" in src
-    assert src.index("checkout") < src.index("pull")  # 切り替えてから pull
+    start = src.index("def git(")
+    end = src.index("# `!pip`")
+    calls = []
+
+    def fake_run(cmd, **kwargs):
+        calls.append(cmd[3:] if cmd[:3] == ["git", "-C", "/clone"] else cmd)
+        return types.SimpleNamespace(stdout="https://example.com/repo.git")
+
+    ns = {
+        "subprocess": types.SimpleNamespace(run=fake_run),
+        "os": types.SimpleNamespace(path=types.SimpleNamespace(isdir=lambda _p: True)),
+        "CLONE": "/clone",
+        "REPO_URL": "https://example.com/repo.git",
+        "REPO_BRANCH": "work-branch",
+    }
+    exec(src[start:end], ns)
+    assert ["checkout", "work-branch"] in calls
+    assert calls.index(["checkout", "work-branch"]) < calls.index(["pull"])  # 切り替えてから pull
 
 
 def test_prepare_cell_refuses_other_repo_clone():

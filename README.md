@@ -31,7 +31,7 @@ ankardo/
 
 | 場所 | 中身 | 作り方 |
 |---|---|---|
-| `items.json` | 21 種類(どうぶつ 6・むし 3・うみのいきもの 3・やさい 4・たべもの 5)の ID・種類・名前・ひらがな・読み上げの文 | 手で書く。ID は `illust-asset-forge/characters/<id>/` と同じ |
+| `items.json` | 21 種類(どうぶつ 6・むし 3・みずのいきもの 3・やさい 4・たべもの 5)の ID・種類・名前・ひらがな・読み上げの文 | 手で書く。ID は `illust-asset-forge/characters/<id>/` と同じ |
 | `img/<id>.webp` | 絵(背景透明、512×512) | `illust-asset-forge` で生成・書き出し(`characters/<id>/object.png`)したものを `shared-assets/tools/build_images.py` で webp にする |
 | `voice/<id>.wav`・`voice/manifest.json` | 名前の声(VOICEVOX:ずんだもん) | `shared-assets/tools/voice.py --speaker 3`(VOICEVOX Engine を `~/opt/voicevox_engine/run --host 127.0.0.1` で起動しておく) |
 | `cry/<id>.wav` | 鳴き声(どうぶつ 6 つだけ) | Wikimedia Commons・Freesound の再配布可の録音を切り出したもの。出典と条件は `CREDITS.md` |

@@ -17,6 +17,9 @@ def test_output_name_and_size():
     assert output_name("face.png", "") == "face.png"
     assert output_size((0, 0, 600, 300), 256) == (256, 128)
     assert output_size((10, 10, 110, 60), None) == (100, 50)
+    assert output_size((0, 0, 2, 1), 1) == (1, 1)  # 高さが 0.5 になるときは切り上げる（round() は 0 にする）
+    assert output_size((0, 0, 3, 2), 1) == (1, 1)  # 0.667 は 1
+    assert output_size((0, 0, 3, 1), 1) == (1, 0)  # 0.333 は 0（export が高さ 0 を止める）
 
 
 def test_render_matte_uses_mask_as_alpha_and_marks_check_red():

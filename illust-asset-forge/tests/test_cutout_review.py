@@ -151,6 +151,23 @@ def test_main_prints_path_or_error(exported, capsys):
     assert out.is_file() and "face_hurt" in out.read_text(encoding="utf-8")
 
 
+def test_review_stops_with_variants_hint_when_only_variants_exist(repo):
+    put(repo, "face_hurt.png", (1024, 1024), "face")
+    set_cutouts(repo, {"face": two_outputs()})
+    export_character(repo, "c1")
+    with pytest.raises(ExportError, match="--variants"):
+        build_review(repo, "c1")
+    assert "face_hurt.png（256x256）" in build_review(repo, "c1", variants=True).read_text(encoding="utf-8")
+
+
+def test_review_stops_when_params_json_is_not_utf8_and_removes_old_page(exported):
+    path = build_review(exported, "c1")
+    (exported / "characters/c1/params.json").write_bytes(b"\xff\xfe{")
+    with pytest.raises(ExportError, match="params.json: 読めない"):
+        build_review(exported, "c1")
+    assert not path.exists()
+
+
 def test_review_removes_old_page_when_check_fails(exported):
     path = build_review(exported, "c1")
     assert path.is_file()

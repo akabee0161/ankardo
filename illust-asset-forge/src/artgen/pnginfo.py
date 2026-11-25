@@ -20,7 +20,15 @@ def save_png(image: Image.Image, path: Path, params: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     info = PngImagePlugin.PngInfo()
     info.add_text(PARAM_KEY, json.dumps(params, ensure_ascii=False))
-    image.save(path, format="PNG", pnginfo=info)
+    # 同じフォルダの一時ファイルへ書き、書き終えてから最終の名前にする。保存中に止まっても、書きかけの PNG が
+    # 候補として残らない（開き直したときの読み込みが失敗しない）。拡張子を .png にしないので、探索にも掛からない
+    tmp = path.with_name(f".{path.name}.tmp")
+    try:
+        image.save(tmp, format="PNG", pnginfo=info)
+        tmp.replace(path)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
 
 
 def read_params(path: Path) -> dict:

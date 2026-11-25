@@ -417,6 +417,13 @@ def test_export_ignores_broken_previous_params(repo):
     assert list(json.loads((repo / "characters/c1/params.json").read_text(encoding="utf-8"))) == ["face.png"]
 
 
+def test_export_ignores_previous_params_with_invalid_utf8(repo):
+    put(repo, "face.png", (1024, 1024), "face")
+    (repo / "characters/c1/params.json").write_bytes(b"\xff\xfe{")
+    export_character(repo, "c1")
+    assert list(json.loads((repo / "characters/c1/params.json").read_text(encoding="utf-8"))) == ["face.png"]
+
+
 def test_export_stops_when_output_height_would_be_zero(repo):
     put(repo, "fullbody.png", (2000, 2), "fullbody")
     set_cutouts(repo, {"fullbody": {"background": "none", "outputs": [{"suffix": "", "width": 10}]}})

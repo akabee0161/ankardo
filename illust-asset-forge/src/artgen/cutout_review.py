@@ -131,7 +131,7 @@ def _collect(root: Path, char_id: str, variants: bool) -> _Parts:
     if params_path.is_file():
         try:
             recorded = json.loads(params_path.read_text(encoding="utf-8")).get("cutouts")
-        except (OSError, json.JSONDecodeError, AttributeError) as e:
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError, AttributeError) as e:
             raise ExportError(f"characters/{char_id}/params.json: 読めない: {e}") from e
     if not expected or recorded != expected:
         raise ExportError(_STALE.format(char=char_id))
@@ -156,6 +156,12 @@ def _collect(root: Path, char_id: str, variants: bool) -> _Parts:
             items.append(_Item(name, _load(source_dir / name, "元の絵", char_id).convert("RGB"), outputs))
         if items:
             templates.append(_Template(template, cutout, items))
+    if not templates:
+        # 表情の差分（face_<表情>.png）だけが書き出されているときは、既定の表示対象が 0 件になる。
+        # 空のページを成功として返すと、何も見せずに承認を求めてしまう
+        raise ExportError(
+            f"characters/{char_id}: 承認用ページに載せる絵が無い（表情の差分だけがある）。--variants を付けて作り直す"
+        )
     return _Parts(char_id, character, templates, load_preview_background(root))
 
 

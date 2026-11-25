@@ -54,15 +54,9 @@ mkdir "$work/out"
 cp -R "$src/." "$work/out/"
 
 mkdir -p "$game/public"
-if [ -e "$dest" ]; then
-  mv "$dest" "$work/old"
-fi
-if ! mv "$work/out" "$dest"; then
-  [ -e "$work/old" ] && mv "$work/old" "$dest"
-  echo "エラー: $dest へ移せなかった（前のコピーに戻した）" >&2
-  exit 1
-fi
+note_dest="$game/${set_name}-assets.md"
 
+# コピー元メモも、素材を入れ替える前に組み立てておく（入れ替えの後で失敗する作業を残さない）
 cat > "$work/note.md" << EOF
 # ${set_name} の共通素材のコピー
 
@@ -75,6 +69,42 @@ cat > "$work/note.md" << EOF
 
 \`+dirty\` が付いているときは、コピー元に未コミットの変更があった。クレジットは \`public/${set_name}/CREDITS.md\` にある。
 EOF
-mv "$work/note.md" "$game/${set_name}-assets.md"
+
+# 素材とメモは 1 つの成功単位。どちらかの入れ替えに失敗したら、両方を前の状態へ戻す。
+# 旧素材・旧メモは、両方の入れ替えが済むまで $work の中に残す（EXIT で消えるのは、成功した後か、戻した後）
+assets_swapped=0
+rollback() {
+  if [ "$assets_swapped" = 1 ]; then
+    rm -rf "$dest"
+  fi
+  if [ -e "$work/old" ]; then
+    mv "$work/old" "$dest"
+  fi
+  if [ -e "$work/old-note.md" ]; then
+    mv "$work/old-note.md" "$note_dest"
+  fi
+}
+
+if [ -e "$dest" ]; then
+  mv "$dest" "$work/old"
+fi
+if ! mv "$work/out" "$dest"; then
+  rollback
+  echo "エラー: $dest へ移せなかった（前のコピーに戻した）" >&2
+  exit 1
+fi
+assets_swapped=1
+if [ -e "$note_dest" ]; then
+  if ! mv "$note_dest" "$work/old-note.md"; then
+    rollback
+    echo "エラー: $note_dest を退避できなかった（前のコピーに戻した）" >&2
+    exit 1
+  fi
+fi
+if ! mv "$work/note.md" "$note_dest"; then
+  rollback
+  echo "エラー: $note_dest を置けなかった（前のコピーに戻した）" >&2
+  exit 1
+fi
 
 echo "コピーした: $dest（ankardo の $commit）"

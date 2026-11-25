@@ -18,7 +18,7 @@ def test_local_dirs(tmp_path):
 
 def _git(root, *args):
     subprocess.run(
-        ["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@example.com", *args],
+        ["git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgSign=false", *args],
         check=True, capture_output=True,
     )
 

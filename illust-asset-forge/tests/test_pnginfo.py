@@ -50,3 +50,25 @@ def test_cli_shows_overrides_first(tmp_path, capsys):
     main([str(p)])
     out = capsys.readouterr().out
     assert out.index("overrides") < out.index("seed")
+
+
+def test_interrupted_save_leaves_no_partial_png(tmp_path, monkeypatch):
+    p = tmp_path / "a.png"
+    real_save = Image.Image.save
+
+    def interrupted(self, fp, *args, **kwargs):
+        real_save(self, fp, *args, **kwargs)  # 書きかけの状態を作る
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(Image.Image, "save", interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        save_png(Image.new("RGB", (8, 8)), p, {"seed": 1})
+    assert list(tmp_path.iterdir()) == []  # 最終の名前も一時ファイルも残らない
+
+
+def test_save_overwrites_existing_png_only_after_success(tmp_path):
+    p = tmp_path / "a.png"
+    save_png(Image.new("RGB", (8, 8)), p, {"seed": 1})
+    save_png(Image.new("RGB", (8, 8)), p, {"seed": 2})
+    assert read_params(p) == {"seed": 2}
+    assert [x.name for x in tmp_path.iterdir()] == ["a.png"]

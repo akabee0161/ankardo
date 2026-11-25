@@ -75,16 +75,24 @@ def _accepted_names(root: Path, expressions: list[str]) -> list[str]:
     return ["face.png", *(f"face_{e}.png" for e in expressions), *(f"{n}.png" for n in others)]
 
 
+def template_for_name(stem: str) -> str:
+    """元の絵のファイル名（拡張子なし）から決まるテンプレート名。取り込みと書き出しで同じ規則を使う。"""
+    if stem == "face" or stem.startswith("face_"):
+        return "face"
+    return stem  # fullbody・object など。名前がそのままテンプレート名
+
+
 def _check_matches_name(src: Path, rel_source: str, params: dict, template_name: str, character) -> None:
     """ファイル名から決まる型・表情と、画像の中身・条件が合っているか。取り違えと縮小を止める。"""
     where = f"{rel_source}/{src.name}"
     stem = src.stem
+    want_template = template_for_name(stem)
     if stem == "face":
-        want_template, want_expression = "face", character.default_expression
+        want_expression = character.default_expression
     elif stem.startswith("face_"):
-        want_template, want_expression = "face", stem.removeprefix("face_")
+        want_expression = stem.removeprefix("face_")
     else:
-        want_template, want_expression = stem, None  # fullbody・object など。名前がそのままテンプレート名
+        want_expression = None
     if template_name != want_template:
         raise ExportError(f"{where}: 条件の template が {template_name!r}。この名前には {want_template!r} の絵が要る")
     if want_expression is not None and params.get("expression", want_expression) != want_expression:
@@ -218,7 +226,7 @@ def export_character(root: Path, char_id: str) -> list[Path]:
     if previous_params.is_file():
         try:
             previous = json.loads(previous_params.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError):
             previous = None
         if isinstance(previous, dict):  # 壊れた記録（辞書でない・読めない）は無視し、書き出しの最後で作り直す
             managed |= {k for k in previous if isinstance(k, str) and k.endswith(".png")}

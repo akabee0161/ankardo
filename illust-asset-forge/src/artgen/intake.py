@@ -16,7 +16,7 @@ from pathlib import Path, PurePosixPath
 from PIL import Image
 
 from artgen.config import ConfigError, load_character, parse_box
-from artgen.export import _accepted_names
+from artgen.export import _accepted_names, template_for_name
 from artgen.pnginfo import MissingParamsError, read_params
 from artgen.selection import check_expression_source
 
@@ -41,9 +41,9 @@ def _read_box(selection: Path, rel: str) -> list[int] | None:
     try:
         data = json.loads(selection.read_text(encoding="utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError, OSError) as e:
-        raise ConfigError(f"{rel}: 読めない: {e}") from e
+        raise ConfigError(f"{rel}: $: 読めない: {e}") from e  # `$` は JSON の全体（キーの位置）
     if not isinstance(data, dict):
-        raise ConfigError(f"{rel}: JSON のオブジェクトでない")
+        raise ConfigError(f"{rel}: $: JSON のオブジェクトでない")
     box = data.get("inpaint_box")
     if box is None:
         return None
@@ -175,6 +175,11 @@ def install_selection(root: Path, selected_dir: Path) -> list[CharacterReport]:
             owner = params.get("character")
             if owner != char_id:
                 raise ConfigError(f"{where}: 条件の character が {owner!r}（{char_id!r} の絵でない）")
+            want_template = template_for_name(p.stem)
+            if params.get("template") != want_template:  # 別の種類の絵で source/ を置き換えない（書き出しが止まる）
+                raise ConfigError(
+                    f"{where}: 条件の template が {params.get('template')!r}（この名前には {want_template!r} の絵が要る）"
+                )
             pngs.append(p)
             used_raw = params.get("inpaint_box")
             if used_raw is not None:

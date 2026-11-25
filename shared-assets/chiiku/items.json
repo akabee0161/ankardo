@@ -2,7 +2,7 @@
   "categories": [
     {"key": "animal", "label": "どうぶつ"},
     {"key": "insect", "label": "むし"},
-    {"key": "sea", "label": "うみのいきもの"},
+    {"key": "sea", "label": "みずのいきもの"},
     {"key": "vegetable", "label": "やさい"},
     {"key": "food", "label": "たべもの"}
   ],

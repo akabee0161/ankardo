@@ -271,10 +271,12 @@ def test_adopt_does_not_restore_stale_backup_from_earlier_failed_restore(
     stale_bytes = stale[0].read_bytes()
 
     # 現在の状態（顔・表情・範囲）を作り直してから、保存で失敗する採用を行う
-    store.adopt(candidate)
+    # 現在の顔は、古い控え（candidate の顔）と違うバイト列にする。同じだと、古い控えを顔へ戻す誤った実装でも比較が通る
+    store.adopt(half_red_candidate)
     store.adopt(expression_candidate)
     store.save_box("c1", (1, 2, 300, 400))
     before = {p.name: p.read_bytes() for p in d.iterdir() if p != stale[0]}
+    assert before["face.png"] != stale_bytes
 
     def boom(*a, **k):
         raise OSError("disk full")
@@ -282,7 +284,7 @@ def test_adopt_does_not_restore_stale_backup_from_earlier_failed_restore(
     with monkeypatch.context() as m:
         m.setattr("artgen.selection.save_png", boom)
         with pytest.raises(OSError, match="disk full"):
-            store.adopt(half_red_candidate)
+            store.adopt(candidate)  # 失敗しても、現在の顔（half_red）が古い控え（candidate）に変わらない
     assert {p.name: p.read_bytes() for p in d.iterdir() if p != stale[0]} == before
     assert stale[0].read_bytes() == stale_bytes
 

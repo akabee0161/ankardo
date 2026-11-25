@@ -97,4 +97,27 @@ mkdir "$other"
 GIT_DIR="$decoy/.git" GIT_WORK_TREE="$decoy" "$here/copy-assets.sh" chiiku "$other" > /dev/null 2>&1 || fail "failed with GIT_DIR set"
 grep -q "$commit" "$other/chiiku-assets.md" || fail "records another repository's commit"
 
+# 9. 素材を入れ替えたあとに、コピー元メモを置けなかったときは、素材もメモも前のコピーに戻る
+shim="$work/shim"
+mkdir "$shim"
+cat > "$shim/mv" << 'SHIM'
+#!/usr/bin/env bash
+# コピー元メモ（note.md）を chiiku-assets.md へ置く mv だけを失敗させる
+case "${@: -1}" in
+  */chiiku-assets.md) case "$1" in */note.md) exit 1 ;; esac ;;
+esac
+exec /bin/mv "$@"
+SHIM
+chmod +x "$shim/mv"
+git -C "$root" checkout -q -- shared-assets/chiiku
+printf 'changed-source' > "$root/shared-assets/chiiku/img/dog.webp"
+before_assets="$(snapshot "$dest")"
+before_note="$(cat "$note")"
+if PATH="$shim:$PATH" "$here/copy-assets.sh" chiiku "$game" 2> /dev/null; then fail "note failure: reported success"; fi
+[ "$before_assets" = "$(snapshot "$dest")" ] || fail "note failure: assets were not restored"
+[ "$before_note" = "$(cat "$note")" ] || fail "note failure: note was changed"
+leftover="$(find "$game" -maxdepth 2 -name '.copy-assets.*')"
+[ -z "$leftover" ] || fail "note failure: left a work folder behind: $leftover"
+git -C "$root" checkout -q -- shared-assets/chiiku
+
 echo "OK copy-assets"

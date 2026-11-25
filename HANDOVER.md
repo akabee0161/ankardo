@@ -9,7 +9,7 @@
 段階: 実装（11 タスク中 8）
 次にやること:
 - 依頼者の手作業（ankardo の PR のマージ、name-touch の GitHub リポジトリ作成・秘密の値・production の保護ルール）が済んだら、実装計画 docs/superpowers/plans/2026-11-24-chiiku-games-step1-2.md の Task 9（なまえタッチの土台）から進める
-- 計画の「20 種類」は 21 種類（たべもの 5）、種類キー fish は sea（うみのいきもの）に読み替える。決めた経緯は shared-assets/chiiku/CREDITS.md と illust-asset-forge/UPSTREAM.md
+- 計画の「20 種類」は 21 種類（たべもの 5）、種類キー fish は sea（みずのいきもの。金魚を含むため表示名を変えた）に読み替える。決めた経緯は shared-assets/chiiku/CREDITS.md と illust-asset-forge/UPSTREAM.md
 - 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は工程 3 で、試聴で不自然だったアクセントを直してから作る
 - 鳴き声（なきごえあて）を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）
 - 設計書は docs/superpowers/specs/2026-11-24-chiiku-games-design.md（依頼者が承認済み）
