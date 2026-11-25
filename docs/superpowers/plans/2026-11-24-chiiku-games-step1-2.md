@@ -4,7 +4,7 @@
 
 **Goal:** ankardo に共通素材（20 種類の絵・名前の声・鳴き声）を作って配る仕組みを入れ、1 本目の「なまえタッチ」を `ankardo.com/play/name-touch/` に公開する。
 
-**Architecture:** ankardo に illust-asset-forge をコピーし、ものを 1 つ描くテンプレート `object` と背景の透明化を足して Modal で 20 枚を作る。書き出した絵・VOICEVOX の声・鳴き声を `ankardo/shared-assets/chiiku/` にまとめ、`scripts/copy-assets.sh` でゲームの `public/chiiku/` にコピーする。なまえタッチは Vite + TypeScript の新しいリポジトリで、あとでひな形に切り出す共通部分を `src/common/` に分けて作る。
+**Architecture:** ankardo に illust-asset-forge をコピーし、ものを 1 つ描くテンプレート `object` を足し、forge の背景消し（`cutouts`）を使って Modal で 20 枚を作る。書き出した絵・VOICEVOX の声・鳴き声を `ankardo/shared-assets/chiiku/` にまとめ、`scripts/copy-assets.sh` でゲームの `public/chiiku/` にコピーする。なまえタッチは Vite + TypeScript の新しいリポジトリで、あとでひな形に切り出す共通部分を `src/common/` に分けて作る。
 
 **Tech Stack:** Python 3.14（forge・素材の道具、pytest）、Modal（T4）、VOICEVOX Engine 0.26.1（`~/opt/voicevox_engine`）、Vite・TypeScript・Vitest・Biome（ゲーム）、Wrangler 4、bash（コピーの道具）。
 
@@ -27,7 +27,7 @@
 
 ## Review Focus
 
-1. 背景の透明化が、白い部分を含むもの（ぶたの鼻の白い光、おにぎりのご飯、にわとりの白い体）を内側まで透明にしてしまう → 外につながる背景だけを消し、線で囲まれた白は残す（Task 2 のテスト `test_cutout_keeps_white_enclosed_by_outline`）
+1. 背景の透明化が、白い部分を含むもの（ぶたの鼻の白い光、おにぎりのご飯、にわとりの白い体）を内側まで透明にしてしまう → 外につながる背景だけを消し、線で囲まれた白は残す（Task 2 のテスト `test_export_object_with_colors_cutout`。forge の `colors` の動きをこの用途で確かめる）
 2. 「はじめる」の前の音・iOS Safari の音の解禁 → 最初のタッチの中で `AudioContext.resume()` と無音の再生をしてから声を鳴らす（Task 9 のテスト `unlock is called inside the start tap`）
 3. 子どもの連打・同時タッチ → 同じ絵を続けて叩いたら前の声を止めて最初から鳴らす。別の絵を叩いたら前の声を止める（Task 10 のテスト `tapping again restarts the voice`）
 4. 長押しの途中で指が外れた・短いタップ → 終えない（Task 9 のテスト `short tap does not exit`、`pointerleave cancels`）
@@ -70,20 +70,19 @@
 - [ ] **Step 6:** `.venv/` と `local/` が ankardo の git に入らないことを `git status --short` で確かめる（forge の `.gitignore` が効かなければ ankardo の `.gitignore` に足す）
 - [ ] **Step 7:** コミット `chore: illust-asset-forge を共通素材用に ankardo へコピーする`
 
-### Task 2: ものを 1 つ描くテンプレートと背景の透明化
+### Task 2: ものを 1 つ描くテンプレート
+
+forge 本体（089c1ff）には、背景消し（`character.yaml` の `cutouts`）と承認用ページ（`artgen.cutout_review`）が既にある（README 11）。このタスクでは背景消しを作らず、テンプレート `object` と、採用・書き出しの名前の決まりだけを足す。
 
 **Files:**
 - Create: `illust-asset-forge/templates/object.yaml`
-- Create: `illust-asset-forge/src/artgen/cutout.py`
-- Modify: `illust-asset-forge/src/artgen/config.py`（`Template.transparent_background: bool`、既定 false）
 - Modify: `illust-asset-forge/src/artgen/selection.py`（`selected_name`）
-- Modify: `illust-asset-forge/src/artgen/export.py`（`_accepted_names`・`_check_matches_name`・書き出し）
-- Modify: `illust-asset-forge/src/artgen/intake.py`（受け付ける名前）
-- Test: `illust-asset-forge/tests/test_cutout.py`、`tests/test_selection.py`、`tests/test_export.py`、`tests/test_intake.py`
+- Modify: `illust-asset-forge/src/artgen/export.py`（受け付ける名前・名前と条件の照合）
+- Modify: `illust-asset-forge/src/artgen/intake.py`・`cloud.py`（`install` の受け付ける名前・持ち越し）
+- Test: `illust-asset-forge/tests/test_selection.py`、`tests/test_export.py`、`tests/test_intake.py`、`tests/test_cloud.py`
 
 **Interfaces:**
-- Produces: `cutout.clear_outer_background(im: Image.Image, *, threshold: int = 240) -> Image.Image`（RGBA を返す。画像の縁から、R・G・B すべてが `threshold` 以上の画素を 4 近傍でたどって透明にする。たどり着けない白は残す）
-- Produces: テンプレート `object`。採用名・書き出し名は `object.png`。書き出しは `characters/<id>/object.png`（512×512、RGBA）
+- Produces: テンプレート `object`。元の絵は `source/object.png`。`cutouts.object` を書いたキャラクターは、forge の書き出しで `characters/<id>/object.png`（RGBA）になる
 
 `object.yaml` の中身:
 
@@ -92,24 +91,22 @@ width: 1024
 height: 1024
 prompt: [no humans, solo, centered, full body, simple background, white background]
 negative: [human, text, watermark, signature, multiple views, cropped, out of frame, shadow]
-export_size: 512
+export_size: null
 use_items: false
-transparent_background: true
 ```
 
 - [ ] **Step 1: 失敗するテストを書く**
-  - `test_cutout.py::test_cutout_clears_white_touching_edges`: 白地の 64×64 の中央に黒い枠の円 → 四隅の alpha が 0、円の線の alpha が 255
-  - `test_cutout.py::test_cutout_keeps_white_enclosed_by_outline`: 黒い枠の円の内側が白 → 内側の中心の alpha が 255
-  - `test_cutout.py::test_cutout_threshold`: 縁の色が (230,230,230) なら threshold=240 で残り、threshold=220 で消える
   - `test_selection.py::test_selected_name_object`: `selected_name({"template": "object"}) == "object.png"`
-  - `test_export.py::test_export_object_is_transparent_512`: `source/object.png`（白地 1024×1024・条件つき）を書き出すと `object.png` が 512×512・RGBA・四隅 alpha 0
+  - `test_selection.py::test_selected_name_rejects_bad_template_name`: `template` が `"../x"` なら `ConfigError`
+  - `test_export.py::test_export_object_with_colors_cutout`: `source/object.png`（白地 1024×1024 の中央に黒い枠の円、円の内側も白、条件つき）と `cutouts: {object: {background: colors, outputs: [{suffix: "", box: null, width: 512}]}}` で書き出すと、`object.png` が 512×512・RGBA・四隅の alpha 0・円の内側の中心の alpha 255
   - `test_export.py::test_export_object_rejects_face_template`: `object.png` の条件が `template: face` なら `ExportError`
-  - `test_intake.py::test_intake_accepts_object_png`: zip／Modal の取り込みで `object.png` を受け付ける
-- [ ] **Step 2:** `.venv/bin/pytest tests/test_cutout.py tests/test_selection.py tests/test_export.py tests/test_intake.py -q` — Expected: 上の新しいテストが FAIL
-- [ ] **Step 3: 実装する。** 名前の決まりを「face と表情は今のまま、それ以外のテンプレートは `<template>.png`」に一般化する（`fullbody.png` はこの決まりで今と同じ名前になる）。`<template>` は `_check_name_part` で検査する。書き出しは `transparent_background` のとき `clear_outer_background` → RGBA のまま `export_size` に縮める（今の `convert("RGB")` を通さない）。`face.png` が無いキャラクター（ものの絵）でも書き出せるようにする
+  - `test_export.py::test_export_without_face_png`: `face.png` が無く `object.png` だけのキャラクターを書き出せる
+  - `test_intake.py::test_intake_accepts_object_png`・`test_cloud.py::test_install_object`: 取り込み・`cloud install` で `object.png` を受け付ける
+- [ ] **Step 2:** `.venv/bin/pytest tests/test_selection.py tests/test_export.py tests/test_intake.py tests/test_cloud.py -q` — Expected: 上の新しいテストが FAIL
+- [ ] **Step 3: 実装する。** 名前の決まりを「face と表情は今のまま、それ以外のテンプレートは `<template>.png`」に一般化する（`fullbody.png` はこの決まりで今と同じ名前になる）。`<template>` は `_check_name_part` で検査し、`templates/<template>.yaml` が無ければ止める。背景消し・切り抜き・縮小は既存の `cutouts` の処理をそのまま使う
 - [ ] **Step 4:** `.venv/bin/pytest -q` — Expected: 全部 PASS（既存のテストも）
-- [ ] **Step 5:** UPSTREAM.md の「forge に戻す候補」に、テンプレート名で決まる採用名・`transparent_background`・`cutout.py` を 1 行ずつ足す
-- [ ] **Step 6:** コミット `feat: ものを 1 つ描くテンプレート object と、外につながる背景の透明化を足す`
+- [ ] **Step 5:** UPSTREAM.md の「forge に戻す候補」に、`object` テンプレートと、テンプレート名で決まる採用名を 1 行ずつ足す
+- [ ] **Step 6:** コミット `feat: ものを 1 つ描くテンプレート object を足し、採用名をテンプレート名で決める`
 
 ### Task 3: 20 種類の設定
 
@@ -127,7 +124,7 @@ ID（以後すべての道具・ゲームで使う）:
 | `vegetable` | `tomato` `carrot` `eggplant` `corn` |
 | `food` | `apple` `banana` `strawberry` `onigiri` |
 
-`character.yaml` の形（例: いぬ）。`name` は日本語の名前、`subject` は何の絵か、`appearance` は見た目、`outfit`・`items` は空、表情は `normal` 1 つ:
+`character.yaml` の形（例: いぬ）。`name` は日本語の名前、`subject` は何の絵か、`appearance` は見た目、`outfit`・`items` は空、表情は `normal` 1 つ。背景消しは `colors`（縁から続く白だけを透明にし、線で囲まれた白は残す）、書き出しは 512px:
 
 ```yaml
 name: いぬ
@@ -138,13 +135,21 @@ items: []
 default_expression: normal
 expressions:
   normal: []
+cutouts:
+  object:
+    background: colors
+    outputs:
+      - {suffix: "", box: null, width: 512}
 ```
+
+`colors` でうまく消えないもの（縁に影や色の付いた地面が出たものなど）は、Task 4 で `matte`（背景除去のモデル）に切り替える。
 
 `expressions.normal: []` を `config` が拒むなら、`[cute]` にする（拒むかどうかは Step 2 で分かる）。かぶとむしは角のあるオス、さめは怖くない顔、おにぎりは海苔を巻いた三角、を `appearance` に入れる。
 
 - [ ] **Step 1: 失敗するテストを書く** `test_chiiku_objects.py`
   - `test_all_twenty_load`: 上の 20 の ID がすべて `load_character` で読め、`build_prompt(…, load_template(root, "object"))` が通る
   - `test_prompt_has_no_humans`: 20 個すべてのプロンプトに `no humans` が入る
+  - `test_every_object_has_cutout`: 20 個すべてに `cutouts.object` があり、出力が 1 つで `width == 512`
   - `test_no_extra_characters_named_like_objects`: `characters/` の中の ID は、見本 4 人と上の 20 個だけ
 - [ ] **Step 2:** `.venv/bin/pytest tests/test_chiiku_objects.py -q` — Expected: FAIL
 - [ ] **Step 3:** 20 個の `character.yaml` を書く
@@ -160,9 +165,9 @@ expressions:
 - [ ] **Step 1: 画風の試し。** `dog`・`tomato`・`butterfly`・`onigiri` を各 3 枚（計 12 枚、10 円前後）作ると依頼者に伝えてから、`.venv/bin/python -m artgen.cloud generate --jobs local/jobs/style-trial.json`
 - [ ] **Step 2:** 候補のページ（`local/rounds/<日時>.html`）を Artifact で見せ、thick-line-flat で続けるか聞く。替えるなら、forge の画風の候補（`styles/`）を同じシードで並べたページを作って選んでもらい、`defaults.yaml` の `style` を替える
 - [ ] **Step 3: 本番の生成。** 20 種類 × 4 枚（80 枚、約 30 分・70 円前後）と伝えてから生成する。種類ごとに 1 ページ（5 回り）にする
-- [ ] **Step 4:** 依頼者が番号で答えた候補を `artgen.cloud adopt` で採用する。良い候補が無いものは、`extra`・`remove` を変えて作り直す（作り直しも枚数を先に伝える）
-- [ ] **Step 5:** `artgen.cloud install <20 の ID>` → `python -m artgen.export <id>`（20 回）
-- [ ] **Step 6:** 書き出した 20 枚の `object.png` を、市松模様の背景に並べた Artifact のページで見せ、透明化の失敗（内側が抜けた・縁に白が残った）が無いか承認を受ける。失敗したものは `threshold` を変えるか作り直す
+- [ ] **Step 4:** 依頼者が番号で答えた候補を `artgen.cloud adopt` で採用する。候補のページには背景を消した絵（Modal の CPU で作るマスク）も並ぶので、背景が消えない候補は選ぶ前に分かる。良い候補が無いものは、`extra`・`remove` を変えて作り直す（作り直しも枚数を先に伝える）
+- [ ] **Step 5:** `artgen.cloud install <20 の ID>` → `python -m artgen.export <id>`（20 回）。`matte` に切り替えたものは、書き出しの前に `artgen.cloud matte <id>`
+- [ ] **Step 6:** `python -m artgen.cutout_review <20 の ID> --out local/check/chiiku-review.html` で 1 枚の承認用ページを作り、Artifact で見せて承認を受ける（内側の白が抜けていないか、縁に白が残っていないか）。失敗したものは `background` を `matte` に替える（マスクが残した飾りは `erase`）か、作り直す
 - [ ] **Step 7:** 承認後にコミット `feat: 知育ゲーム用の 20 種類の絵を生成して書き出す`
 
 ### Task 5: 共通素材の一覧と絵の書き出し
