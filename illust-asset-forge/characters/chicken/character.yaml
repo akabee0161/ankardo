@@ -8,6 +8,10 @@ expressions:
   normal: []
 cutouts:
   object:
-    background: colors
+    background: matte
+    erase:
+      - [[170,835],[340,835],[340,900],[170,900]]
+      - [[745,830],[880,830],[880,900],[745,900]]
+      - [[340,884],[745,884],[745,900],[340,900]]
     outputs:
       - {suffix: "", box: null, width: 512}

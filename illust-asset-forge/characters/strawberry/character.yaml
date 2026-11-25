@@ -1,13 +1,14 @@
 name: いちご
 subject: [strawberry, food focus]
-appearance: [red strawberry, green calyx, seeds]
+appearance: [single red strawberry, small green calyx on top, small yellow seeds, heart-like shape]
 outfit: []
 items: []
+negative: [lettuce, large leaves, wrapped in leaves, white blotches, cream, many leaves, shadow, colored background]
 default_expression: normal
 expressions:
   normal: []
 cutouts:
   object:
-    background: colors
+    background: matte
     outputs:
       - {suffix: "", box: null, width: 512}

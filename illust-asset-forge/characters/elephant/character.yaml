@@ -8,6 +8,6 @@ expressions:
   normal: []
 cutouts:
   object:
-    background: colors
+    background: matte
     outputs:
       - {suffix: "", box: null, width: 512}

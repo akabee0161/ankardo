@@ -1,13 +1,16 @@
 name: りんご
 subject: [apple, food focus]
-appearance: [red apple, green leaf, stem]
+appearance: [single red apple, short brown stem, one green leaf, round shape]
 outfit: []
 items: []
+negative: [plant, branch, tree, many leaves, leaves on the ground, vine, shadow, colored background]
 default_expression: normal
 expressions:
   normal: []
 cutouts:
   object:
     background: colors
+    clear_colors:
+      - {min: 175, max_rg: 40, max_gb: 35}
     outputs:
       - {suffix: "", box: null, width: 512}

@@ -1,0 +1,14 @@
+name: いるか
+subject: [dolphin, animal focus, cute, solo]
+appearance: [grey dolphin, friendly smile, side view, only one dolphin]
+outfit: []
+items: []
+negative: [other animals, fish, waves, water splash, sea, stars, bubbles, shadow, colored background]
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}
