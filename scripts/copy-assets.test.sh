@@ -132,8 +132,12 @@ for f in items.json img/dog.webp voice/dog.wav CREDITS.md; do
   cmp -s "$root/shared-assets/chiiku/$f" "$no_cry_game/public/chiiku/$f" || fail "no-cry: $f differs"
 done
 grep -q "入れていない" "$no_cry_game/chiiku-assets.md" || fail "no-cry: note does not say cry/ was left out"
+# メモの「コピーしたコマンド」は、使ったオプションごと書く（そのまま再実行しても、同じコピーになるように）
+grep -q 'scripts/copy-assets.sh chiiku \. --no-cry`' "$no_cry_game/chiiku-assets.md" || fail "no-cry: the command in the note lacks --no-cry"
 "$here/copy-assets.sh" chiiku "$no_cry_game" > /dev/null # 付けずにコピーし直すと、cry/ が入る
 [ -f "$no_cry_game/public/chiiku/cry/dog.wav" ] || fail "no-cry: recopy without the flag did not bring cry/ back"
+if grep -q -e '--no-cry`' "$no_cry_game/chiiku-assets.md"; then fail "no-cry: the note of a copy without the flag shows --no-cry in the command"; fi
+grep -q 'scripts/copy-assets.sh chiiku \.`' "$no_cry_game/chiiku-assets.md" || fail "the command in the note is wrong for a copy with cry/"
 set +e
 "$here/copy-assets.sh" chiiku "$no_cry_game" --nope 2> /dev/null; code=$?
 set -e
