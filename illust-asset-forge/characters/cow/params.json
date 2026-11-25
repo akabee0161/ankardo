@@ -1,0 +1,208 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [
+        [
+          [
+            280,
+            925
+          ],
+          [
+            352,
+            925
+          ],
+          [
+            352,
+            975
+          ],
+          [
+            280,
+            975
+          ]
+        ],
+        [
+          [
+            433,
+            928
+          ],
+          [
+            488,
+            928
+          ],
+          [
+            488,
+            975
+          ],
+          [
+            433,
+            975
+          ]
+        ],
+        [
+          [
+            553,
+            925
+          ],
+          [
+            654,
+            925
+          ],
+          [
+            654,
+            975
+          ],
+          [
+            553,
+            975
+          ]
+        ],
+        [
+          [
+            728,
+            925
+          ],
+          [
+            800,
+            925
+          ],
+          [
+            800,
+            975
+          ],
+          [
+            728,
+            975
+          ]
+        ],
+        [
+          [
+            280,
+            956
+          ],
+          [
+            800,
+            956
+          ],
+          [
+            800,
+            980
+          ],
+          [
+            280,
+            980
+          ]
+        ],
+        [
+          [
+            433,
+            862
+          ],
+          [
+            488,
+            862
+          ],
+          [
+            488,
+            928
+          ],
+          [
+            433,
+            928
+          ]
+        ],
+        [
+          [
+            552,
+            862
+          ],
+          [
+            654,
+            862
+          ],
+          [
+            654,
+            925
+          ],
+          [
+            552,
+            925
+          ]
+        ],
+        [
+          [
+            240,
+            925
+          ],
+          [
+            284,
+            925
+          ],
+          [
+            284,
+            960
+          ],
+          [
+            240,
+            960
+          ]
+        ],
+        [
+          [
+            350,
+            925
+          ],
+          [
+            363,
+            925
+          ],
+          [
+            363,
+            955
+          ],
+          [
+            350,
+            955
+          ]
+        ]
+      ],
+      "matte_sha256": {
+        "object.png": "5efe87f6719576affa3bffd802a5b364a799c23fbf26ba790480ecff0396ce4f"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "3f7ced2bd0dfab031f07f578ef02a52ab29d90d3bf24c8d594168c3d4c41d039"
+      }
+    }
+  },
+  "object.png": {
+    "character": "cow",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "cow, animal focus, cute, holstein cow, black and white spots, standing, smiling, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_034333",
+    "sampler": "Euler a",
+    "seed": 2190606034,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

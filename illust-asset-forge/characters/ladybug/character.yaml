@@ -1,0 +1,15 @@
+name: てんとうむし
+subject: [ladybug, bug, animal focus, cute]
+appearance: [red shell, black spots, round body]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: colors
+    clear_colors:
+      - {min: 175, max_rg: 40, max_gb: 35}
+    outputs:
+      - {suffix: "", box: null, width: 512}

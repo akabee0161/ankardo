@@ -197,7 +197,7 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/pixel-a
 
 ## イラストを使うなら（illust-asset-forge）
 
-顔グラなどのイラストは illust-asset-forge（以下 forge）で作る。forge をゲームリポジトリの `illust-asset-forge/` へ丸ごとコピーし、ゲームの中で画風・テンプレート・道具を直しながらキャラクターを作る。GPU を使う処理（生成）は依頼者が Colab で動かす。仕組みは「ドット絵を使うなら」と同じ（コピーして自由に直す）。
+顔グラなどのイラストは illust-asset-forge（以下 forge）で作る。forge をゲームリポジトリの `illust-asset-forge/` へ丸ごとコピーし、ゲームの中で画風・テンプレート・道具を直しながらキャラクターを作る。GPU を使う処理（生成）は、量産は Claude が Modal の T4 で、1 枚ずつ手で試すときは依頼者が Colab で動かす（forge の README 10）。仕組みは「ドット絵を使うなら」と同じ（コピーして自由に直す）。
 
 ### コピーする
 
@@ -218,7 +218,7 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 3. コピーの `tests/test_repo_configs.py` のうち、forge 本体の見本だけを前提にしたテスト（`test_sample_characters_are_the_four_generic_ones`・`test_no_game_ids_or_trial_style_names`）と、禁止語の検査（`test_repo_does_not_mention_the_game`。ゲームのリポジトリ名が `REPO_URL` に入ると落ちる）を、このゲームに合わせて直す
 4. コピーの `CLAUDE.md` の「リポジトリにゲーム側の事情…を書かない」を、このゲーム専用であることと、直したら `UPSTREAM.md` に 1 行足すことに書き換える
 5. Python の venv を作り、テストを通す: `uv venv illust-asset-forge/.venv && uv pip install --python illust-asset-forge/.venv/bin/python -e 'illust-asset-forge[dev]' && (cd illust-asset-forge && .venv/bin/pytest)`
-6. 生成（GPU）は依頼者が Colab で動かす。Colab は `develop` を取るので、設定の変更は `develop` にマージするまで Colab に届かない
+6. 量産は Modal の道（forge の README 10）で作る。Modal には手元のコードをそのまま送るので、push せずに試せる。Modal を使うなら `illust-asset-forge/src/artgen/modal_app.py` の `APP_NAME` をゲームの名前に書き換える（`VOLUME_NAME` は forge 本体と同じままにすると、モデル約 7GB を取り直さずに済む。理由は `UPSTREAM.md` に書く）。生成の前に、枚数と見込みの金額を依頼者に伝える。1 枚ずつ手で試すときは依頼者が Colab で動かす。Colab は `develop` を取るので、設定の変更は `develop` にマージするまで Colab に届かない
 
 ### forge とゲーム側のコピーの関係
 
@@ -227,3 +227,38 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 ### 経緯
 
 - 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/fc34a512e9fdcdeccea1bd78679f3f9cbe62676e/docs/superpowers/specs/2026-11-22-face-gen-ai-design.md)（commit 固定。マージの前後で同じ資料が開ける）
+
+## 共通素材を使うなら（知育ゲーム: shared-assets）
+
+幼児向けの知育ゲームは、絵・名前の声・鳴き声を ankardo の `shared-assets/chiiku/` から取る。素材の中身と作り方は README の「共通素材」。ここは、新しいゲームがそれを使うときの手順。
+
+### コピーする
+
+```bash
+./scripts/copy-assets.sh chiiku <ゲームリポジトリのパス>            # 鳴き声を使うゲーム
+./scripts/copy-assets.sh chiiku <ゲームリポジトリのパス> --no-cry   # 鳴き声を使わないゲーム
+```
+
+鳴き声を鳴らさないゲームには `--no-cry` を付ける。付けないと、CC BY-SA の録音（`cry/dog.wav`・`cry/pig.wav`）がそのゲームの公開物に入り、使わないのにクレジットの義務だけを負う。
+
+`<ゲーム>/public/chiiku/` に、`items.json`・`img/<id>.webp`・`voice/<id>.wav`・`voice/manifest.json`・`cry/<id>.wav`（どうぶつ 6 つ。`--no-cry` では入らない）・`CREDITS.md` が入る。`public/chiiku/` が既にあるときは、丸ごと置き換える（コピー元から消えたファイルも消える）。コピー元の commit（未コミットの変更があれば `+dirty`）とコピーした日は `<ゲーム>/chiiku-assets.md` に書かれる。コミットはしないので、ゲーム側で中身を見てから、ゲーム側の変更とは分けて 1 つのコミットにする。
+
+### ゲーム側で守ること
+
+1. `public/chiiku/` を手で直さない。素材を直すときは ankardo の `shared-assets/chiiku/` を直し、コピーし直す
+2. `items.json` の形（`categories` と `items`。種類のキーは `animal`・`insect`・`sea`・`vegetable`・`food`、ID は 21 種類の英語名）を `loadItems` で読み、形が違えば、どの項目が違うかを示して止める。ゲーム側に 21 種類の一覧を書き写さない
+3. 字を読めない子ども向けなので、名前は声（`voice/<id>.wav`）で出し、画面の字は 8・9 のゲーム（もじとえ・もじなぞり）だけ。字を出すときは `kana`（ひらがな）を使い、`label` は使わない
+4. クレジットは `public/chiiku/CREDITS.md` の「ゲームの画面に出すクレジット」を、タイトル画面の下に小さく出す。鳴き声（`cry/`）を使うゲームだけ、鳴き声の行も出す
+5. 音は最初のタッチの「はじめる」の中で `AudioContext.resume()` を呼び、無音の再生をしてから鳴らす（ブラウザは画面に触れるまで音を出せないため）
+6. 声と鳴き声は wav。古い iOS でも鳴る
+
+### 素材を足す・直す
+
+- 絵: forge（`illust-asset-forge/`）で作り、`shared-assets/tools/build_images.py` で webp にする。Modal で作る前に、枚数と見込みの金額を依頼者に伝える。背景の消し方で詰まったときは `illust-asset-forge/UPSTREAM.md` の「分かったこと」
+- 声: VOICEVOX Engine を起動し、`shared-assets/tools/voice.py --speaker 3`。text・話者・Engine の版が同じ声は作り直さない。決まり文句（「〇〇は どれ？」など）は、そのゲームを作るときに足す。試聴では「ぞうさんは どれ？」がどの話者でも不自然だったので、アクセントを直してから作る
+- 鳴き声: 再配布が許される録音だけを使う（効果音ラボは再配布禁止で使えない）。出典・条件を `CREDITS.md` に書く。元の録音が市販ライブラリの転載でないか、Commons のページで確かめる
+- どれを直しても、`illust-asset-forge/.venv/bin/pytest shared-assets/tools/tests` と `bash scripts/copy-assets.test.sh` を通す
+
+### 経緯
+
+- 設計: `docs/superpowers/specs/2026-11-24-chiiku-games-design.md`（ログ。決まったこと・決めた人の印）

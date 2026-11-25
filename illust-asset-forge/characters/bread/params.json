@@ -1,0 +1,45 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [],
+      "matte_sha256": {
+        "object.png": "3a3a17809bf9d35632efef306c1351be9b32b7a8eab1caeee2ec4f996a67723e"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "c6ce9fba85a163486bed14fde4dcaf3d10e80c3597607ab74e7068dca19280ac"
+      }
+    }
+  },
+  "object.png": {
+    "character": "bread",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow, butter, jam, plate, multiple slices, colored background",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "bread, food focus, single slice of bread, square shape, golden brown crust, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_045031",
+    "sampler": "Euler a",
+    "seed": 588378760,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

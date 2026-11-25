@@ -1,0 +1,100 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [
+        [
+          [
+            170,
+            835
+          ],
+          [
+            340,
+            835
+          ],
+          [
+            340,
+            900
+          ],
+          [
+            170,
+            900
+          ]
+        ],
+        [
+          [
+            745,
+            830
+          ],
+          [
+            880,
+            830
+          ],
+          [
+            880,
+            900
+          ],
+          [
+            745,
+            900
+          ]
+        ],
+        [
+          [
+            340,
+            884
+          ],
+          [
+            745,
+            884
+          ],
+          [
+            745,
+            900
+          ],
+          [
+            340,
+            900
+          ]
+        ]
+      ],
+      "matte_sha256": {
+        "object.png": "f68ac773e7cbd0e3bb57a7b102885fbbd8293ce4b0a7d54848e6f40a7e702917"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "1fe1a3bec7dfb982f8131e9860dfaacbb02888226c19526bf35697a0e58418ff"
+      }
+    }
+  },
+  "object.png": {
+    "character": "chicken",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "chicken, bird, animal focus, cute, white hen, red comb, standing, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_034630",
+    "sampler": "Euler a",
+    "seed": 1936410465,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

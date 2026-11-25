@@ -1,0 +1,45 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [],
+      "matte_sha256": {
+        "object.png": "65b7a1c978a3bfa552f25e7c1a62dd5fc65ef7c8fdd8d9e843b2c3cc31ed2594"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "f5eda604444943541402abc87a9e0fc97083f61ddb01b8505477b6bd7ec19e9c"
+      }
+    }
+  },
+  "object.png": {
+    "character": "goldfish",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "goldfish, fish, animal focus, cute, orange goldfish, flowing fins, side view, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_035722",
+    "sampler": "Euler a",
+    "seed": 1140675877,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

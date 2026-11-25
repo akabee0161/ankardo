@@ -1,0 +1,14 @@
+name: パン
+subject: [bread, food focus]
+appearance: [single slice of bread, square shape, golden brown crust]
+outfit: []
+items: []
+negative: [butter, jam, plate, multiple slices, shadow, colored background]
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

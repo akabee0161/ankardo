@@ -1,0 +1,14 @@
+name: とんぼ
+subject: [dragonfly, bug, animal focus, cute, solo]
+appearance: [red dragonfly, long slender body, four transparent wings, seen from above]
+outfit: []
+items: []
+negative: [other insects, plants, grass, shadow, ground, colored background]
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

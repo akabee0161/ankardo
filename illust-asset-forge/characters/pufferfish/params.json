@@ -1,0 +1,45 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [],
+      "matte_sha256": {
+        "object.png": "53b995199b9ffc307ab5c43faef08696ccfb2299fe0707d611cad1e27a43c94c"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "0a6ee2aae32c7d013247920a655fd457fe67361e2bf48c0280d16f7aba4b9186"
+      }
+    }
+  },
+  "object.png": {
+    "character": "pufferfish",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "pufferfish, fish, animal focus, cute, round body, inflated, small spikes, side view, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_035851",
+    "sampler": "Euler a",
+    "seed": 337727857,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

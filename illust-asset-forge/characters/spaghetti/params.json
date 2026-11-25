@@ -1,0 +1,45 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [],
+      "matte_sha256": {
+        "object.png": "8b186020c8d557942475655b2454915d7f22056987a30aa0026e861dc98257f5"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "5caf42c06ccd01c3edf0a37b70c2c7d560e2533b51afa66d01e62f6b83cb8c84"
+      }
+    }
+  },
+  "object.png": {
+    "character": "spaghetti",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow, multiple plates, table, colored background",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "spaghetti, pasta, food focus, plate of spaghetti, red tomato sauce, one fork, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_045116",
+    "sampler": "Euler a",
+    "seed": 179697890,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

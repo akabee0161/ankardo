@@ -1,0 +1,6 @@
+width: 1024
+height: 1024
+prompt: [no humans, solo, centered, full body, simple background, white background]
+negative: [human, text, watermark, signature, multiple views, cropped, out of frame, shadow]
+export_size: null
+use_items: false

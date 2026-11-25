@@ -1,0 +1,13 @@
+name: ふぐ
+subject: [pufferfish, fish, animal focus, cute]
+appearance: [round body, inflated, small spikes, side view]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

@@ -1,0 +1,13 @@
+name: ぞう
+subject: [elephant, animal focus, cute]
+appearance: [grey elephant, long trunk, big ears, standing, smiling]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

@@ -1,0 +1,198 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [
+        [
+          [
+            200,
+            770
+          ],
+          [
+            290,
+            770
+          ],
+          [
+            290,
+            845
+          ],
+          [
+            200,
+            845
+          ]
+        ],
+        [
+          [
+            290,
+            790
+          ],
+          [
+            430,
+            790
+          ],
+          [
+            445,
+            803
+          ],
+          [
+            478,
+            812
+          ],
+          [
+            478,
+            845
+          ],
+          [
+            290,
+            845
+          ]
+        ],
+        [
+          [
+            565,
+            797
+          ],
+          [
+            722,
+            797
+          ],
+          [
+            722,
+            845
+          ],
+          [
+            565,
+            845
+          ]
+        ],
+        [
+          [
+            478,
+            812
+          ],
+          [
+            565,
+            812
+          ],
+          [
+            565,
+            845
+          ],
+          [
+            478,
+            845
+          ]
+        ],
+        [
+          [
+            722,
+            782
+          ],
+          [
+            810,
+            782
+          ],
+          [
+            810,
+            860
+          ],
+          [
+            722,
+            860
+          ]
+        ],
+        [
+          [
+            640,
+            806
+          ],
+          [
+            780,
+            806
+          ],
+          [
+            780,
+            840
+          ],
+          [
+            640,
+            840
+          ]
+        ],
+        [
+          [
+            716,
+            770
+          ],
+          [
+            760,
+            770
+          ],
+          [
+            760,
+            795
+          ],
+          [
+            716,
+            795
+          ]
+        ],
+        [
+          [
+            670,
+            840
+          ],
+          [
+            740,
+            840
+          ],
+          [
+            740,
+            856
+          ],
+          [
+            670,
+            856
+          ]
+        ]
+      ],
+      "matte_sha256": {
+        "object.png": "ed42fb847d296391e3d668110d8a4d3c6139a42bf7ad37a1f9545802f7259f01"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "e0c841b1928f3f03c3687e02095a50f9f0cc6369404473e48f6a1d6adb3098fc"
+      }
+    }
+  },
+  "object.png": {
+    "character": "pig",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "pig, animal focus, cute, pink pig, round body, standing, smiling, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_034502",
+    "sampler": "Euler a",
+    "seed": 1807961568,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

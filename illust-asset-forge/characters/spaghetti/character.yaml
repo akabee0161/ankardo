@@ -1,0 +1,14 @@
+name: スパゲッティ
+subject: [spaghetti, pasta, food focus]
+appearance: [plate of spaghetti, red tomato sauce, one fork]
+outfit: []
+items: []
+negative: [multiple plates, table, shadow, colored background]
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

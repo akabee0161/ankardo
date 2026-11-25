@@ -1,0 +1,13 @@
+name: バナナ
+subject: [banana, food focus]
+appearance: [yellow banana, curved, bunch of two]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

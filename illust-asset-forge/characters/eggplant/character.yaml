@@ -1,0 +1,13 @@
+name: なす
+subject: [eggplant, food focus]
+appearance: [purple eggplant, green calyx]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

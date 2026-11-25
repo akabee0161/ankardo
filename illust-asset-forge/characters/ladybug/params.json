@@ -1,0 +1,48 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "colors",
+      "clear_colors": [
+        {
+          "max_gb": 35,
+          "max_rg": 40,
+          "min": 175
+        }
+      ],
+      "erase": [],
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "8b866a3e76c7738f24887d05855cd1dd56470a445d5e297a5a44943ec851cf17"
+      }
+    }
+  },
+  "object.png": {
+    "character": "ladybug",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "ladybug, bug, animal focus, cute, red shell, black spots, round body, no humans, solo, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_035306",
+    "sampler": "Euler a",
+    "seed": 3007503205,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}

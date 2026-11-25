@@ -1,0 +1,13 @@
+name: ちょうちょ
+subject: [butterfly, bug, animal focus]
+appearance: [orange wings, spread wings, colorful]
+outfit: []
+items: []
+default_expression: normal
+expressions:
+  normal: []
+cutouts:
+  object:
+    background: matte
+    outputs:
+      - {suffix: "", box: null, width: 512}

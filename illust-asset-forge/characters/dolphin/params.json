@@ -1,0 +1,45 @@
+{
+  "cutouts": {
+    "object": {
+      "background": "matte",
+      "clear_colors": [],
+      "erase": [],
+      "matte_sha256": {
+        "object.png": "cc10f6f9cf4568cf17a8d5c2b1dd1cb5d75ddc86d87af96d48a78e9ea3a9b467"
+      },
+      "outputs": [
+        {
+          "box": null,
+          "suffix": "",
+          "width": 512
+        }
+      ],
+      "source_sha256": {
+        "object.png": "cfdd50a115061278eac8088111c5ae6c9354f67b2ebc46c7530d9e595b8a37e1"
+      }
+    }
+  },
+  "object.png": {
+    "character": "dolphin",
+    "commit": "c732a6e+dirty",
+    "diffusers": "0.42.1",
+    "expression": "normal",
+    "flipped": false,
+    "gpu": "Tesla T4",
+    "guidance_scale": 5,
+    "height": 1024,
+    "model": "cagliostrolab/animagine-xl-4.0",
+    "negative_prompt": "monochrome, greyscale, sketch, lowres, bad anatomy, bad hands, text, error, missing finger, extra digits, fewer digits, cropped, worst quality, low quality, low score, bad score, average score, signature, watermark, username, blurry, 3d, realistic, messy hair, shiny hair, multicolored hair, streaked hair, detailed hair, colorful, vivid colors, saturated, human, multiple views, out of frame, shadow, other animals, fish, waves, water splash, sea, stars, bubbles, colored background",
+    "num_inference_steps": 28,
+    "overrides": {},
+    "prompt": "dolphin, animal focus, cute, solo, grey dolphin, friendly smile, side view, only one dolphin, no humans, centered, full body, simple background, white background, thick outlines, flat color, limited palette, bold lineart, simple shading, masterpiece, high score, great score, absurdres",
+    "run_id": "20261125_051034",
+    "sampler": "Euler a",
+    "seed": 2398738710,
+    "style": "thick-line-flat",
+    "template": "object",
+    "torch": "2.14.1+cu130",
+    "transformers": "5.22.2",
+    "width": 1024
+  }
+}
