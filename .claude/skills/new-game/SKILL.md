@@ -159,6 +159,11 @@ CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... \
 4. ゲームの `CLAUDE.md` に、機能ブランチ → `develop` → `main` の流れを書く
 5. この PR は `develop` がまだないので `main` に向け、マージしたあと、**`main` の本番の `deploy` が成功するまで待つ**（`production` の承認が要るリポジトリでは、承認する）。`preview_urls = true` は本番の `deploy` で Worker に反映されるので、先に `develop` を push すると、プレビューは成功しても URL が付かない（`"urls": []`。sea-defence で起きた。承認後に `Preview (develop)` を動かし直すと付く）
 6. `main` から `develop` を作って push する。ワークフローの成功を見てから、ログインなしで `curl` し、`302` で `cloudflareaccess.com` に転送されることを確かめる
+7. 依頼者の作業ページ（personal-work-hub リポジトリ）のリンク集に、このプレビューを足す PR を作る（足さないと、作業ページにゲームが出てこない）。`main` から作業ブランチを切って、次の 3 か所を直す
+   - `src/links.ts` の `LINKS` に、`{ label: '<ゲーム名>（プレビュー）', url: 'https://develop-<Worker 名>.akabee0161.workers.dev/play/<slug>/', note: 'develop ブランチの確認用。本番に出す前に遊んで確かめる' }` を、既存のゲームと同じ形で足す。URL は、手順 6 で確かめたプレビューのもの（`<Worker 名>` は `wrangler.toml` の `name`）
+   - `test/links.test.ts` の「ゲームのプレビュー」のテストが固定している slug の一覧に、`<slug>` を足す（一覧は並べ替えた順）。足さないと `npm test` が落ちる
+   - `README.md` の「リンク」の説明の、ゲームの本数と名前の一覧を直す
+   - `npm test && npm run typecheck` を通してから、`main` 向けの PR を作る。受付はプレビュー全体が対象なので、`infra/` の変更は要らない
 
 守ること:
 
