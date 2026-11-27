@@ -17,6 +17,9 @@ __TITLE__（chiiku-template-slug）で作業する際の指針。
 - `src/common/`（素材の一覧の読み込み・音・長押し・タイトル画面・「？」・⏏・はねる動き・共通の見た目）は、知育ゲームで共通の部分。**このゲームだけの決まりを入れない**。このゲームの遊びは `src/game/` に書く
 - `src/common/` は ankardo のひな形 `templates/chiiku-game/` の写しで、写した元は `template.md`。共通部分を直したら、ほかのゲームにも要るかを考え、要るなら ankardo のひな形にも同じ直しを入れる（PR を分ける）。要らないなら `src/game/` に置く
 
+- 問題を出すゲームは、`src/common/` の区切りを使う。`ROUND_SIZE`（5 問）・`createProgressDots(total)`（正解した数を見せる点。点数ではない）・`showRoundEnd`（つづける／やめる。どちらも通常のタップ）
+- 正解は `playCorrect(audio, 声の URL)`（音 → 声の順。`true` が返ったときだけ次へ進む。`false` は ⏏ などで切られた印）、間違いは `playWrong(audio)`。揺れは `createBouncer('wiggle', WIGGLE_MS)`。素材の URL は `assetUrl('voice/…')`
+
 ## 守ること（知育ゲームの決まり）
 
 - 字が読めない子どもが遊ぶ。指示は声、ボタンは絵だけ。字を出すのは、親のための題・クレジット・「？」の説明だけ
