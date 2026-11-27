@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { loadItems } from './assets';
+import { assetUrl, loadItems } from './assets';
 
 // 写した直後は素材（public/chiiku/）が無い。実物の一覧を使う確認は、素材が入っているときだけ行う
 const REAL_PATH = 'public/chiiku/items.json';
@@ -19,6 +19,13 @@ function stubFetch(body: string, init: { ok?: boolean; status?: number } = {}) {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+});
+
+describe('assetUrl', () => {
+  it('points into chiiku/ under the base of the game', () => {
+    // vitest の BASE_URL は '/'
+    expect(assetUrl('voice/dog.wav')).toBe('/chiiku/voice/dog.wav');
+  });
 });
 
 describe('loadItems', () => {

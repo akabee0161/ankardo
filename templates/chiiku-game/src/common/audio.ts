@@ -8,6 +8,8 @@ export interface AudioPlayer {
   unlock(): Promise<void>;
   /** 鳴っている音を止めてから鳴らす。読み込みが遅くても、後から叩いた方を優先する */
   play(url: string): Promise<void>;
+  /** play と同じに鳴らし、鳴り終わったら true で解決する。stop()・別の play／playToEnd に切られたら false（呼んだ側は、そこで続きをやめる目印にする）。読み込めなければ reject */
+  playToEnd(url: string): Promise<boolean>;
   /** 声を先に読み込んで、デコードしておく（鳴らさない）。最初のタッチで待たせないために、画面に出す前後に呼ぶ。失敗は握りつぶし、タップのときにやり直す */
   preload(urls: string[]): void;
   /** 鳴っている音と、読み込み中で鳴らしていない音を止める */
@@ -62,6 +64,14 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     return context;
   };
 
+  // 鳴っている playToEnd の、終わりを待つ側。どの終わり方でも、必ず 1 回だけ解決する
+  let settle: ((completed: boolean) => void) | null = null;
+  const settleEnd = (completed: boolean) => {
+    const resolve = settle;
+    settle = null;
+    resolve?.(completed);
+  };
+
   const stopPlaying = () => {
     if (!playing) return;
     const source = playing;
@@ -72,6 +82,32 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     } catch {
       // 鳴り終わった音を止めても例外になるブラウザがある。無視してよい
     }
+    // 途中で切られた。最後まで鳴ったときだけ true にする
+    settleEnd(false);
+  };
+
+  /** 前の音を止め、鳴らす用意をした source を返す。読み込みの間に別の play・stop が来ていたら null */
+  const prepare = async (url: string): Promise<SourceLike | null> => {
+    const mine = ++ticket;
+    stopPlaying();
+    const c = ctx();
+    // suspended（最初のタッチの前）と、iOS が電話・画面ロックで止めた interrupted は、タップで動かし直す
+    if (c.state !== 'running') {
+      void c.resume().catch(() => {});
+    }
+    let buffer: unknown;
+    try {
+      buffer = await load(url);
+    } catch (error) {
+      // 読み込みの間に stop・別の再生が来ていたら、この失敗は伝えない（呼んだ側が、止めたあとに次の音を鳴らさないように）
+      if (mine !== ticket) return null;
+      throw error;
+    }
+    if (mine !== ticket) return null;
+    const source = c.createBufferSource();
+    source.buffer = buffer;
+    source.connect(c.destination);
+    return source;
   };
 
   const load = (url: string): Promise<unknown> => {
@@ -106,23 +142,27 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     },
 
     async play(url) {
-      const mine = ++ticket;
-      stopPlaying();
-      const c = ctx();
-      // suspended（最初のタッチの前）と、iOS が電話・画面ロックで止めた interrupted は、タップで動かし直す
-      if (c.state !== 'running') {
-        void c.resume().catch(() => {});
-      }
-      const buffer = await load(url);
-      if (mine !== ticket) return;
-      const source = c.createBufferSource();
-      source.buffer = buffer;
-      source.connect(c.destination);
+      const source = await prepare(url);
+      if (!source) return;
       source.onended = () => {
         if (playing === source) playing = null;
       };
       playing = source;
       source.start(0);
+    },
+
+    async playToEnd(url) {
+      const source = await prepare(url);
+      if (!source) return false;
+      return new Promise<boolean>((resolve) => {
+        settle = resolve;
+        source.onended = () => {
+          if (playing === source) playing = null;
+          settleEnd(true);
+        };
+        playing = source;
+        source.start(0);
+      });
     },
 
     preload(urls) {

@@ -19,6 +19,7 @@ describe('startGame', () => {
     audio = {
       unlock: vi.fn(),
       play: vi.fn().mockResolvedValue(undefined),
+      playToEnd: vi.fn().mockResolvedValue(true),
       preload: vi.fn(),
       stop: vi.fn(),
     } as unknown as AudioPlayer;

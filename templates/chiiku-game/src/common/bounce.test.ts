@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { BOUNCE_MS, createBouncer } from './bounce';
+import { BOUNCE_MS, WIGGLE_MS, createBouncer } from './bounce';
 
 describe('createBouncer', () => {
   let el: HTMLElement;
@@ -42,6 +42,21 @@ describe('createBouncer', () => {
     vi.advanceTimersByTime(200);
     expect(el.classList.contains('bounce')).toBe(false);
     expect(other.classList.contains('bounce')).toBe(true);
+  });
+
+  it('uses the given class and duration (the wiggle)', () => {
+    expect(WIGGLE_MS).toBe(400);
+    const wiggler = createBouncer('wiggle', 100);
+    wiggler.bounce(el);
+    expect(el.classList.contains('wiggle')).toBe(true);
+    expect(el.classList.contains('bounce')).toBe(false);
+    vi.advanceTimersByTime(99);
+    expect(el.classList.contains('wiggle')).toBe(true);
+    vi.advanceTimersByTime(1);
+    expect(el.classList.contains('wiggle')).toBe(false);
+    wiggler.bounce(el);
+    wiggler.clear();
+    expect(el.classList.contains('wiggle')).toBe(false);
   });
 
   it('clear removes the class at once and stops the timers', () => {

@@ -190,6 +190,83 @@ body {
   outline-offset: 4px;
 }
 
+/* 点の並び（5 問のうち、正解した数）。点数ではなく飾り */
+.progress {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2vmin, 16px);
+}
+
+.dot {
+  width: clamp(14px, 3vmin, 24px);
+  height: clamp(14px, 3vmin, 24px);
+  border-radius: 50%;
+  background: rgb(59 47 30 / 0.15);
+}
+
+.dot.on {
+  background: var(--accent);
+}
+
+/* 5 問のあとの画面。「つづける」は大きな緑の丸、「やめる」は小さな灰色の丸で、離して置く */
+.round-end {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(16px, 5vmin, 40px);
+  padding-block: max(16px, env(safe-area-inset-top, 0px))
+    max(12px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+.continue-button {
+  width: min(40vmin, 280px);
+  height: min(40vmin, 280px);
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: min(20vmin, 140px);
+  line-height: 1;
+  padding-left: 0.08em; /* ▶ は見た目の重心が左に寄るので、少し右へ */
+  cursor: pointer;
+  box-shadow: 0 6px 0 rgb(0 0 0 / 0.18);
+}
+
+.continue-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 3px 0 rgb(0 0 0 / 0.18);
+}
+
+/* 動きを減らす指定は、押下時のスタイル（.continue-button:active）より後ろに置く（詳細度が同じなので、後ろが勝つ） */
+@media (prefers-reduced-motion: reduce) {
+  .continue-button:active {
+    transform: none;
+  }
+}
+
+.quit-button {
+  width: 56px;
+  height: 56px;
+  margin-top: clamp(8px, 4vmin, 32px);
+  border: 0;
+  border-radius: 50%;
+  background: rgb(59 47 30 / 0.12);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.continue-button:focus-visible,
+.quit-button:focus-visible {
+  outline: 4px solid var(--focus);
+  outline-offset: 6px;
+}
+
 /* 触った絵がはねる動き。付けた要素そのものがはねる（中の絵だけをはねさせたいゲームは、絵に付ける）。
    400ms は bounce.ts の BOUNCE_MS と合わせる */
 .bounce {
@@ -211,8 +288,30 @@ body {
   }
 }
 
+/* 間違えたときの揺れ。付けた要素そのものが、左右に 3 回揺れる。400ms は bounce.ts の WIGGLE_MS と合わせる */
+.wiggle {
+  animation: wiggle 0.4s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  17%,
+  50%,
+  83% {
+    transform: translateX(-6px);
+  }
+  33%,
+  67% {
+    transform: translateX(6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .bounce {
+  .bounce,
+  .wiggle {
     animation: none;
     opacity: 0.7;
   }

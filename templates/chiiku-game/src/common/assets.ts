@@ -1,5 +1,8 @@
 // 共通素材の一覧（public/chiiku/items.json）を読む。知育ゲームで共通。ゲームごとの決まりを入れない。
 
+/** 素材（public/chiiku/ の下）の URL。公開先（/play/<slug>/）の基準から読むので、末尾のスラッシュ無しで開かれても外れない */
+export const assetUrl = (path: string): string => `${import.meta.env.BASE_URL}chiiku/${path}`;
+
 export type Category = { key: string; label: string };
 
 export type Item = {
