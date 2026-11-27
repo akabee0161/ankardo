@@ -251,7 +251,9 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 6. 作業ページ（personal-work-hub）のリンク集に足す（上の手順 7）
 7. ひな形を直すときは、先に ankardo の `templates/chiiku-game/` を直し、`./scripts/check-chiiku-template.sh`（写す → 素材 → `npm ci` → テスト・lint・ビルド。ネットワークを使う）を通してから、各ゲームの `src/common/` へ手で写す。`bash scripts/copy-template.test.sh` は、スクリプト自体の確認
 
-ひな形に素材は入れない。写した直後は `public/chiiku/` が無いので、素材を入れるまで画面は「読み込めませんでした」になる（テストとビルドは通る。素材の実物を読む確認だけ、素材があるときに走る）。
+この一覧の 5（最初の PR）の前に、このファイルの前半の「6. ゲームリポジトリの GitHub Secrets を設定」（`scripts/setup-game-secrets.sh`）をする。ankardo のカタログ登録は、前半の「5. ankardo 側: ゲームをカタログに登録」（`site/content/games/<slug>.json`・`_redirects`・スクリーンショット）。
+
+ひな形に素材は入れない。写した直後は `public/chiiku/` が無いので、素材を入れるまで画面は「読み込めませんでした」になる。手元ではテストとビルドが通り（素材の実物を読む確認だけ、素材があるときに走る）、CI（`CI=true`。deploy.yml の `npm test`）では、素材が無いと `npm test` が落ちる（入れ忘れを本番に出さないため）。
 
 ## 共通素材を使うなら（知育ゲーム: shared-assets）
 

@@ -126,4 +126,60 @@ rc=$?
 set -e
 [ "$rc" = 1 ] || fail "missing destination exit $rc"
 
+# 8. 題の中の置き換え用の文字は、そのまま題になる（置き換えの結果をもう一度置き換えない）。空白だけの題は止まる
+g8="$work/g8"
+new_game "$g8"
+"$here/copy-template.sh" chiiku-game my-game 'x__DATE__y' "$g8" > /dev/null || fail "title with __DATE__ rejected"
+grep -q '<title>x__DATE__y</title>' "$g8/index.html" || fail "title containing a placeholder was rewritten"
+g8b="$work/g8b"
+new_game "$g8b"
+before="$(snapshot "$g8b")"
+set +e
+"$here/copy-template.sh" chiiku-game my-game '   ' "$g8b" 2> /dev/null
+rc=$?
+set -e
+[ "$rc" = 2 ] || fail "blank title exit $rc"
+[ "$before" = "$(snapshot "$g8b")" ] || fail "blank title changed files"
+
+# 9. 日付は UTC（手元の時刻帯で、UTC より先の日付にならないように）
+g9="$work/g9"
+new_game "$g9"
+TZ=Pacific/Kiritimati "$here/copy-template.sh" chiiku-game my-game 'x' "$g9" > /dev/null || fail "tz copy failed"
+utc="$(date -u +%F)"
+grep -q "compatibility_date = \"$utc\"" "$g9/wrangler.toml" || fail "date is not UTC ($utc)"
+
+# 10. 写し先の中身が読めないときは、確かめられないので、何も書かずに止まる（既存のファイルを上書きしない）
+if [ "$(id -u)" != 0 ]; then
+  g10="$work/g10"
+  new_game "$g10"
+  printf 'MINE\n' > "$g10/README.md"
+  chmod 300 "$g10"
+  set +e
+  "$here/copy-template.sh" chiiku-game my-game 'x' "$g10" 2> /dev/null
+  rc=$?
+  set -e
+  chmod 700 "$g10"
+  [ "$rc" = 1 ] || fail "unreadable destination exit $rc"
+  [ "$(cat "$g10/README.md")" = "MINE" ] || fail "unreadable destination: README.md was overwritten"
+fi
+
+# 11. UTF-8 として読めないテキストがひな形にあるときは、どのファイルかを示して、何も書かずに止まる
+repo2="$work/repo2"
+git init -q -b main "$repo2"
+mkdir -p "$repo2/templates/chiiku-game"
+printf '__TITLE__\n' > "$repo2/templates/chiiku-game/ok.txt"
+printf 'caf\351 __TITLE__\n' > "$repo2/templates/chiiku-game/latin1.txt"
+git -C "$repo2" add .
+git -C "$repo2" -c user.name=test -c user.email=test@example.com commit -q -m init
+g11="$work/g11"
+new_game "$g11"
+before="$(snapshot "$g11")"
+set +e
+err="$(TEMPLATE_ROOT="$repo2/templates" "$here/copy-template.sh" chiiku-game my-game 'x' "$g11" 2>&1)"
+rc=$?
+set -e
+[ "$rc" = 1 ] || fail "non-UTF-8 template file exit $rc"
+case "$err" in *latin1.txt*) ;; *) fail "error does not name the file: $err" ;; esac
+[ "$before" = "$(snapshot "$g11")" ] || fail "non-UTF-8 template file changed files"
+
 echo "ok"

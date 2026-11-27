@@ -35,7 +35,7 @@ step "写す（copy-template.sh）" "$here/copy-template.sh" chiiku-game check-g
 step "素材を入れる（copy-assets.sh chiiku --no-cry）" "$here/copy-assets.sh" chiiku "$game" --no-cry
 cd "$game"
 step "npm ci" npx --yes npm@10 ci
-step "テスト" npm test
+step "テスト（deploy.yml と同じ CI=true。素材の入れ忘れも見る）" env CI=true npm test
 step "lint" npx biome check .
 step "ビルド" npm run build
 

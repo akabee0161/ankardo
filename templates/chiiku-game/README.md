@@ -12,7 +12,7 @@
 - `public/chiiku/`: 共通素材（絵・声・一覧・クレジット）。ankardo の `shared-assets/chiiku/` のコピーで、手で直さない。コピーし直すには ankardo のフォルダで `./scripts/copy-assets.sh chiiku <このリポジトリのパス> [--no-cry]`（鳴き声 `cry/` を使わないゲームは `--no-cry`）。コピー元は `chiiku-assets.md`
 
 ```sh
-npm install
+npx npm@10 ci   # ロックファイルは CI と同じ npm 10 で作る。`npm install` は使わない（手元の npm が違うとロックが壊れ、deploy が止まる。依存を足すときは CLAUDE.md の手順）
 npm run dev     # 開発サーバ（素材を入れてから）
 npm test        # Vitest
 npm run lint    # Biome

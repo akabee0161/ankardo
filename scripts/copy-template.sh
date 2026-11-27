@@ -38,8 +38,8 @@ if [ "${#slug}" -gt 42 ] || ! [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
   usage
 fi
 # 題は index.html の <title> や main.ts の文字列にそのまま入るので、壊す文字は受け付けない
-if [ -z "$title" ]; then
-  echo "エラー: 題が空" >&2
+if [[ "$title" =~ ^[[:space:]]*$ ]]; then
+  echo "エラー: 題が空（空白だけも不可）" >&2
   usage
 fi
 if [[ "$title" == *[\<\&\'\"\\]* ]] || [[ "$title" == *[[:cntrl:]]* ]]; then
@@ -65,7 +65,12 @@ if [ ! -f "$preview_template" ]; then
   exit 1
 fi
 # .git 以外が既にある（gh repo create --add-readme など）ときは、何も書かずに止まる
-if [ -n "$(find "$game" -mindepth 1 -maxdepth 1 ! -name .git -print -quit)" ]; then
+# find が失敗する（読めないフォルダ）ときは、中身を確かめられないので止まる
+if ! existing="$(find "$game" -mindepth 1 -maxdepth 1 ! -name .git -print -quit)"; then
+  echo "エラー: $game の中身を調べられない" >&2
+  exit 1
+fi
+if [ -n "$existing" ]; then
   echo "エラー: $game に .git 以外のファイルが既にある（上書きしない）" >&2
   exit 1
 fi
@@ -74,7 +79,8 @@ commit="$(git -C "$template_root" rev-parse HEAD)"
 if [ -n "$(git -C "$template_root" status --porcelain -- "$name")" ]; then
   commit="$commit+dirty"
 fi
-today="$(date +%F)"
+# 手元の時刻帯が UTC より先だと、Cloudflare の compatibility_date が未来の日付になるので UTC にする
+today="$(date -u +%F)"
 
 # 一時フォルダで組み立ててから移すので、途中で失敗しても何も残らない。
 # 一時フォルダをゲームのフォルダの中に作るのは、mv を同じファイルシステムの中の rename にするため
@@ -95,23 +101,31 @@ while IFS= read -r -d '' f; do
   fi
 done < <(git -C "$template_root" ls-files -z -- "$name")
 
-# テキストのファイルだけを、Python の str.replace で置き換える（sed だと & や区切り文字で題が化ける）
+# テキストのファイルだけを、Python で 1 回の走査で置き換える（置き換えた結果をもう一度置き換えない。
+# sed だと & や区切り文字で題が化ける）。UTF-8 として読めないファイルは、名前を示して止まる
 SLUG="$slug" TITLE="$title" TODAY="$today" TEXTS="$texts" python3 -c '
 import os
-pairs = [
-    ("chiiku-template-slug", os.environ["SLUG"]),
-    ("__TITLE__", os.environ["TITLE"]),
-    ("__DATE__", os.environ["TODAY"]),
-]
+import re
+import sys
+
+table = {
+    "chiiku-template-slug": os.environ["SLUG"],
+    "__TITLE__": os.environ["TITLE"],
+    "__DATE__": os.environ["TODAY"],
+}
+pattern = re.compile("|".join(re.escape(k) for k in table))
 with open(os.environ["TEXTS"], "rb") as f:
     paths = [p for p in f.read().split(b"\0") if p]
-for p in paths:
-    with open(p, "r", encoding="utf-8", newline="") as f:
-        s = f.read()
-    for old, new in pairs:
-        s = s.replace(old, new)
-    with open(p, "w", encoding="utf-8", newline="") as f:
-        f.write(s)
+for raw in paths:
+    try:
+        with open(raw, "r", encoding="utf-8", newline="") as f:
+            text = f.read()
+        text = pattern.sub(lambda m: table[m.group(0)], text)
+        with open(raw, "w", encoding="utf-8", newline="") as f:
+            f.write(text)
+    except (UnicodeError, OSError) as e:
+        print("エラー: " + os.fsdecode(raw) + ": " + str(e), file=sys.stderr)
+        sys.exit(1)
 '
 
 mkdir -p "$out/.github/workflows"
@@ -131,5 +145,5 @@ cat > "$out/template.md" << EOF
 EOF
 
 # 中身（.git 以外）を移す。先頭が . のファイルも含める
-find "$out" -mindepth 1 -maxdepth 1 -exec mv {} "$game"/ \;
+find "$out" -mindepth 1 -maxdepth 1 -exec mv -t "$game" -- {} +
 echo "コピーした: $game（templates/$name の $commit）"
