@@ -6,14 +6,13 @@
 1. 共通素材を作る（forge のコピー・21 種類の絵・声・鳴き声・copy-assets.sh）（完了）
 2. なまえタッチを作って公開する（完了）
 3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ
-段階: 実装計画
+段階: 実装（5 タスク中 5）
 次にやること:
-- 工程 3 の計画（docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md）を依頼者に承認してもらい、Task 0（スクリーンショットの撮り直し）から実装する。「？」はひな形に入れる・PR の CI と deploy の concurrency は足さない（依頼者が決めた、11-26）。設計書は docs/superpowers/specs/2026-11-24-chiiku-games-design.md
+- 1 本目 `which-one-2`: 小さな計画を書いて依頼者の承認をもらう（問題を出すゲームの最初。5 問の区切り・点の並び・つづける／やめるの画面・正解／不正解の音をひな形の `src/common/` に先に作る）。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
+- 新しいゲームは `./scripts/copy-template.sh chiiku-game <slug> <題> <フォルダ>` → `./scripts/copy-assets.sh chiiku <フォルダ> [--no-cry]`（手順は `.claude/skills/new-game/SKILL.md` の「知育ゲームをひな形から作る」）。ひな形を直したら `./scripts/check-chiiku-template.sh` を通す
 - 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。経緯は README.md の「共通素材」
-- 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は、試聴で不自然だったアクセントを直してから作る（`voice.py` に足す）
-- 鳴き声（なきごえあて）を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）。鳴き声を使わないゲームは、ゲームのフォルダで `<ankardo のフォルダ>/scripts/copy-assets.sh chiiku . --no-cry` を実行してコピーする（スクリプトは ankardo にあり、ゲームには無い）
-- 持ち越した課題は ISSUES.md（並行実行の対策・YAML の重複キーなど、直さないと決めたもの）
-- ゲームの `package-lock.json` は、CI と同じ npm（Node 22 の npm 10）で、`node_modules` の無い場所で作り、同じ npm で `npm ci` を試してから出す（name-touch で、npm 11 のロックが 2 回デプロイを止めた）
+- 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は、試聴で不自然だったアクセントを直してから作る（`voice.py` に足す）。鳴き声を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）
+- 持ち越した課題は ISSUES.md（並行実行の対策・YAML の重複キーなど、直さないと決めたもの）。ゲームの `package-lock.json` は、CI と同じ npm（Node 22 の npm 10）で、`node_modules` の無い場所で作り、同じ npm で `npm ci` を試してから出す（name-touch で、npm 11 のロックが 2 回デプロイを止めた）
 
 ## 前の作業（Google Search Console の導入、完了）の残り
 - スマートフォンの実機でハンバーガーメニューを確かめる（縦向き・横向き）
