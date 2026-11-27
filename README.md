@@ -37,7 +37,8 @@ ankardo/
 |---|---|---|
 | `items.json` | 21 種類(どうぶつ 6・むし 3・みずのいきもの 3・やさい 4・たべもの 5)の ID・種類・名前・ひらがな・読み上げの文 | 手で書く。ID は `illust-asset-forge/characters/<id>/` と同じ |
 | `img/<id>.webp` | 絵(背景透明、512×512。絵の長い辺が枠の約 90%) | `illust-asset-forge` で生成・書き出し(`characters/<id>/object.png`)したものを `shared-assets/tools/build_images.py` で webp にする。枠に占める大きさをそろえるため、`character.yaml` の `cutouts.object.outputs[].box` に、絵の外接の正方形(長辺が枠の 90%、片側の余白 5%)を、元の 1024 の絵の座標で書く(全体を縮めると、てんとうむし 8%・ぞう 71% のようにばらつく。`illust-asset-forge/tests/test_chiiku_objects.py` が、全種類に正方形の `box` があることを確かめる) |
-| `voice/<id>.wav`・`voice/manifest.json` | 名前の声(VOICEVOX:ずんだもん) | `shared-assets/tools/voice.py --speaker 3`(VOICEVOX Engine を `~/opt/voicevox_engine/run --host 127.0.0.1` で起動しておく) |
+| `voice/<id>.wav`・`voice/ask-<id>.wav`・`voice/ok-<id>.wav`・`voice/again.wav`・`voice/manifest.json` | 名前の声と、決まり文句の声(「〇〇は どれ？」「そう、〇〇！」「もういっかい やる？」。VOICEVOX:ずんだもん) | `shared-assets/tools/voice.py --speaker 3`(VOICEVOX Engine を `~/opt/voicevox_engine/run --host 127.0.0.1` で起動しておく)。決まり文句の文と、声の高さの直しは `shared-assets/tools/phrases.json`(`contour` が「どれ？」「そう、」の抑揚、`name_contour` が名前そのものの高さ、`text` が Engine の読み誤りの書き直し。この Engine の `kana` は、アクセント句の途中にアクセント記号を置くと句が割れるので、使わない) |
+| `sfx/correct.wav`・`sfx/wrong.wav` | 正解・不正解のやさしい音(自作) | `python shared-assets/tools/sfx.py`(標準ライブラリだけ。同じ入力から同じ音) |
 | `cry/<id>.wav` | 鳴き声(どうぶつ 6 つだけ) | Wikimedia Commons・Freesound の再配布可の録音を切り出したもの。出典と条件は `CREDITS.md` |
 | `CREDITS.md` | 出典・条件・ゲームの画面に出すクレジットの文 | 手で書く。素材を替えたら直す(`shared-assets/tools/tests/test_credits.py` が、全部の鳴き声と声の話者が載っているかを確かめる) |
 

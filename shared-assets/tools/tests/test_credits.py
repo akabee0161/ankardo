@@ -33,6 +33,21 @@ def test_only_animals_have_cries():
     assert {p.stem for p in (CHIIKU / "cry").glob("*.wav")} == ids
 
 
+def test_sfx_files_exist_and_are_in_credits():
+    text = (CHIIKU / "CREDITS.md").read_text(encoding="utf-8")
+    for name in ("correct", "wrong"):
+        assert (CHIIKU / "sfx" / f"{name}.wav").is_file(), f"sfx/{name}.wav が無い"
+        assert f"sfx/{name}.wav" in text, f"{name}.wav が CREDITS.md に載っていない"
+
+
+def test_every_phrase_voice_exists():
+    manifest = json.loads((CHIIKU / "voice" / "manifest.json").read_text(encoding="utf-8"))
+    expected = {"again"} | {f"{k}-{i['id']}" for i in items() for k in ("ask", "ok")}
+    assert expected <= set(manifest["files"]), sorted(expected - set(manifest["files"]))
+    for name in expected:
+        assert (CHIIKU / "voice" / f"{name}.wav").is_file(), f"voice/{name}.wav が無い"
+
+
 def test_credits_list_every_cry_and_voice():
     text = (CHIIKU / "CREDITS.md").read_text(encoding="utf-8")
     manifest = json.loads((CHIIKU / "voice" / "manifest.json").read_text(encoding="utf-8"))
