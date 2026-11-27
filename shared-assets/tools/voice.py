@@ -1,4 +1,6 @@
-"""VOICEVOX Engine で、共通素材の名前の声（voice/<id>.wav）を作る。
+"""VOICEVOX Engine で、共通素材の名前の声（voice/<id>.wav）と、決まり文句の声（voice/ask-<id>.wav など）を作る。
+
+決まり文句の文・アクセントの直しは shared-assets/tools/phrases.json（ゲームには配らない）。
 
 Engine の起動:  ~/opt/voicevox_engine/run --host 127.0.0.1
 使い方（ankardo のルートで）:
@@ -24,6 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_ITEMS = ROOT / "shared-assets" / "chiiku" / "items.json"
 DEFAULT_OUT = ROOT / "shared-assets" / "chiiku" / "voice"
+DEFAULT_PHRASES = ROOT / "shared-assets" / "tools" / "phrases.json"
 DEFAULT_URL = "http://127.0.0.1:50021"
 TIMEOUT = 60
 
@@ -53,8 +56,12 @@ def _request(method: str, base_url: str, path: str, query: dict | None = None, b
         raise VoiceError(f"VOICEVOX Engine（{base_url}）に繋がらない。{START_HINT}") from e
 
 
-def synthesize(text: str, speaker: int, base_url: str) -> bytes:
-    query = _request("POST", base_url, "/audio_query", {"text": text, "speaker": speaker})
+def synthesize(text: str, speaker: int, base_url: str, is_kana: bool = False) -> bytes:
+    """is_kana=True なら text を AquesTalk 風の読み（' がアクセント、/ が区切り、? が疑問）として渡す。"""
+    params: dict = {"text": text, "speaker": speaker}
+    if is_kana:
+        params["is_kana"] = "true"
+    query = _request("POST", base_url, "/audio_query", params)
     return _request("POST", base_url, "/synthesis", {"speaker": speaker}, query)
 
 
@@ -85,13 +92,83 @@ def _load_manifest(path: Path) -> dict:
         return {}
 
 
-def build(items_path: Path, out_dir: Path, speaker: int, base_url: str) -> list[Path]:
-    """voice/<id>.wav を作り、manifest.json に記録する。作った（作り直した）ファイルの一覧を返す。"""
+def _no_duplicate_keys(pairs: list[tuple[str, object]]) -> dict:
+    result: dict = {}
+    for key, value in pairs:
+        if key in result:
+            raise VoiceError(f"キー '{key}' が重複している")
+        result[key] = value
+    return result
+
+
+def load_phrases(phrases_path: Path, items: list[tuple[str, str]]) -> list[tuple[str, str, bool]]:
+    """phrases.json から、(ファイルの名前, 読む文字列, かな指定か) の一覧を作る。形が違えば、どの項目かを示す VoiceError。
+
+    templates は全項目に当てはめて `<キー>-<id>`、single は `<キー>`、kana は名前ごとの上書き（AquesTalk 風）。
+    """
+    where = str(phrases_path)
+    try:
+        data = json.loads(Path(phrases_path).read_text(encoding="utf-8"), object_pairs_hook=_no_duplicate_keys)
+    except OSError as e:
+        raise VoiceError(f"{where}: 読めない: {e}") from e
+    except json.JSONDecodeError as e:
+        raise VoiceError(f"{where}: JSON として読めない: {e}") from e
+    except VoiceError as e:
+        raise VoiceError(f"{where}: {e}") from e
+    if not isinstance(data, dict):
+        raise VoiceError(f"{where}: オブジェクトでない")
+
+    templates = data.get("templates")
+    if not isinstance(templates, dict) or not templates:
+        raise VoiceError(f"{where}: templates が、空でないオブジェクトでない")
+    single = data.get("single", {})
+    kana = data.get("kana", {})
+    if not isinstance(single, dict):
+        raise VoiceError(f"{where}: single がオブジェクトでない")
+    if not isinstance(kana, dict):
+        raise VoiceError(f"{where}: kana がオブジェクトでない")
+
+    for key, template in templates.items():
+        if not isinstance(template, str) or "{reading}" not in template:
+            raise VoiceError(f"{where}: templates.{key} に {{reading}} が無い")
+    for key, text in single.items():
+        if key in templates:
+            raise VoiceError(f"{where}: single.{key} が templates と重複している")
+        if not isinstance(text, str) or not text:
+            raise VoiceError(f"{where}: single.{key} が空でない文字列でない")
+
+    entries: list[tuple[str, str, bool]] = []
+    for key, template in templates.items():
+        for item_id, reading in items:
+            entries.append((f"{key}-{item_id}", template.replace("{reading}", reading), False))
+    for key, text in single.items():
+        entries.append((key, text, False))
+
+    names = {name for name, _, _ in entries}
+    item_ids = {item_id for item_id, _ in items}
+    clash = sorted(names & item_ids)
+    if clash:
+        raise VoiceError(f"{where}: 名前の声と同じ名前のファイルができる: {clash[0]}")
+    for name, text in kana.items():
+        if name not in names:
+            raise VoiceError(f"{where}: kana.{name} が、作るファイルの名前に無い")
+        if not isinstance(text, str) or not text:
+            raise VoiceError(f"{where}: kana.{name} が空でない文字列でない")
+    return [(name, kana.get(name, text), name in kana) for name, text, _ in entries]
+
+
+def build(
+    items_path: Path, out_dir: Path, speaker: int, base_url: str, phrases_path: Path | None = None
+) -> list[Path]:
+    """voice/<id>.wav（と、phrases_path があれば決まり文句の wav）を作り、manifest.json に記録する。作った（作り直した）ファイルの一覧を返す。"""
     try:
         data = json.loads(Path(items_path).read_text(encoding="utf-8"))
         items = [(i["id"], i["reading"]) for i in data["items"]]
     except (OSError, json.JSONDecodeError, KeyError, TypeError) as e:
         raise VoiceError(f"{items_path}: items.json として読めない: {e}") from e
+    entries = [(item_id, reading, False) for item_id, reading in items]
+    if phrases_path is not None:
+        entries += load_phrases(phrases_path, items)
 
     version = engine_version(base_url)
     name = speaker_name(base_url, speaker)
@@ -104,18 +181,26 @@ def build(items_path: Path, out_dir: Path, speaker: int, base_url: str) -> list[
 
     files: dict[str, dict] = {}
     written: list[Path] = []
-    for item_id, reading in items:
-        dest = out_dir / f"{item_id}.wav"
-        old = old_files.get(item_id)
-        if old and old.get("text") == reading and dest.is_file() and _sha256(dest.read_bytes()) == old.get("sha256"):
-            files[item_id] = old
+    for file_id, text, is_kana in entries:
+        dest = out_dir / f"{file_id}.wav"
+        old = old_files.get(file_id)
+        if (
+            old
+            and old.get("text") == text
+            and bool(old.get("kana")) == is_kana
+            and dest.is_file()
+            and _sha256(dest.read_bytes()) == old.get("sha256")
+        ):
+            files[file_id] = old
             continue
-        wav = synthesize(reading, speaker, base_url)
+        wav = synthesize(text, speaker, base_url, is_kana)
         dest.write_bytes(wav)
-        files[item_id] = {"text": reading, "sha256": _sha256(wav)}
+        files[file_id] = {"text": text, "sha256": _sha256(wav)}
+        if is_kana:
+            files[file_id]["kana"] = True
         written.append(dest)
 
-    keep = {f"{item_id}.wav" for item_id, _ in items}
+    keep = {f"{file_id}.wav" for file_id, _, _ in entries}
     for old_wav in out_dir.glob("*.wav"):
         if old_wav.name not in keep:
             old_wav.unlink()
@@ -143,6 +228,7 @@ def cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--trial", action="store_true", help="試聴用の声を作る（--speakers と --out が要る）")
     parser.add_argument("--speakers", type=int, nargs="*", default=[])
     parser.add_argument("--items", type=Path, default=DEFAULT_ITEMS)
+    parser.add_argument("--phrases", type=Path, default=DEFAULT_PHRASES, help="決まり文句の定義（phrases.json）")
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
     base_url = os.environ.get("VOICEVOX_URL", DEFAULT_URL)
@@ -160,7 +246,7 @@ def cli(argv: list[str] | None = None) -> int:
             return 0
         if args.speaker is None:
             parser.error("--speaker（または --list-speakers・--trial）が要る")
-        written = build(args.items, args.out or DEFAULT_OUT, args.speaker, base_url)
+        written = build(args.items, args.out or DEFAULT_OUT, args.speaker, base_url, args.phrases)
         print(f"作った: {len(written)} 個（作り直さなかった声は含まない）")
         return 0
     except VoiceError as e:

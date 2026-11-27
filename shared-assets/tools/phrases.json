@@ -1,0 +1,10 @@
+{
+  "templates": {
+    "ask": "{reading}は どれ？",
+    "ok": "そう、{reading}！"
+  },
+  "single": {
+    "again": "もういっかい やる？"
+  },
+  "kana": {}
+}
