@@ -243,7 +243,7 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 
 幼児向けの知育ゲームは、`templates/chiiku-game/`（なまえタッチの共通部分・⏏・はねる動きを切り出した Vite + TypeScript のひな形）から作る。上の手順 2〜4（ベースパス・`wrangler.toml`・deploy.yml）は、ひな形に入っているので、手で作らない。
 
-1. GitHub に空のリポジトリを作って clone する（**README を付けない**。`.git` 以外のファイルがあると、スクリプトは何も書かずに止まる）
+1. GitHub に空のリポジトリを作って clone する（**README を付けない**。`.git` 以外のファイルがあると、スクリプトは何も書かずに止まる）。空のリポジトリには `main` が無く、最初の PR の向き先にできないので、先に空コミットで `main` を作る: `git commit --allow-empty -m "chore: 初期化"` → `git push -u origin main`。そのあと `git switch -c feat/<作業名>` で作業ブランチを切る（空コミットなので、`.git` 以外が無い状態は保たれる）
 2. `./scripts/copy-template.sh chiiku-game <slug> <題> <ゲームのフォルダ>` で写す。slug は `^[a-z0-9]+(-[a-z0-9]+)*$` で 42 文字以内（プレビューのホスト名 `develop-ankardo-game-<slug>` を 63 文字以内にするため）。題に `<`・`&`・`'`・`"`・`\`・改行は使えない。`.github/workflows/preview.yml` も、正本の `.claude/skills/new-game/preview.yml` から一緒に写る。写した元の commit は `<ゲーム>/template.md`
 3. `./scripts/copy-assets.sh chiiku <ゲームのフォルダ> [--no-cry]`（鳴き声を使うかで決める。下の「共通素材を使うなら」）
 4. `package-lock.json` はひな形のものをそのまま使う。依存を足したときだけ、npm 10 で（`node_modules` の無い場所で `npx npm@10 install --package-lock-only`）作り直し、`npx npm@10 ci` が通ることと、全パッケージに `integrity` があることを確かめる

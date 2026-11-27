@@ -41,6 +41,11 @@ export function createHelp(): HTMLElement {
   dialog.append(panel);
 
   const onKey = (e: KeyboardEvent) => {
+    // 開いたまま画面が置き換わった（長押しの終了など）。後の画面の Tab を奪わないように、ここで外す
+    if (!wrap.isConnected) {
+      close();
+      return;
+    }
     if (e.key === 'Escape') close();
     // 説明の中で動けるのは「とじる」だけ。Tab・Shift+Tab で、後ろ（ブラウザの画面の外）へ出さない
     if (e.key === 'Tab') {

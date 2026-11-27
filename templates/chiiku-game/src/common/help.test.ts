@@ -92,4 +92,15 @@ describe('createHelp', () => {
     document.dispatchEvent(e);
     expect(e.defaultPrevented).toBe(false);
   });
+
+  it('stops holding Tab once the screen was replaced while the notice was open', () => {
+    button()?.click();
+    help.remove(); // 開いたまま、画面が置き換わった（タイトル画面に戻るなど）
+    const e = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+    document.dispatchEvent(e);
+    expect(e.defaultPrevented).toBe(false);
+    const next = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+    document.dispatchEvent(next);
+    expect(next.defaultPrevented).toBe(false);
+  });
 });

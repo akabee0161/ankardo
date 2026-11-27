@@ -3,6 +3,11 @@
 #   ./scripts/copy-template.test.sh
 set -euo pipefail
 
+# 親から GIT_INDEX_FILE などが入っていると、下の git add が一時リポジトリでなく親の index を書き換える。
+# 最初の git の前に外す（ケース 6 は、あえて GIT_DIR を渡す）
+# shellcheck disable=SC2046
+unset $(git rev-parse --local-env-vars)
+
 here="$(cd "$(dirname "$0")" && pwd)"
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
@@ -28,7 +33,7 @@ git -C "$repo" -c user.name=test -c user.email=test@example.com commit -q -m ini
 mkdir -p "$tpl/node_modules/x"
 printf 'x' > "$tpl/node_modules/x/junk.js"
 commit="$(git -C "$repo" rev-parse HEAD)"
-today="$(date +%F)"
+today="$(date -u +%F)" # copy-template.sh は UTC の日付を書く
 
 preview="$work/preview.yml"
 printf 'name: preview\non: push\n' > "$preview"

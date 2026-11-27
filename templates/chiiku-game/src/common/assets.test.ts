@@ -73,7 +73,10 @@ describe('loadItems', () => {
 // CI（deploy.yml の npm test）では、素材の入れ忘れを本番に出す前に止める。
 // 写した直後の手元では、素材を入れる前でもテストが通るように、CI のときだけ確かめる
 describe('素材（public/chiiku/）', () => {
-  it.runIf(process.env.CI)('CI では入っている（copy-assets.sh を流し忘れていない）', () => {
-    expect(HAS_REAL, `${REAL_PATH} が無い。copy-assets.sh chiiku を流す`).toBe(true);
-  });
+  it.runIf(process.env.CI === 'true')(
+    'CI では入っている（copy-assets.sh を流し忘れていない）',
+    () => {
+      expect(HAS_REAL, `${REAL_PATH} が無い。copy-assets.sh chiiku を流す`).toBe(true);
+    },
+  );
 });
