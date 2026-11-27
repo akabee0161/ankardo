@@ -1,0 +1,16 @@
+name = "ankardo-game-chiiku-template-slug"
+compatibility_date = "__DATE__"
+
+# develop ブランチの確認用プレビュー（develop-<Worker 名>.…workers.dev）を有効にする。本番の workers.dev は開かない
+preview_urls = true
+
+routes = [
+  { pattern = "ankardo.com/play/chiiku-template-slug/*", zone_name = "ankardo.com" }
+]
+
+[assets]
+directory = "./out"
+not_found_handling = "404-page"
+
+# Worker Previews（wrangler preview）が要求する設定。中身は空でよい
+[previews]

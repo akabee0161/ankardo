@@ -239,6 +239,22 @@ forge の main の最新 commit の中身が `<ゲームリポジトリ>/illust-
 
 - 設計: [character-tactics の spec](https://github.com/akabee0161/character-tactics/blob/fc34a512e9fdcdeccea1bd78679f3f9cbe62676e/docs/superpowers/specs/2026-11-22-face-gen-ai-design.md)（commit 固定。マージの前後で同じ資料が開ける）
 
+## 知育ゲームをひな形から作る
+
+幼児向けの知育ゲームは、`templates/chiiku-game/`（なまえタッチの共通部分・⏏・はねる動きを切り出した Vite + TypeScript のひな形）から作る。上の手順 2〜4（ベースパス・`wrangler.toml`・deploy.yml）は、ひな形に入っているので、手で作らない。
+
+1. GitHub に空のリポジトリを作って clone する（**README を付けない**。`.git` 以外のファイルがあると、スクリプトは何も書かずに止まる）。空のリポジトリには `main` が無く、最初の PR の向き先にできないので、先に空コミットで `main` を作る: `git commit --allow-empty -m "chore: 初期化"` → `git branch -M main`（初期ブランチ名が `master` の環境でも、push できるように）→ `git push -u origin main`。そのあと `git switch -c feat/<作業名>` で作業ブランチを切る（空コミットなので、`.git` 以外が無い状態は保たれる）
+2. `./scripts/copy-template.sh chiiku-game <slug> <題> <ゲームのフォルダ>` で写す。slug は `^[a-z0-9]+(-[a-z0-9]+)*$` で 42 文字以内（プレビューのホスト名 `develop-ankardo-game-<slug>` を 63 文字以内にするため）。題に `<`・`&`・`'`・`"`・`\`・改行は使えない。`.github/workflows/preview.yml` も、正本の `.claude/skills/new-game/preview.yml` から一緒に写る。写した元の commit は `<ゲーム>/template.md`
+3. `./scripts/copy-assets.sh chiiku <ゲームのフォルダ> [--no-cry]`（鳴き声を使うかで決める。下の「共通素材を使うなら」）
+4. `package-lock.json` はひな形のものをそのまま使う。依存を足したときだけ、npm 10 で（`node_modules` の無い場所で `npx npm@10 install --package-lock-only`）作り直し、`npx npm@10 ci` が通ることと、全パッケージに `integrity` があることを確かめる
+5. 最初の PR は `main` 向け → 本番の deploy の成功を待つ → `develop` を作る（上の「確認用のプレビュー」の手順 5・6 と同じ）
+6. 作業ページ（personal-work-hub）のリンク集に足す（上の手順 7）
+7. ひな形を直すときは、先に ankardo の `templates/chiiku-game/` を直し、`./scripts/check-chiiku-template.sh`（写す → 素材 → `npm ci` → テスト・lint・ビルド。ネットワークを使う）を通してから、各ゲームの `src/common/` へ手で写す。`bash scripts/copy-template.test.sh` は、スクリプト自体の確認
+
+この一覧の 5（最初の PR）の前に、このファイルの前半の「6. ゲームリポジトリの GitHub Secrets を設定」（`scripts/setup-game-secrets.sh`）をする。ankardo のカタログ登録は、前半の「5. ankardo 側: ゲームをカタログに登録」（`site/content/games/<slug>.json`・`_redirects`・スクリーンショット）。
+
+ひな形に素材は入れない。写した直後は `public/chiiku/` が無いので、素材を入れるまで画面は「読み込めませんでした」になる。手元ではテストとビルドが通り（素材の実物を読む確認だけ、素材があるときに走る）、CI（`CI=true`。deploy.yml の `npm test`）では、素材が無いと `npm test` が落ちる（入れ忘れを本番に出さないため）。
+
 ## 共通素材を使うなら（知育ゲーム: shared-assets）
 
 幼児向けの知育ゲームは、絵・名前の声・鳴き声を ankardo の `shared-assets/chiiku/` から取る。素材の中身と作り方は README の「共通素材」。ここは、新しいゲームがそれを使うときの手順。

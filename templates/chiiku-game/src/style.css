@@ -1,0 +1,10 @@
+/* このゲームの遊びの見た目。共通の見た目（タイトル画面・⏏・？・はねる動き）は src/common/common.css */
+
+.play-screen {
+  position: relative;
+  height: 100%;
+  padding-block: max(12px, env(safe-area-inset-top, 0px))
+    max(12px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
+}

@@ -14,9 +14,13 @@ ankardo/
 ├── site/      # Next.js カタログサイト(静的書き出し、トップ・一覧・個別詳細・このサイトについて)
 ├── illust-asset-forge/  # forge(イラスト生成)のコピー。知育ゲームの共通の絵をここで作る
 ├── shared-assets/       # 書き出した共通素材(chiiku/: 絵・名前の声・鳴き声・クレジット)と、その道具(tools/)
+├── templates/
+│   └── chiiku-game/     # 知育ゲームのひな形(Vite + TypeScript。なまえタッチの共通部分・⏏・はねる動き)
 ├── scripts/
 │   ├── copy-forge.sh    # forge をゲームリポジトリへコピーする
 │   ├── copy-assets.sh   # shared-assets の素材をゲームリポジトリへコピーする
+│   ├── copy-template.sh # 知育ゲームのひな形を空のゲームリポジトリへ写し、slug・題・日付を置き換える
+│   ├── check-chiiku-template.sh  # ひな形を写して素材を入れ、npm ci・テスト・lint・ビルドが通るか確かめる
 │   └── setup-game-secrets.sh
 └── .github/workflows/
     ├── infra.yml  # infra/ 変更時の terraform plan/apply
@@ -42,7 +46,7 @@ ankardo/
 - 種類(`items.json` の `categories`)は、`animal`(どうぶつ)・`insect`(むし)・`sea`(みずのいきもの)・`vegetable`(やさい)・`food`(たべもの)。`sea` の表示名は、最初は「うみのいきもの」だったが、金魚(淡水魚)を含むため、PR #28 のレビュー指摘で「みずのいきもの」にした。設計書・計画の「20 種類」「`fish`」「うみ」は、この 21 種類・`sea`・「みずのいきもの」に読み替えて読む
 - 絵の生成は Modal の T4 で行う(`illust-asset-forge/README.md` の 10)。Modal アプリの名前は `ankardo-chiiku`、モデルの Volume は forge 本体と同じ `illust-asset-forge-models`。生成の前に、枚数と見込みの金額を依頼者に伝える
 - `illust-asset-forge/UPSTREAM.md` に、forge のコピーで直したことと、ものの絵を作って分かったこと(背景の消し方など)を書いている
-- テスト: `illust-asset-forge/.venv/bin/pytest shared-assets/tools/tests`(素材の道具)、`bash scripts/copy-assets.test.sh`(コピーの道具)
+- テスト: `illust-asset-forge/.venv/bin/pytest shared-assets/tools/tests`(素材の道具)、`bash scripts/copy-assets.test.sh`(コピーの道具)、`bash scripts/copy-template.test.sh`(ひな形を写す道具)、`./scripts/check-chiiku-template.sh`(ひな形そのもの。npm の取得でネットワークを使う)
 - `shared-assets/` と `illust-asset-forge/` を直しても、カタログサイトのデプロイ(`site.yml`)は動かない(`site/**` の変更でだけ動く)
 
 ### ゲームリポジトリの命名規則
