@@ -583,3 +583,40 @@ def test_a_name_contour_that_does_not_fit_the_name_voice_names_the_item(engine, 
     with pytest.raises(voice.VoiceError) as e:
         voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
     assert "dog" in str(e.value)
+
+
+# ---- CodeRabbit の指摘: contour.base の検証・出力名の重複・--items だけの経路 ----
+
+
+@pytest.mark.parametrize("base", ["5.8", None, True])
+def test_a_contour_base_that_is_not_a_number_is_reported(engine, items_path, tmp_path, base):
+    bad = write_phrases(
+        tmp_path, kana={}, contour={"ask": {"phrase": -1, "offsets": [0.0], "base": base}}
+    )
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "contour.ask.base" in str(e.value)
+
+
+def test_a_duplicated_output_name_is_reported(engine, items_path, tmp_path):
+    # templates.ask と single["ask-dog"] は、どちらも ask-dog.wav になる
+    bad = write_phrases(tmp_path, single={"ask-dog": "あ"}, templates={"ask": "{reading}は どれ？"})
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "ask-dog" in str(e.value)
+
+
+def test_cli_with_custom_items_does_not_read_the_default_phrases(engine, items_path, tmp_path, monkeypatch):
+    # 既定の phrases.json には、items_path に無い名前（cow・elephant）の指定がある。それと自動では組み合わせない
+    monkeypatch.setenv("VOICEVOX_URL", engine.url)
+    out = tmp_path / "voice"
+    assert voice.cli(["--speaker", "1", "--items", str(items_path), "--out", str(out)]) == 0
+    assert wavs(out) == ["dog.wav", "tomato.wav"]
+
+
+def test_cli_with_custom_items_and_explicit_phrases_makes_the_phrases(engine, items_path, phrases_path, tmp_path, monkeypatch):
+    monkeypatch.setenv("VOICEVOX_URL", engine.url)
+    out = tmp_path / "voice"
+    args = ["--speaker", "1", "--items", str(items_path), "--phrases", str(phrases_path), "--out", str(out)]
+    assert voice.cli(args) == 0
+    assert "ask-dog.wav" in wavs(out) and "again.wav" in wavs(out)

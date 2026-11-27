@@ -227,6 +227,8 @@ def load_phrases(
             or not all(_is_number(o) for o in offsets)
         ):
             raise VoiceError(f"{where}: contour.{key} は {{\"phrase\": 整数, \"offsets\": [数, ...]}} の形でない")
+        if "base" in spec and not _is_number(spec["base"]):
+            raise VoiceError(f"{where}: contour.{key}.base が数でない")
         rise = spec.get("rise")
         if rise is not None and not (
             isinstance(rise, dict)
@@ -272,7 +274,12 @@ def load_phrases(
     for key, text in single.items():
         entries.append((key, text, False, contours.get(key)))
 
-    names = {name for name, _, _, _ in entries}
+    seen: set[str] = set()
+    for name, _, _, _ in entries:
+        if name in seen:
+            raise VoiceError(f"{where}: ファイルの名前 {name} が重複している（templates と single のキーの組み合わせを見直す）")
+        seen.add(name)
+    names = seen
     item_ids = {item_id for item_id, _ in items}
     clash = sorted(names & item_ids)
     if clash:
@@ -377,7 +384,13 @@ def cli(argv: list[str] | None = None) -> int:
     parser.add_argument("--trial", action="store_true", help="試聴用の声を作る（--speakers と --out が要る）")
     parser.add_argument("--speakers", type=int, nargs="*", default=[])
     parser.add_argument("--items", type=Path, default=DEFAULT_ITEMS)
-    parser.add_argument("--phrases", type=Path, default=DEFAULT_PHRASES, help="決まり文句の定義（phrases.json）")
+    parser.add_argument(
+        "--phrases",
+        type=Path,
+        default=None,
+        help="決まり文句の定義（phrases.json）。省略すると、既定の items.json のときだけ既定の phrases.json を使う"
+        "（--items を替えたときは、その items に無い名前の指定で止まらないよう、名前の声だけを作る）",
+    )
     parser.add_argument("--out", type=Path, default=None)
     args = parser.parse_args(argv)
     base_url = os.environ.get("VOICEVOX_URL", DEFAULT_URL)
@@ -395,7 +408,10 @@ def cli(argv: list[str] | None = None) -> int:
             return 0
         if args.speaker is None:
             parser.error("--speaker（または --list-speakers・--trial）が要る")
-        written = build(args.items, args.out or DEFAULT_OUT, args.speaker, base_url, args.phrases)
+        phrases = args.phrases
+        if phrases is None and args.items.resolve() == DEFAULT_ITEMS.resolve():
+            phrases = DEFAULT_PHRASES
+        written = build(args.items, args.out or DEFAULT_OUT, args.speaker, base_url, phrases)
         print(f"作った: {len(written)} 個（作り直さなかった声は含まない）")
         return 0
     except VoiceError as e:
