@@ -93,8 +93,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .start-button:active,
-  .continue-button:active {
+  .start-button:active {
     transform: none;
   }
 }
@@ -241,6 +240,13 @@ body {
 .continue-button:active {
   transform: translateY(3px);
   box-shadow: 0 3px 0 rgb(0 0 0 / 0.18);
+}
+
+/* 動きを減らす指定は、押下時のスタイル（.continue-button:active）より後ろに置く（詳細度が同じなので、後ろが勝つ） */
+@media (prefers-reduced-motion: reduce) {
+  .continue-button:active {
+    transform: none;
+  }
 }
 
 .quit-button {

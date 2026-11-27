@@ -95,7 +95,14 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     if (c.state !== 'running') {
       void c.resume().catch(() => {});
     }
-    const buffer = await load(url);
+    let buffer: unknown;
+    try {
+      buffer = await load(url);
+    } catch (error) {
+      // 読み込みの間に stop・別の再生が来ていたら、この失敗は伝えない（呼んだ側が、止めたあとに次の音を鳴らさないように）
+      if (mine !== ticket) return null;
+      throw error;
+    }
     if (mine !== ticket) return null;
     const source = c.createBufferSource();
     source.buffer = buffer;

@@ -263,6 +263,41 @@ describe('playToEnd', () => {
     expect(context.sources.filter((s) => s.started)).toHaveLength(0);
   });
 
+  it('resolves false, not rejects, when stop() came first and then the file failed to load', async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const context = new FakeContext();
+    const fetchFn = vi.fn(async () => {
+      await gate;
+      return { ok: false, status: 404, arrayBuffer: async () => new ArrayBuffer(0) };
+    });
+    const audio = createAudio({ context: context as never, fetchFn: fetchFn as never });
+    const done = audio.playToEnd('a.wav');
+    audio.stop();
+    release();
+    // 止めたあとの読み込み失敗は、呼んだ側（playCorrect）に次の声を鳴らさせない
+    await expect(done).resolves.toBe(false);
+  });
+
+  it('play() also returns quietly when stop() came first and then the file failed to load', async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const context = new FakeContext();
+    const fetchFn = vi.fn(async () => {
+      await gate;
+      return { ok: false, status: 404, arrayBuffer: async () => new ArrayBuffer(0) };
+    });
+    const audio = createAudio({ context: context as never, fetchFn: fetchFn as never });
+    const done = audio.play('a.wav');
+    audio.stop();
+    release();
+    await expect(done).resolves.toBeUndefined();
+  });
+
   it('rejects when the file cannot be read', async () => {
     const context = new FakeContext();
     const fetchFn = vi.fn(async () => ({
