@@ -48,7 +48,12 @@ class FakeEngine:
                 body = self._body()
                 outer.requests.append(("POST", url.path, query, body))
                 if url.path == "/audio_query":
-                    q = {"text": query["text"][0], "speaker": query["speaker"][0]}
+                    text = query["text"][0]
+                    # 本物の Engine のように、アクセント句ごとの mora と pitch を返す（"/" で句を区切り、1 文字 1 mora、pitch は 6.0）
+                    phrases = [
+                        {"moras": [{"text": ch, "pitch": 6.0} for ch in part]} for part in text.split("/") if part
+                    ]
+                    q = {"text": text, "speaker": query["speaker"][0], "accent_phrases": phrases}
                     self._send(json.dumps(q, ensure_ascii=False).encode(), "application/json")
                 elif url.path == "/synthesis":
                     q = json.loads(body)
@@ -298,3 +303,283 @@ def test_duplicate_key_in_phrases_json_is_reported(engine, items_path, tmp_path)
     with pytest.raises(voice.VoiceError) as e:
         voice.build(items_path, tmp_path / "voice", 1, engine.url, path)
     assert "ask" in str(e.value)
+
+
+# ---- 抑揚（contour）: 決まり文句のアクセント句の pitch を、名前の部分の高さを基準に決める ----
+
+
+def query_of(*phrases):
+    return {"accent_phrases": [{"moras": [{"text": "あ", "pitch": p} for p in ps]} for ps in phrases]}
+
+
+def pitches(q, i):
+    return [round(m["pitch"], 3) for m in q["accent_phrases"][i]["moras"]]
+
+
+def test_apply_contour_sets_the_phrase_around_the_base_of_the_other_phrases():
+    q = query_of([5.8, 6.0, 0.0], [6.2, 6.2])  # 基準は、他の句の声のある mora（pitch > 0）の平均 = 5.9
+    voice.apply_contour(q, {"phrase": -1, "offsets": [-0.1, 0.1]})
+    assert pitches(q, 1) == [5.8, 6.0]
+    assert pitches(q, 0) == [5.8, 6.0, 0.0]  # 他の句は触らない
+
+
+def test_apply_contour_on_the_first_phrase():
+    q = query_of([5.0, 5.0], [6.2, 6.4])  # 基準 = 6.3
+    voice.apply_contour(q, {"phrase": 0, "offsets": [0.12, -0.12]})
+    assert pitches(q, 0) == [6.42, 6.18]
+    assert pitches(q, 1) == [6.2, 6.4]
+
+
+def test_apply_contour_rejects_a_wrong_number_of_offsets():
+    with pytest.raises(voice.VoiceError) as e:
+        voice.apply_contour(query_of([6.0, 6.0, 6.0], [6.0, 6.0]), {"phrase": -1, "offsets": [0.0]})
+    assert "offsets" in str(e.value)
+
+
+def test_apply_contour_rejects_a_missing_phrase():
+    with pytest.raises(voice.VoiceError) as e:
+        voice.apply_contour(query_of([6.0]), {"phrase": 3, "offsets": [0.0]})
+    assert "phrase" in str(e.value)
+
+
+def contour_phrases(tmp_path, offsets=(-0.1, 0.0)):
+    return write_phrases(
+        tmp_path,
+        single={},
+        templates={"ask": "{reading}は どれ？"},
+        kana={"ask-dog": "イヌワ/ドレ", "ask-tomato": "トマトワ/ドレ"},
+        contour={"ask": {"phrase": -1, "offsets": list(offsets)}},
+    )
+
+
+def synthesis_pitches(engine, text):
+    for _, path, _, body in engine.requests:
+        if path == "/synthesis" and json.loads(body)["text"] == text:
+            return pitches(json.loads(body), -1)
+    raise AssertionError(f"{text} の合成の要求が無い")
+
+
+def test_build_applies_the_contour_before_synthesis(engine, items_path, tmp_path):
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, contour_phrases(tmp_path))
+    assert synthesis_pitches(engine, "イヌワ/ドレ") == [5.9, 6.0]
+    files = json.loads((out / "manifest.json").read_text(encoding="utf-8"))["files"]
+    assert files["ask-dog"]["contour"] == {"phrase": -1, "offsets": [-0.1, 0.0]}
+    assert "contour" not in files["dog"]
+
+
+def test_build_redoes_only_the_files_whose_contour_changed(engine, items_path, tmp_path):
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, contour_phrases(tmp_path))
+    engine.requests.clear()
+    voice.build(items_path, out, 1, engine.url, contour_phrases(tmp_path))
+    assert engine.synth_requests() == []
+    voice.build(items_path, out, 1, engine.url, contour_phrases(tmp_path, offsets=(-0.2, 0.0)))
+    assert len(engine.synth_requests()) == 4  # ask-dog と ask-tomato（audio_query と synthesis）
+    assert synthesis_pitches(engine, "イヌワ/ドレ") == [5.8, 6.0]
+
+
+def test_a_contour_that_does_not_fit_names_the_file(engine, items_path, tmp_path):
+    bad = write_phrases(tmp_path, kana={}, contour={"ok": {"phrase": -1, "offsets": [0.0, 0.0]}})
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "ok-dog" in str(e.value)
+
+
+def test_a_contour_for_an_unknown_phrase_is_reported(engine, items_path, tmp_path):
+    bad = write_phrases(tmp_path, contour={"nope": {"phrase": 0, "offsets": [0.0]}})
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "nope" in str(e.value)
+
+
+def test_text_override_replaces_the_sentence_for_that_file_only(engine, items_path, tmp_path):
+    phrases = write_phrases(tmp_path, text={"ask-dog": "イヌは どれ？"})
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, phrases)
+    files = json.loads((out / "manifest.json").read_text(encoding="utf-8"))["files"]
+    assert files["ask-dog"]["text"] == "イヌは どれ？"
+    assert "kana" not in files["ask-dog"]  # 普通の文として Engine に渡す
+    assert files["ask-tomato"]["text"] == "トマトは どれ？"
+    queries = [r[2] for r in engine.requests if r[1] == "/audio_query"]
+    assert not any(q.get("is_kana") for q in queries)
+
+
+def test_kana_wins_over_text(engine, items_path, tmp_path):
+    phrases = write_phrases(tmp_path, text={"ask-dog": "イヌは どれ？"}, kana={"ask-dog": "イヌワ'/ドレ？"})
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, phrases)
+    files = json.loads((out / "manifest.json").read_text(encoding="utf-8"))["files"]
+    assert files["ask-dog"]["text"] == "イヌワ'/ドレ？" and files["ask-dog"]["kana"] is True
+
+
+def test_text_override_for_an_unknown_file_is_reported(engine, items_path, tmp_path):
+    bad = write_phrases(tmp_path, text={"ask-nothing": "あ"})
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "ask-nothing" in str(e.value)
+
+
+# ---- ？の上がり（rise）: 最後の mora を伸ばした音を足し、基準 + offset の高さにする ----
+
+
+def rise_contour(offset=0.1, seconds=0.15):
+    return {"phrase": -1, "offsets": [0.2, 0.0], "rise": {"offset": offset, "seconds": seconds}}
+
+
+def test_apply_contour_adds_a_rising_mora_after_the_last_one():
+    q = query_of([5.8, 5.8], [6.5, 6.5])
+    q["accent_phrases"][1]["is_interrogative"] = True
+    q["accent_phrases"][1]["moras"][-1].update({"text": "レ", "consonant": "r", "vowel": "e", "vowel_length": 0.3})
+    assert voice.apply_contour(q, rise_contour()) is True
+    moras = q["accent_phrases"][1]["moras"]
+    assert [round(m["pitch"], 3) for m in moras] == [6.0, 5.8, 5.9]
+    assert moras[-1]["vowel"] == "e" and moras[-1]["consonant"] is None
+    assert moras[-1]["vowel_length"] == 0.15
+    assert q["accent_phrases"][1]["is_interrogative"] is False  # Engine の自動の上がりと二重にしない
+
+
+def test_apply_contour_without_rise_leaves_the_interrogative_alone():
+    q = query_of([5.8], [6.5, 6.5])
+    q["accent_phrases"][1]["is_interrogative"] = True
+    assert voice.apply_contour(q, {"phrase": -1, "offsets": [0.1, 0.0]}) is False
+    assert len(q["accent_phrases"][1]["moras"]) == 2
+    assert q["accent_phrases"][1]["is_interrogative"] is True
+
+
+def test_synthesize_turns_off_the_engine_upspeak_when_the_contour_has_a_rise(engine):
+    voice.synthesize("イヌワ/ドレ", 1, engine.url, False, rise_contour())
+    synthesis = [r for r in engine.requests if r[1] == "/synthesis"][0]
+    assert synthesis[2]["enable_interrogative_upspeak"] == ["false"]
+    plain = engine.requests.copy()
+    engine.requests.clear()
+    voice.synthesize("イヌワ/ドレ", 1, engine.url, False, {"phrase": -1, "offsets": [0.1, 0.0]})
+    synthesis = [r for r in engine.requests if r[1] == "/synthesis"][0]
+    assert "enable_interrogative_upspeak" not in synthesis[2]
+    assert plain
+
+
+@pytest.mark.parametrize(
+    "rise",
+    [{"offset": 0.1}, {"seconds": 0.1}, {"offset": "x", "seconds": 0.1}, {"offset": 0.1, "seconds": 0}, 3],
+)
+def test_a_broken_rise_names_the_entry(engine, items_path, tmp_path, rise):
+    bad = write_phrases(
+        tmp_path, kana={}, contour={"ask": {"phrase": -1, "offsets": [0.0], "rise": rise}}
+    )
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "contour.ask" in str(e.value) and "rise" in str(e.value)
+
+
+# ---- 名前の高さ（name_contour）: 決まり文句の中の名前の、頭の数 mora を、決まった高さにする ----
+
+
+def name_step(base=6.0, offsets=(-0.2, 0.0)):
+    return {"base": base, "offsets": list(offsets)}
+
+
+def test_apply_contour_sets_the_first_moras_of_the_name_phrase_after_the_template_part():
+    q = query_of([5.9, 5.7, 5.6], [6.5, 6.5])
+    contour = {"phrase": -1, "offsets": [0.2, 0.0], "name_phrase": 0, "name": name_step()}
+    voice.apply_contour(q, contour)
+    # 決まり文句の部分の基準は、直す前の名前の高さの平均（5.9 + 5.7 + 5.6）/ 3
+    assert pitches(q, 1) == [5.933, 5.733]
+    # 名前は、基準 6.0 に offsets を足す（3 つ目の mora は触らない）
+    assert pitches(q, 0) == [5.8, 6.0, 5.6]
+
+
+def test_apply_contour_rejects_a_name_with_fewer_moras_than_offsets():
+    contour = {"phrase": -1, "offsets": [0.0, 0.0], "name_phrase": 0, "name": name_step(offsets=(0.0, 0.0, 0.0))}
+    with pytest.raises(voice.VoiceError) as e:
+        voice.apply_contour(query_of([5.9, 5.7], [6.5, 6.5]), contour)
+    assert "name" in str(e.value)
+
+
+def name_phrases(tmp_path, name_contour):
+    return write_phrases(
+        tmp_path,
+        single={},
+        templates={"ask": "{reading}は どれ？"},
+        kana={"ask-dog": "イヌワ/ドレ", "ask-tomato": "トマトワ/ドレ"},
+        contour={"ask": {"phrase": -1, "offsets": [-0.1, 0.0], "name_phrase": 0}},
+        name_contour=name_contour,
+    )
+
+
+def synthesis_phrase_pitches(engine, text, index):
+    for _, path, _, body in engine.requests:
+        if path == "/synthesis" and json.loads(body)["text"] == text:
+            return pitches(json.loads(body), index)
+    raise AssertionError(f"{text} の合成の要求が無い")
+
+
+def test_build_applies_the_name_contour_to_that_item_only(engine, items_path, tmp_path):
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, name_phrases(tmp_path, {"dog": name_step(offsets=(-0.3, 0.0))}))
+    assert synthesis_phrase_pitches(engine, "イヌワ/ドレ", 0) == [5.7, 6.0, 6.0]
+    assert synthesis_phrase_pitches(engine, "トマトワ/ドレ", 0) == [6.0, 6.0, 6.0, 6.0]
+    files = json.loads((out / "manifest.json").read_text(encoding="utf-8"))["files"]
+    assert files["ask-dog"]["contour"]["name"] == name_step(offsets=(-0.3, 0.0))
+    assert "name" not in files["ask-tomato"]["contour"]
+
+
+def test_changing_a_name_contour_redoes_only_that_items_voices(engine, items_path, tmp_path):
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, name_phrases(tmp_path, {"dog": name_step()}))
+    engine.requests.clear()
+    voice.build(items_path, out, 1, engine.url, name_phrases(tmp_path, {"dog": name_step(offsets=(-0.4, 0.0))}))
+    assert len(engine.synth_requests()) == 4  # dog（名前の声）と ask-dog の 2 つ（audio_query と synthesis）
+
+
+def test_a_name_contour_for_an_unknown_item_is_reported(engine, items_path, tmp_path):
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, name_phrases(tmp_path, {"cow": name_step()}))
+    assert "name_contour.cow" in str(e.value)
+
+
+def test_a_name_contour_needs_name_phrase_in_the_template_contour(engine, items_path, tmp_path):
+    phrases = write_phrases(
+        tmp_path,
+        kana={"ask-dog": "イヌワ/ドレ", "ask-tomato": "トマトワ/ドレ"},
+        single={},
+        templates={"ask": "{reading}は どれ？"},
+        contour={"ask": {"phrase": -1, "offsets": [-0.1, 0.0]}},
+        name_contour={"dog": name_step()},
+    )
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, phrases)
+    assert "name_phrase" in str(e.value)
+
+
+@pytest.mark.parametrize("step", [{"offsets": [0.0]}, {"base": 6.0}, {"base": 6.0, "offsets": []}, {"base": "x", "offsets": [0.0]}, 3])
+def test_a_broken_name_contour_names_the_entry(engine, items_path, tmp_path, step):
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, name_phrases(tmp_path, {"dog": step}))
+    assert "name_contour.dog" in str(e.value)
+
+
+# ---- 名前の声そのもの（<id>.wav）にも name_contour を効かせる ----
+
+
+def test_apply_contour_uses_the_given_base_instead_of_the_computed_one():
+    q = query_of([5.0, 5.0])
+    voice.apply_contour(q, {"phrase": 0, "offsets": [-0.3, 0.0], "base": 6.0})
+    assert pitches(q, 0) == [5.7, 6.0]
+
+
+def test_build_applies_the_name_contour_to_the_name_voice_too(engine, items_path, tmp_path):
+    out = tmp_path / "voice"
+    voice.build(items_path, out, 1, engine.url, name_phrases(tmp_path, {"dog": name_step(offsets=(-0.3, 0.0))}))
+    assert synthesis_phrase_pitches(engine, "いぬ", 0) == [5.7, 6.0]
+    assert synthesis_phrase_pitches(engine, "トマト", 0) == [6.0, 6.0, 6.0]
+    files = json.loads((out / "manifest.json").read_text(encoding="utf-8"))["files"]
+    assert files["dog"]["contour"] == {"phrase": 0, "offsets": [-0.3, 0.0], "base": 6.0}
+    assert "contour" not in files["tomato"]
+
+
+def test_a_name_contour_that_does_not_fit_the_name_voice_names_the_item(engine, items_path, tmp_path):
+    bad = name_phrases(tmp_path, {"dog": name_step(offsets=(0.0, 0.0, 0.0))})
+    with pytest.raises(voice.VoiceError) as e:
+        voice.build(items_path, tmp_path / "voice", 1, engine.url, bad)
+    assert "dog" in str(e.value)

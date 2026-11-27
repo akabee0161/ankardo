@@ -13,7 +13,15 @@
     },
     "cow": {
       "text": "うし",
-      "sha256": "7c0ce3c7ff866b241311517bee9944c2930914fad8343a76388614f67742c9f9"
+      "sha256": "63415718ab4574ec52a52de3985fa257f133fcbcccd833d64c055e0f2068b941",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          -0.1734,
+          0.0
+        ],
+        "base": 5.805
+      }
     },
     "pig": {
       "text": "ぶた",
@@ -86,6 +94,612 @@
     "spaghetti": {
       "text": "スパゲッティ",
       "sha256": "78d274953c24bb4a14a7750820d18bd567709c557a38ad57c8f4db8fb4505783"
+    },
+    "ask-dog": {
+      "text": "いぬは どれ？",
+      "sha256": "5a852fea3a4895aff22cb381a828550ee5381ca034a8f17eff3613bed1b6dc84",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-cat": {
+      "text": "ねこは どれ？",
+      "sha256": "af881746b58cf0bd2bdc0b1c0354e68aff651c33178f21633164dda979fc86e1",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-cow": {
+      "text": "うしは どれ？",
+      "sha256": "5f90bb0c0024d447b57450bf60daaf43b9479a223c61debf04c318e668cc2ee0",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0,
+        "name": {
+          "base": 5.805,
+          "offsets": [
+            -0.1734,
+            0.0
+          ]
+        }
+      }
+    },
+    "ask-pig": {
+      "text": "ぶたは どれ？",
+      "sha256": "a36edc8bb3e6abd976e00c935b6edbeba40ed1f4767968a4032a19c6886b27c6",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-chicken": {
+      "text": "にわとりは どれ？",
+      "sha256": "62dd92ad4ce4cef579e00e37a6bb978493021a632da6a8516c8f3aaeecb5a35a",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-elephant": {
+      "text": "ゾウは どれ？",
+      "sha256": "7a74124f6625da6f8f0289abd7228f6665090987e52c09f49cb48fac079276ff",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-butterfly": {
+      "text": "ちょうちょは どれ？",
+      "sha256": "05657a424d99cb027ba2821e0fd523d9694877826b9ee3b8af590bb14f303091",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-ladybug": {
+      "text": "てんとうむしは どれ？",
+      "sha256": "6cefb21341b827de7c79224bc79d157ec90438330e97290005d372fffbbc3944",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-dragonfly": {
+      "text": "とんぼは どれ？",
+      "sha256": "dafc84b02d2918a47c2c518eca2dcb1588cf489a5241bfd5a49540578662816e",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-goldfish": {
+      "text": "きんぎょは どれ？",
+      "sha256": "d398da7620cce311ff06b6ead68ba902cc0e94519ace49228ca4ddd13d1556bb",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-pufferfish": {
+      "text": "ふぐは どれ？",
+      "sha256": "cd7d045e51dd673e72e5e3cd5560e503b8ac24590bc32ffa9e0a9efa64c5fc18",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-dolphin": {
+      "text": "いるかは どれ？",
+      "sha256": "4d73e5d7180ce38d28e2b0f786913ddd8586da4a19f91895255404f7abda0691",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-tomato": {
+      "text": "トマトは どれ？",
+      "sha256": "5591a77accc79cfce60e1423d5a02d14a83c51649fd810ed6702c6bf7d488fae",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-carrot": {
+      "text": "にんじんは どれ？",
+      "sha256": "9c224b31f1701c95d7b6aadb27b4908c7121732b2a7147bf9350e02c94cda30d",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-eggplant": {
+      "text": "なすは どれ？",
+      "sha256": "2b3c430fff6ab80189705b7fe618896294d865bcbab5e39bbc6254f50ce190f5",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-corn": {
+      "text": "とうもろこしは どれ？",
+      "sha256": "35df5d20cae39970114b2d45f307d9ea324d9dc5c4903e85c585ec5b1d82b69e",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-apple": {
+      "text": "りんごは どれ？",
+      "sha256": "9a56387253ba246a2018247aaa35c8392d796b7e40227992f1dfaf15c316152f",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-banana": {
+      "text": "バナナは どれ？",
+      "sha256": "635a23d7dfb0ea68450bd05c159c5d9b3f6e5368c2ee816d44fc635da42376ed",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-strawberry": {
+      "text": "いちごは どれ？",
+      "sha256": "83a839ceabe898c7affa45dbe5173410b293bcd5318d45d6664d0263dba2a339",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-bread": {
+      "text": "パンは どれ？",
+      "sha256": "7457dc3e897468bddfa66f47b08b5ecfecc59639e4aa1355b6e42b63b8ea7b8b",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ask-spaghetti": {
+      "text": "スパゲッティは どれ？",
+      "sha256": "3b2c3dd63571bfbf375cc1d63689f489c2bf0dbf7f735e4d1f7c1d8d8cc4ffc9",
+      "contour": {
+        "phrase": -1,
+        "offsets": [
+          0.2312,
+          0.0
+        ],
+        "rise": {
+          "offset": 0.1156,
+          "seconds": 0.15
+        },
+        "name_phrase": 0
+      }
+    },
+    "ok-dog": {
+      "text": "そう、いぬ！",
+      "sha256": "6f2fda4e0f56934ced3c806fdb59462893693369ab004d4fdde2097f59682e2a",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-cat": {
+      "text": "そう、ねこ！",
+      "sha256": "2d81cd4b827f8515352281f5d74af1fe5054676869eaa7bbb05d77520e96117e",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-cow": {
+      "text": "そう、うし！",
+      "sha256": "75a249f62e3e464a6b445a89c9e3ba1b16e937530d656a0029b591e2abef7a00",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1,
+        "name": {
+          "base": 5.805,
+          "offsets": [
+            -0.1734,
+            0.0
+          ]
+        }
+      }
+    },
+    "ok-pig": {
+      "text": "そう、ぶた！",
+      "sha256": "4121202cf42ef7e22312e2e37329f2d8bdc2895f4fb37fac3c3ab6881441bebc",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-chicken": {
+      "text": "そう、にわとり！",
+      "sha256": "617591492901bb0d79603b3f1b49d508c33630ef332ae0ea0a6b70ff40859a82",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-elephant": {
+      "text": "そう、ぞう！",
+      "sha256": "bfae31b594644c0652f6d13480e7c70217df142ebeb0c6c6caf0e7acb3f6cc29",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-butterfly": {
+      "text": "そう、ちょうちょ！",
+      "sha256": "a0911e059e341f543d18cbcf3ce1d42f076258dac1d9e3ae0bfc8acffb47f8bb",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-ladybug": {
+      "text": "そう、てんとうむし！",
+      "sha256": "041f2f655e41b6f7871c1f669cee2e4d036b0690495c2b1f437b05e8b608e7f7",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-dragonfly": {
+      "text": "そう、とんぼ！",
+      "sha256": "801311e5cc1495f41367885c268ecb097c84b84b49cfd5d298582d13631a5816",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-goldfish": {
+      "text": "そう、きんぎょ！",
+      "sha256": "ab14cceff6157adbbb0b9a5170f03d31b2cff8f9b3e6820b4fa6117e09499645",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-pufferfish": {
+      "text": "そう、ふぐ！",
+      "sha256": "fc3d82d874346049a76914fcd29787a81bab3265f266bd120a4419acaccf3e40",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-dolphin": {
+      "text": "そう、いるか！",
+      "sha256": "73b16e7f6ddda7fbe30b057efe0958d80ec9836a657fa63d47719073da3a3e53",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-tomato": {
+      "text": "そう、トマト！",
+      "sha256": "825dff92519d7adadd4d81205d9aa029a7b40f0c4e69009cc7c00b85d5b46cf0",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-carrot": {
+      "text": "そう、にんじん！",
+      "sha256": "2509b3a5e17bf19041f35971d13cd2e734186b650687f834bd763cad866bb397",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-eggplant": {
+      "text": "そう、なす！",
+      "sha256": "1bd7c5082efb579bf6e96e017ea98648bd85838d69e5cde5690531226779bdc4",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-corn": {
+      "text": "そう、とうもろこし！",
+      "sha256": "fd359206f3175fb33104cd9f9e8b5718890f9fef211fdfbaa17f0a4d25267fde",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-apple": {
+      "text": "そう、りんご！",
+      "sha256": "879aec9b4b52de4ac7f58281dfa74787643c740a1c836ac59eeb53205777c2e5",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-banana": {
+      "text": "そう、バナナ！",
+      "sha256": "20131b90620735e8628202d53f8e7689f5cd123b3f59ee01a7b3b4806fd42422",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-strawberry": {
+      "text": "そう、いちご！",
+      "sha256": "3284ae417156ad7ea48d58940350a13fa404b86834cc87eb4afe9c41c596f967",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-bread": {
+      "text": "そう、パン！",
+      "sha256": "b9153da3f054ed84ab87652ee3b4dae4a52c3a6436aba61ddd01ab3734fd8a97",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "ok-spaghetti": {
+      "text": "そう、スパゲッティ！",
+      "sha256": "4b2996d9de5908209cd2337e73c7cfbe12554470f0d9149529ea43df6902cfe5",
+      "contour": {
+        "phrase": 0,
+        "offsets": [
+          0.12,
+          -0.12
+        ],
+        "name_phrase": -1
+      }
+    },
+    "again": {
+      "text": "もういっかい やる？",
+      "sha256": "a39531411fb96e06664cfedafd7f782b830c30934a6e6a4a1daac58429c1fd57"
     }
   }
 }
