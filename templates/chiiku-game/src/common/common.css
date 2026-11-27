@@ -211,8 +211,30 @@ body {
   }
 }
 
+/* 間違えたときの揺れ。付けた要素そのものが、左右に 3 回揺れる。400ms は bounce.ts の WIGGLE_MS と合わせる */
+.wiggle {
+  animation: wiggle 0.4s ease-in-out;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  17%,
+  50%,
+  83% {
+    transform: translateX(-6px);
+  }
+  33%,
+  67% {
+    transform: translateX(6px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .bounce {
+  .bounce,
+  .wiggle {
     animation: none;
     opacity: 0.7;
   }

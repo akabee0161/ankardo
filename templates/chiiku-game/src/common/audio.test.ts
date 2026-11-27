@@ -207,3 +207,70 @@ describe('preload', () => {
     expect(context.sources.filter((s) => s.started)).toHaveLength(0);
   });
 });
+
+describe('playToEnd', () => {
+  const lastSource = (context: FakeContext) => {
+    const s = context.sources.at(-1);
+    if (!s) throw new Error('no source');
+    return s;
+  };
+
+  it('resolves true when the sound ends', async () => {
+    const { audio, context } = makeAudio();
+    const done = audio.playToEnd('a.wav');
+    await vi.waitFor(() => expect(lastSource(context).started).toBe(true));
+    lastSource(context).onended?.();
+    await expect(done).resolves.toBe(true);
+  });
+
+  it('resolves false when stop() is called while it is playing', async () => {
+    const { audio, context } = makeAudio();
+    const done = audio.playToEnd('a.wav');
+    await vi.waitFor(() => expect(lastSource(context).started).toBe(true));
+    audio.stop();
+    await expect(done).resolves.toBe(false);
+  });
+
+  it('resolves false when another play() replaces it', async () => {
+    const { audio, context } = makeAudio();
+    const first = audio.playToEnd('a.wav');
+    await vi.waitFor(() => expect(lastSource(context).started).toBe(true));
+    await audio.play('b.wav');
+    await expect(first).resolves.toBe(false);
+  });
+
+  it('resolves false when another playToEnd() replaces it', async () => {
+    const { audio, context } = makeAudio();
+    const first = audio.playToEnd('a.wav');
+    await vi.waitFor(() => expect(lastSource(context).started).toBe(true));
+    const second = audio.playToEnd('b.wav');
+    await expect(first).resolves.toBe(false);
+    await vi.waitFor(() => expect(context.sources.filter((s) => s.started)).toHaveLength(2));
+    lastSource(context).onended?.();
+    await expect(second).resolves.toBe(true);
+  });
+
+  it('resolves false when stop() comes while the file is still loading', async () => {
+    let release: () => void = () => {};
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const { audio, context } = makeAudio(() => gate);
+    const done = audio.playToEnd('a.wav');
+    audio.stop();
+    release();
+    await expect(done).resolves.toBe(false);
+    expect(context.sources.filter((s) => s.started)).toHaveLength(0);
+  });
+
+  it('rejects when the file cannot be read', async () => {
+    const context = new FakeContext();
+    const fetchFn = vi.fn(async () => ({
+      ok: false,
+      status: 404,
+      arrayBuffer: async () => new ArrayBuffer(0),
+    }));
+    const audio = createAudio({ context: context as never, fetchFn: fetchFn as never });
+    await expect(audio.playToEnd('missing.wav')).rejects.toThrow('404');
+  });
+});
