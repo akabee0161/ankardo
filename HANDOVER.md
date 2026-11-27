@@ -5,10 +5,10 @@
 工程:
 1. 共通素材を作る（forge のコピー・21 種類の絵・声・鳴き声・copy-assets.sh）（完了）
 2. なまえタッチを作って公開する（完了）
-3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ
-段階: 実装（5 タスク中 5）
+3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ（1 本目 which-one-2 の計画を書いた）
+段階: 実装計画
 次にやること:
-- 1 本目 `which-one-2`: 小さな計画を書いて依頼者の承認をもらう（問題を出すゲームの最初。5 問の区切り・点の並び・つづける／やめるの画面・正解／不正解の音をひな形の `src/common/` に先に作る）。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
+- 1 本目 `which-one-2`: 計画 docs/superpowers/plans/2026-11-27-which-one-2.md（ブランチ `docs/which-one-2-plan`、未 push）の承認をもらい、承認後に段階を `実装（7 タスク中 0）` にして Task 1（ひな形に共通の区切りを足す PR）から。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
 - 新しいゲームは `./scripts/copy-template.sh chiiku-game <slug> <題> <フォルダ>` → `./scripts/copy-assets.sh chiiku <フォルダ> [--no-cry]`（手順は `.claude/skills/new-game/SKILL.md` の「知育ゲームをひな形から作る」）。ひな形を直したら `./scripts/check-chiiku-template.sh` を通す
 - 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。経緯は README.md の「共通素材」
 - 名前の声は VOICEVOX:ずんだもん。決まり文句（「〇〇は どれ？」）は、試聴で不自然だったアクセントを直してから作る（`voice.py` に足す）。鳴き声を使うゲームは、いぬ（Amada44）・ぶた（Secretlondon）の CC BY-SA のクレジットを画面に出す（CREDITS.md）
