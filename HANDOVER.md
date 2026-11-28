@@ -8,7 +8,7 @@
 3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ（1 本目 which-one-of-two のゲーム本体を作った）
 段階: 実装（7 タスク中 6）
 次にやること:
-- 1 本目 `which-one-of-two`: 計画 docs/superpowers/plans/2026-11-27-which-one-2.md の Task 1〜6 は済み（ひな形の共通部分・決まり文句の声・正解と不正解の音は main に入った。ゲーム本体はリポジトリ `which-one-of-two` の `feat/which-one-of-two`）。ゲームの `main` へのマージとデプロイの後、Task 7（カタログ登録・`develop` のプレビュー・作業ページのリンク）。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
+- 1 本目 `which-one-of-two`: 計画 docs/superpowers/plans/2026-11-27-which-one-2.md の Task 1〜6 は済み（ひな形の共通部分・決まり文句の声・正解と不正解の音・ゲーム本体）。ゲームが本番に出たら、Task 7（カタログ登録・`develop` のプレビュー・作業ページのリンク）。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
 - slug は、計画・設計書の `which-one-2`・`which-one-4` を `which-one-of-two`・`which-one-of-four` に読み替える（依頼者の判断。「2」が何の数か分からないため）
 - 新しいゲームは `./scripts/copy-template.sh chiiku-game <slug> <題> <フォルダ>` → `./scripts/copy-assets.sh chiiku <フォルダ> [--no-cry]`（手順は `.claude/skills/new-game/SKILL.md` の「知育ゲームをひな形から作る」）。ひな形を直したら `./scripts/check-chiiku-template.sh` を通す
 - 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。経緯は README.md の「共通素材」
