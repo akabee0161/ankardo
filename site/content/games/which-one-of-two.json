@@ -1,0 +1,17 @@
+{
+  "slug": "which-one-of-two",
+  "title": "どれかな？",
+  "description": "声で聞かれた絵を、2 つの中から選びます。",
+  "playUrl": "/play/which-one-of-two/",
+  "genre": "education",
+  "devices": ["pc", "mobile-landscape"],
+  "controls": [
+    "絵をタッチして選びます",
+    "もう一度聞きたいときは、スピーカーのボタンをタッチします",
+    "左上のボタンを長押しすると、はじめの画面にもどります"
+  ],
+  "images": ["/screenshots/which-one-of-two/01.png"],
+  "ageRange": "2歳〜",
+  "players": "ひとり用",
+  "difficulty": "やさしめ"
+}
