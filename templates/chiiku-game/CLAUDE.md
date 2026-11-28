@@ -27,6 +27,7 @@ __TITLE__（chiiku-template-slug）で作業する際の指針。
 - 最初に大きな「はじめる」ボタンを押してもらう。その**タッチの中で**（`await` の前に）`audio.unlock()` を呼ぶ。そうしないと iOS Safari は音を出さない（`showTitle` の `unlock` がそれを行う）
 - 消音スイッチは無視しない（利用者の意思）。鳴らないときは、「？」で保護者に消音ボタンと音量を確かめてもらう。`audio.ts` の `unlock()` の決まりを変えない
 - ゲームを終えるボタン（⏏）は長押し 1.5 秒で、タイトル画面に戻る（子どもが間違えて出ないように）。`createExitButton` を使う
+- 触れて選ぶ絵・ボタンは `attachActivate(el, 処理)`（`src/common/activate.ts`）で受ける。触れた瞬間（pointerdown）・Enter／スペース・click だけの起動（スクリーンリーダーなど）のすべてに応え、同じ操作の click で 2 度呼ばない。自分で `pointerdown` と `keydown` を書かない
 - 同じ絵を続けて叩いたら前の声を止めて最初から鳴らし、別の絵を叩いたら前の声を止める
 - 素材は ankardo の `shared-assets/chiiku/` が正で、`public/chiiku/` はそのコピー。**手で直さない**。直すときは ankardo の素材を直し、`ankardo/scripts/copy-assets.sh chiiku . [--no-cry]` でコピーし直す（コピー元の commit は `chiiku-assets.md`）。鳴き声（`cry/`）を使わないゲームは `--no-cry` を付ける（CC BY-SA の録音を配らず、画面のクレジットも VOICEVOX の 1 行だけで済む）。クレジットは `public/chiiku/CREDITS.md`
 - 種類は 21（たべもの 5）、種類キーは `sea`（みずのいきもの。金魚を含むため）。素材の一覧（`items.json`）を正とし、ゲーム側に一覧を書き写さない

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { createAudio } from './audio';
+import { END_GRACE_MS, createAudio } from './audio';
 
 class FakeSource {
   buffer: unknown = null;
@@ -296,6 +296,59 @@ describe('playToEnd', () => {
     audio.stop();
     release();
     await expect(done).resolves.toBeUndefined();
+  });
+
+  it('does not start the sound when stop() comes right after the source is prepared', async () => {
+    const { audio, context } = makeAudio();
+    // 用意ができた直後（prepare の戻り）に stop が割り込む
+    const original = context.createBufferSource.bind(context);
+    context.createBufferSource = () => {
+      const s = original();
+      audio.stop();
+      return s;
+    };
+    await expect(audio.playToEnd('a.wav')).resolves.toBe(false);
+    await audio.play('b.wav');
+    expect(context.sources.filter((s) => s.started)).toHaveLength(0);
+  });
+
+  it('resolves true after the length of the sound plus a grace when the end notice never comes', async () => {
+    vi.useFakeTimers();
+    try {
+      const { audio, context } = makeAudio();
+      const done = audio.playToEnd('a.wav');
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lastSource(context).started).toBe(true);
+      // 長さが分からない音は 10 秒として数える
+      await vi.advanceTimersByTimeAsync(10000 + END_GRACE_MS - 1);
+      let settled = false;
+      void done.then(() => {
+        settled = true;
+      });
+      await vi.advanceTimersByTimeAsync(0);
+      expect(settled).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
+      await expect(done).resolves.toBe(true);
+      expect(lastSource(context).stopCalls).toBe(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('uses the buffer duration for the limit and does not fire after a normal end', async () => {
+    vi.useFakeTimers();
+    try {
+      const { audio, context } = makeAudio();
+      context.decodeAudioData = vi.fn(async () => ({ duration: 2 })) as never;
+      const done = audio.playToEnd('a.wav');
+      await vi.advanceTimersByTimeAsync(0);
+      lastSource(context).onended?.();
+      await expect(done).resolves.toBe(true);
+      await vi.advanceTimersByTimeAsync(60000);
+      expect(lastSource(context).stopCalls).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('rejects when the file cannot be read', async () => {

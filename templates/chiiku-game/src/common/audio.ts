@@ -51,6 +51,9 @@ function defaultContext(): ContextLike {
   return new Ctor();
 }
 
+/** 音の長さを過ぎても鳴り終わりの知らせが来ないとき、先へ進めるまでの余裕 */
+export const END_GRACE_MS = 3000;
+
 export function createAudio(deps: AudioDeps = {}): AudioPlayer {
   let context: ContextLike | undefined = deps.context;
   const fetchFn: FetchLike = deps.fetchFn ?? ((url) => fetch(url));
@@ -86,8 +89,8 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     settleEnd(false);
   };
 
-  /** 前の音を止め、鳴らす用意をした source を返す。読み込みの間に別の play・stop が来ていたら null */
-  const prepare = async (url: string): Promise<SourceLike | null> => {
+  /** 前の音を止め、鳴らす用意をした source と、この要求の番号を返す。読み込みの間に別の play・stop が来ていたら null */
+  const prepare = async (url: string): Promise<{ source: SourceLike; mine: number } | null> => {
     const mine = ++ticket;
     stopPlaying();
     const c = ctx();
@@ -107,7 +110,7 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     const source = c.createBufferSource();
     source.buffer = buffer;
     source.connect(c.destination);
-    return source;
+    return { source, mine };
   };
 
   const load = (url: string): Promise<unknown> => {
@@ -142,8 +145,10 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     },
 
     async play(url) {
-      const source = await prepare(url);
-      if (!source) return;
+      const prepared = await prepare(url);
+      // prepare の戻りから、ここが動くまでの間に stop・別の play が来ていたら、鳴らさない
+      if (!prepared || prepared.mine !== ticket) return;
+      const { source } = prepared;
       source.onended = () => {
         if (playing === source) playing = null;
       };
@@ -152,10 +157,30 @@ export function createAudio(deps: AudioDeps = {}): AudioPlayer {
     },
 
     async playToEnd(url) {
-      const source = await prepare(url);
-      if (!source) return false;
+      const prepared = await prepare(url);
+      if (!prepared || prepared.mine !== ticket) return false;
+      const { source } = prepared;
       return new Promise<boolean>((resolve) => {
-        settle = resolve;
+        // 鳴り終わりの知らせが届かないとき（iOS が電話などで音を止めた後など）に、遊びが止まったままにならないよう、
+        // 音の長さ + 余裕の間に知らせが来なければ、鳴り終わったことにして先へ進める
+        const duration = (source.buffer as { duration?: number } | null)?.duration;
+        const base = typeof duration === 'number' && duration > 0 ? duration * 1000 : 10000;
+        const watchdog = setTimeout(() => {
+          if (playing === source) {
+            playing = null;
+            source.onended = null;
+            try {
+              source.stop();
+            } catch {
+              // 止まっている音を止めても例外になるブラウザがある。無視してよい
+            }
+          }
+          settleEnd(true);
+        }, base + END_GRACE_MS);
+        settle = (completed) => {
+          clearTimeout(watchdog);
+          resolve(completed);
+        };
         source.onended = () => {
           if (playing === source) playing = null;
           settleEnd(true);

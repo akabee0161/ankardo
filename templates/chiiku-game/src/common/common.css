@@ -162,7 +162,8 @@ body {
   padding: 12px 20px;
   border: 0;
   border-radius: 12px;
-  background: var(--accent);
+  /* 白文字との濃さの差を 4.5:1 以上にするため、共通のアクセント色（#2e9e6a、3.4:1）より濃くする。他の要素には影響させない */
+  background: #217a52;
   color: var(--accent-fg);
   font-size: 1rem;
   cursor: pointer;
