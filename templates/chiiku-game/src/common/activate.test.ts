@@ -18,7 +18,10 @@ describe('attachActivate', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    document.body.replaceChildren();
     el = document.createElement('button');
+    // 実際の画面と同じく、要素は document の中に置く（pointerup が document まで届く）
+    document.body.append(el);
     fn = vi.fn();
     attachActivate(el, fn);
   });
