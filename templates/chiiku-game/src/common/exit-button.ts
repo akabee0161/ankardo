@@ -16,5 +16,23 @@ export function createExitButton(onExit: () => void): HTMLButtonElement {
   button.setAttribute('aria-label', 'おわる（ながおし）');
   button.textContent = '⏏';
   attachLongPress(button, EXIT_HOLD_MS, onExit);
+
+  // キーボード: Enter・スペースを EXIT_HOLD_MS 押し続けたら終える。離す・フォーカスが外れると取り消す
+  let keyTimer: ReturnType<typeof setTimeout> | undefined;
+  const cancelKey = () => {
+    clearTimeout(keyTimer);
+    keyTimer = undefined;
+  };
+  button.addEventListener('keydown', (ev) => {
+    if (ev.key !== 'Enter' && ev.key !== ' ') return;
+    ev.preventDefault();
+    if (ev.repeat || keyTimer !== undefined) return;
+    keyTimer = setTimeout(() => {
+      keyTimer = undefined;
+      onExit();
+    }, EXIT_HOLD_MS);
+  });
+  button.addEventListener('keyup', cancelKey);
+  button.addEventListener('blur', cancelKey);
   return button;
 }

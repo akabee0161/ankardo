@@ -7,8 +7,12 @@ const NOTICE = [
   '音量も確かめてください。',
 ];
 
-export function createHelp(): HTMLElement {
-  const wrap = document.createElement('div');
+/** 画面に置く入れ物。画面を置き換える側が、開いたままの説明を閉じるために `closeIfOpen` を呼ぶ */
+export type Help = HTMLElement & { closeIfOpen(): void };
+
+export function createHelp(): Help {
+  // closeIfOpen は、下で入れる（それまでは型だけ Help にしておく）
+  const wrap = document.createElement('div') as unknown as Help;
   wrap.className = 'help';
   // 触れたことが、後ろの遊び（声を鳴らす処理）へ伝わらないように
   wrap.addEventListener('pointerdown', (e) => e.stopPropagation());
@@ -55,14 +59,19 @@ export function createHelp(): HTMLElement {
   };
   // 説明を開いている間、後ろの画面は Tab で動けず、Enter も効かないようにする（後ろの絵の声が鳴らないように）
   let behind: Element[] = [];
-  function close() {
+  function close(refocus = true) {
     dialog.hidden = true;
     for (const el of behind) el.removeAttribute('inert');
     behind = [];
     open.removeAttribute('inert');
     document.removeEventListener('keydown', onKey);
-    open.focus();
+    if (refocus) open.focus();
   }
+  // 説明を開いたまま、画面が置き換わるとき（区切りの画面など）に呼ぶ。開いていなければ何もしない。
+  // 置き換わった後も画面が使い回されるので、閉じておかないと、戻ったときに説明が開いたまま出る
+  wrap.closeIfOpen = () => {
+    if (!dialog.hidden) close(false);
+  };
   open.addEventListener('click', () => {
     dialog.hidden = false;
     behind = [...(wrap.parentElement?.children ?? [])].filter((el) => el !== wrap);
@@ -71,7 +80,7 @@ export function createHelp(): HTMLElement {
     document.addEventListener('keydown', onKey);
     closeButton.focus();
   });
-  closeButton.addEventListener('click', close);
+  closeButton.addEventListener('click', () => close());
 
   wrap.append(open, dialog);
   return wrap;

@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createHelp } from './help';
+import { type Help, createHelp } from './help';
 
 describe('createHelp', () => {
-  let help: HTMLElement;
+  let help: Help;
   const button = () => help.querySelector<HTMLButtonElement>('.help-button');
   const dialog = () => help.querySelector<HTMLElement>('.help-dialog');
   const close = () => help.querySelector<HTMLButtonElement>('.help-close');
@@ -91,6 +91,25 @@ describe('createHelp', () => {
     const e = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
     document.dispatchEvent(e);
     expect(e.defaultPrevented).toBe(false);
+  });
+
+  it('closeIfOpen closes an open notice, gives the screen behind back, and drops the key listener', () => {
+    const sibling = document.createElement('button');
+    document.body.append(sibling);
+    button()?.click();
+    expect(sibling.hasAttribute('inert')).toBe(true);
+    help.closeIfOpen();
+    expect(dialog()?.hidden).toBe(true);
+    expect(sibling.hasAttribute('inert')).toBe(false);
+    expect(button()?.hasAttribute('inert')).toBe(false);
+    const e = new KeyboardEvent('keydown', { key: 'Tab', cancelable: true });
+    document.dispatchEvent(e);
+    expect(e.defaultPrevented).toBe(false);
+  });
+
+  it('closeIfOpen does nothing when the notice is closed', () => {
+    help.closeIfOpen();
+    expect(dialog()?.hidden).toBe(true);
   });
 
   it('stops holding Tab once the screen was replaced while the notice was open', () => {
