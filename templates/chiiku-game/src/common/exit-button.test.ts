@@ -57,6 +57,16 @@ describe('createExitButton', () => {
     expect(onExit).toHaveBeenCalledTimes(2);
   });
 
+  it('still exits when another key (Shift) is released while Enter is held', () => {
+    const key = (type: string, k: string) =>
+      button.dispatchEvent(new KeyboardEvent(type, { key: k, bubbles: true, cancelable: true }));
+    key('keydown', 'Enter');
+    vi.advanceTimersByTime(500);
+    key('keyup', 'Shift');
+    vi.advanceTimersByTime(EXIT_HOLD_MS - 500);
+    expect(onExit).toHaveBeenCalledTimes(1);
+  });
+
   it('does not exit by keyboard on a short press, when focus leaves, or on other keys', () => {
     const key = (type: string, k: string) =>
       button.dispatchEvent(new KeyboardEvent(type, { key: k, bubbles: true, cancelable: true }));

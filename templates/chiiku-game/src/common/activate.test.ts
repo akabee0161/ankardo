@@ -64,6 +64,14 @@ describe('attachActivate', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
+  it('still fires on a lone click after a mouse press released outside the element', () => {
+    pointer(el, 'pointerdown');
+    pointer(document.body, 'pointerup'); // 要素の外で離した（el の pointerup は来ない）
+    vi.advanceTimersByTime(CLICK_FOLLOW_MS);
+    el.click();
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
   it('still fires on a lone click after a touch that slid away (no click followed)', () => {
     pointer(el, 'pointerdown');
     pointer(el, 'pointerup'); // 指がすべって、click は来なかった

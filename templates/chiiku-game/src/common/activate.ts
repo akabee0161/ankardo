@@ -27,9 +27,10 @@ export function attachActivate(el: HTMLElement, onActivate: () => void): void {
     if (e.button > 0) return;
     handled();
     onActivate();
+    // マウスで押して要素の外で離すと、pointerup は el に届かない。document でも受けて、期限を必ず設ける
+    document.addEventListener('pointerup', releaseSoon, { once: true });
+    document.addEventListener('pointercancel', releaseSoon, { once: true });
   });
-  el.addEventListener('pointerup', releaseSoon);
-  el.addEventListener('pointercancel', releaseSoon);
   el.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();

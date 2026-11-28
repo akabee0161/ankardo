@@ -17,22 +17,29 @@ export function createExitButton(onExit: () => void): HTMLButtonElement {
   button.textContent = '⏏';
   attachLongPress(button, EXIT_HOLD_MS, onExit);
 
-  // キーボード: Enter・スペースを EXIT_HOLD_MS 押し続けたら終える。離す・フォーカスが外れると取り消す
+  // キーボード: Enter・スペースを EXIT_HOLD_MS 押し続けたら終える。押し始めたキーを離す・フォーカスが外れると取り消す
+  // （Shift など、ほかのキーを離しても取り消さない）
   let keyTimer: ReturnType<typeof setTimeout> | undefined;
+  let heldKey: string | undefined;
   const cancelKey = () => {
     clearTimeout(keyTimer);
     keyTimer = undefined;
+    heldKey = undefined;
   };
   button.addEventListener('keydown', (ev) => {
     if (ev.key !== 'Enter' && ev.key !== ' ') return;
     ev.preventDefault();
     if (ev.repeat || keyTimer !== undefined) return;
+    heldKey = ev.key;
     keyTimer = setTimeout(() => {
       keyTimer = undefined;
+      heldKey = undefined;
       onExit();
     }, EXIT_HOLD_MS);
   });
-  button.addEventListener('keyup', cancelKey);
+  button.addEventListener('keyup', (ev) => {
+    if (ev.key === heldKey) cancelKey();
+  });
   button.addEventListener('blur', cancelKey);
   return button;
 }
