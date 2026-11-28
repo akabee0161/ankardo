@@ -5,10 +5,12 @@
 工程:
 1. 共通素材を作る（forge のコピー・21 種類の絵・声・鳴き声・copy-assets.sh）（完了）
 2. なまえタッチを作って公開する（完了）
-3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ（1 本目 which-one-of-two のゲーム本体を作った）
-段階: 実装（7 タスク中 6）
+3. ひな形を作り、残りの 8 本を作って公開する ← 今ここ（1 本目 which-one-of-two は公開・カタログ登録・プレビューまで済み。共通部分は `playCorrect`・`playWrong`・`showRoundEnd`・`createProgressDots`・`ROUND_SIZE`）
+段階: 実装（8 本中 1 本）
 次にやること:
-- 1 本目 `which-one-of-two`: 計画 docs/superpowers/plans/2026-11-27-which-one-2.md の Task 1〜6 は済み（ひな形の共通部分・決まり文句の声・正解と不正解の音・ゲーム本体）。ゲームが本番に出たら、Task 7（カタログ登録・`develop` のプレビュー・作業ページのリンク）。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
+- 1 本目 `which-one-of-two` のレビュー対応で `src/common/` を直した 5 件を、ひな形 `templates/chiiku-game/` に入れる（PR を分ける。`check-chiiku-template.sh` を通す）: `audio.ts`（鳴り終わりの知らせが来ないとき、音の長さ + 3 秒で先へ進む・鳴らす直前の取り消し確認）、`exit-button.ts`（キー長押し）、`common.css`（「とじる」の背景を `#217a52`）、新設の `activate.ts`（click だけの起動も受ける）、`help.ts`（`closeIfOpen`）。ゲーム側の `game.ts` の使い方は which-one-of-two のリポジトリが見本
+- 作業ページ（personal-work-hub）の PR #9（どれかな？のプレビューのリンク）は依頼者のマージ待ち
+- 2 本目 `which-one-of-four`: 小さな計画を書いて承認をもらう。作る順と 1 本ごとの流れは docs/superpowers/plans/2026-11-26-chiiku-games-step3-template.md の「残りの 8 本」
 - slug は、計画・設計書の `which-one-2`・`which-one-4` を `which-one-of-two`・`which-one-of-four` に読み替える（依頼者の判断。「2」が何の数か分からないため）
 - 新しいゲームは `./scripts/copy-template.sh chiiku-game <slug> <題> <フォルダ>` → `./scripts/copy-assets.sh chiiku <フォルダ> [--no-cry]`（手順は `.claude/skills/new-game/SKILL.md` の「知育ゲームをひな形から作る」）。ひな形を直したら `./scripts/check-chiiku-template.sh` を通す
 - 種類は 21（たべもの 5）、種類キーは sea（表示名「みずのいきもの」。金魚を含むため）。設計書・計画の「20 種類」「fish」「うみ」は、この読み替えで読む。経緯は README.md の「共通素材」
